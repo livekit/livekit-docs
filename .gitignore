@@ -5,6 +5,7 @@
 /build
 
 /static/client-sdk-js
+/static/server-api-js
 
 # Generated files
 .docusaurus

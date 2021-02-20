@@ -17,6 +17,7 @@ module.exports = {
       collapsed: false,
       items: [
        'references/client-sdks',
+       'references/server-apis',
       ]
     },
     // {
