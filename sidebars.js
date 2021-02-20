@@ -13,14 +13,10 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Client SDKs',
+      label: 'References',
       collapsed: false,
       items: [
-        {
-          type: 'link',
-          label: 'JavaScript',
-          href: '/client-sdk-js/',
-        },
+       'references/client-sdks',
       ]
     },
     // {
