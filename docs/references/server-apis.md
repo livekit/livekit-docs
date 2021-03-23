@@ -8,6 +8,7 @@ These APIs are designed to be integrated into your backend code, and they can in
 
 We officially support client wrappers for the following platforms
 
-| Platform | Package                                                                | Docs                                          |
-| :------- | :--------------------------------------------------------------------- | :-------------------------------------------- |
-| Node.js  | [livekit-server-api](https://www.npmjs.com/package/livekit-server-api) | [docs](https://docs.livekit.io/server-api-js) |
+| Platform | Package                                                                | Docs                                                         |
+| :------- | :--------------------------------------------------------------------- | :----------------------------------------------------------- |
+| Node.js  | [livekit-server-api](https://www.npmjs.com/package/livekit-server-api) | [docs](https://docs.livekit.io/server-api-js)                |
+| Go       | [livekit-sdk-go](https://github.com/livekit/livekit-sdk-go)            | [docs](https://pkg.go.dev/github.com/livekit/livekit-sdk-go) |
