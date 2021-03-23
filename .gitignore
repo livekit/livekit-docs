@@ -4,6 +4,7 @@
 # Production
 /build
 
+/static/client-sdk-android
 /static/client-sdk-js
 /static/server-api-js
 

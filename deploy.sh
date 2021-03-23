@@ -16,6 +16,12 @@ popd
 rm -rf static/server-api-js
 cp -R ../server-api-js/docs static/server-api-js
 
+pushd ../client-sdk-android
+./gradlew dokkaHtml
+popd
+rm -rf static/client-sdk-android
+cp -R ../client-sdk-android/livekit-android-sdk/build/dokka/html static/client-sdk-android
+
 
 GIT_USER=davidzhao DEPLOYMENT_BRANCH=main yarn deploy
 
