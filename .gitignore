@@ -5,6 +5,7 @@
 /build
 
 /static/client-sdk-android
+/static/client-sdk-ios
 /static/client-sdk-js
 /static/server-api-js
 
