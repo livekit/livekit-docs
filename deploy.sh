@@ -22,11 +22,11 @@ popd
 rm -rf static/client-sdk-android
 cp -R ../client-sdk-android/livekit-android-sdk/build/dokka/html static/client-sdk-android
 
-pushd ../livekit-ios
+pushd ../client-sdk-ios
 make docs
 popd
 rm -rf static/client-sdk-ios
-cp -R ../livekit-ios/Documentation static/client-sdk-ios
+cp -R ../client-sdk-ios/Documentation static/client-sdk-ios
 
 
 GIT_USER=davidzhao DEPLOYMENT_BRANCH=main yarn deploy
