@@ -4,13 +4,15 @@ module.exports = {
       type: 'doc',
       id: 'index',
     },
-    {
-      type: 'category',
-      label: 'Guides',
-      items: [
-        'guides/getting-started',
-      ],
-    },
+    // {
+    //   type: 'category',
+    //   label: 'Guides',
+    //   collapsed: false,
+    //   items: [
+    //     'guides/getting-started',
+    //     'guides/deploy',
+    //   ],
+    // },
     {
       type: 'category',
       label: 'References',
@@ -20,17 +22,5 @@ module.exports = {
        'references/server-apis',
       ]
     },
-    // {
-    //   type: 'category',
-    //   label: 'Server SDKs',
-    //   collapsed: false,
-    //   items: [
-    //     {
-    //       type: 'link',
-    //       label: 'JavaScript',
-    //       href: '/server-api-js',
-    //     },
-    //   ]
-    // }
   ],
 };
