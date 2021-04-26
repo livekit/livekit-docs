@@ -16,12 +16,12 @@ LiveKit is an open source project that lets you create scalable, distributed Web
 
 ## Why LiveKit?
 
-We built LiveKit out of frustration with the barrier of entry with building real time audio/video applications. While building [Watercooler](https://watercooler.fm), we realized that hosted solutions are too expensive, and existing OSS media servers are complex to work with, while lacking some of he interactions/events that we needed. We wanted to lower the barrier of entry for others in building real time apps.
+We built LiveKit out of frustration with the barrier of entry with building real time audio/video applications. While building [Watercooler](https://watercooler.fm), we realized that hosted solutions are too expensive, and existing OSS media servers were difficult to work with, while missing features that we needed.
 
 LiveKit is designed for those that want to build real-time audio/video capability, and are looking for a "deploy-it-yourself" solution. Compared to hosted solutions like Agora or Twilio Video, LiveKit gives you total control, and lets you keeps costs under control.
 
 ## Architecture
 
-LiveKit is built on [Pion](https://github.com/pion/webrtc), an excellent Go-based WebRTC implementation.
+LiveKit is built with [Pion](https://github.com/pion/webrtc), an excellent Go-based WebRTC implementation.
 
 ![LiveKit Architecture](/img/architecture.png)
