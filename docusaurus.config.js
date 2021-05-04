@@ -52,7 +52,13 @@ module.exports = {
     },
     colorMode: {
       respectPrefersColorScheme: true,
-    }
+      defaultMode: 'light',
+      disableSwitch: true,
+    },
+    prism: {
+      theme: require('prism-react-renderer/themes/nightOwl'),
+      additionalLanguages: ["swift", "kotlin"],
+    },
   },
   presets: [
     [

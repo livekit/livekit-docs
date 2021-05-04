@@ -1,0 +1,200 @@
+---
+title: LiveKit Intro
+sidebar_label: Home
+slug: /
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+LiveKit is an open source project that lets you create scalable, distributed WebRTC rooms within your apps. It's designed to give you everything you need to build real time video/audio applications.
+
+## Features
+
+- Horizontally scalable WebRTC server / SFU, scales by adding nodes
+- Modern, full-featured [client SDKs](references/client-sdks.md) for JS, iOS, Android
+- Built for production - JWT authentication and [server APIs](references/server-apis.md)
+- Robust networking & connectivity, fallback to TCP when UDP isn't available
+- Easy to deploy, a single binary and only three ports to forward.
+- Advanced features - simulcasting, selective subscription, moderation APIs.
+
+## Why LiveKit?
+
+We built LiveKit out of frustration with the options available when building WebRTC-based apps. Hosted solutions like Twilio and Agora were too expensive for our use, and we didn't want to be locked into a particular vendor. While there were a few WebRTC servers available, we found that they were tricky to configure and deploy, and felt too generic and yet limiting in what we could do with it.
+
+LiveKit is designed for those that want to build real-time audio/video capability, and want to avoid the high cost and vendor lock-in. It has a simple API for those starting out, but offers advanced capabilities that allows you to build production quality apps that are efficient and robust.
+
+## Architecture
+
+LiveKit is written in Go. It builds upon [Pion](https://github.com/pion/webrtc), an excellent WebRTC implementation in Go. Each LiveKit instance is capable of handling WebRTC session, signal connection, and serving API requests. This homogeneous architecture makes it easy to deploy and scale. Redis is the only external dependency. The only limitation is that each room has to fit on a single server.
+
+![LiveKit Architecture](/img/architecture.png)
+
+## Client Examples
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'TypeScript', value: 'typescript'},
+    {label: 'iOS (Swift)', value: 'ios'},
+    {label: 'Android (Kotlin)', value: 'android'},
+  ]}>
+  <TabItem value="typescript">
+
+```typescript
+import {
+  connect,
+  createLocalTracks,
+  Participant,
+  RoomEvent,
+  Track,
+  VideoTrack,
+} from 'livekit-client'
+
+const url = 'wss://your_host'
+const token = 'jwt_token'
+
+connect(url, token).then(async (room) => {
+  // set up listeners
+  room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+    attachTrack(track, participant)
+  })
+
+  const tracks = await createLocalTracks({
+    audio: true,
+    video: true,
+  })
+  for (let track of tracks) {
+    // publish to the room
+    const publication = await room.localParticipant.publishTrack(track)
+    // attach to DOM only if it's video
+    if (track instanceof VideoTrack) {
+      attachTrack(track, room.localParticipant)
+    }
+  }
+})
+
+function attachTrack(track: Track, participant: Participant) {
+  // creates a new audio or video element
+  const element = track.attach()
+  // find the target element for participant
+  ...
+  target.appendChild(element)
+}
+
+```
+
+  </TabItem>
+  <TabItem value="ios">
+
+```swift
+import LiveKit
+import UIKit
+
+class RoomViewController: UIViewController {
+    var room: Room?
+    var remoteVideo: VideoView?
+    var localVideo: VideoView?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+
+        let url: String = "ws://your_host"
+        let token: String = "your_jwt_token"
+
+        room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+    }
+
+    func attachVideo(track: VideoTrack, participant: Participant) {
+      let videoView = VideoView(frame: .zero)
+      // find destination view
+      ...
+      target.addSubview(videoView)
+      track.addRenderer(videoView.renderer)
+    }
+}
+
+extension RoomViewController: RoomDelegate {
+    func didConnect(room: Room) {
+        guard let localParticipant = room.localParticipant else {
+            return
+        }
+        do {
+            let videoTrack = try LocalVideoTrack.createTrack(name: "localVideo")
+            _ = localParticipant.publishVideoTrack(track: videoTrack)
+            let audioTrack = LocalAudioTrack.createTrack(name: "localAudio")
+            _ = localParticipant.publishAudioTrack(track: audioTrack)
+        } catch {
+            // error publishing
+        }
+
+        // attach video view
+        attachVideo(videoTrack, localParticipant)
+    }
+
+    func didSubscribe(track: Track, publication _: RemoteTrackPublication, participant _: RemoteParticipant) {
+        guard let videoTrack = track as? VideoTrack else {
+          return
+        }
+        DispatchQueue.main.async {
+            attachVideo(videoTrack, participant)
+        }
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="android">
+
+
+```kt
+
+class MainActivity : AppCompatActivity(), RoomListener {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ...
+        val url = "wss://your_host";
+        val token = "your_token"
+
+        launch {
+            val room = LiveKit.connect(
+                applicationContext,
+                url,
+                token,
+                ConnectOptions(),
+                this
+            )
+            val localParticipant = room.localParticipant
+            val audioTrack = localParticipant.createAudioTrack()
+            localParticipant.publishAudioTrack(audioTrack)
+            val videoTrack = localParticipant.createVideoTrack()
+            localParticipant.publishVideoTrack(videoTrack)
+            videoTrack.startCapture()
+
+            attachVideo(videoTrack, localParticipant)
+        }
+    }
+
+    override fun onTrackSubscribed(
+        track: Track,
+        publication: RemoteTrackPublication,
+        participant: RemoteParticipant,
+        room: Room
+    ) {
+        if (track is VideoTrack) {
+            attachVideo(track, participant)
+        }
+    }
+
+    private fun attachVideo(videoTrack: VideoTrack, participant: Participant) {
+        // viewBinding.renderer is a `org.webrtc.SurfaceViewRenderer` in your
+        // layout
+        videoTrack.addRenderer(viewBinding.renderer)
+    }
+}
+
+```
+
+</TabItem>
+</Tabs>
