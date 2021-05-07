@@ -51,7 +51,7 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} LiveKit, Inc.`,
     },
     colorMode: {
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
       defaultMode: 'light',
       disableSwitch: true,
     },
