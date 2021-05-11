@@ -4,15 +4,15 @@ module.exports = {
       type: 'doc',
       id: 'index',
     },
-    // {
-    //   type: 'category',
-    //   label: 'Guides',
-    //   collapsed: false,
-    //   items: [
-    //     'guides/getting-started',
-    //     'guides/deploy',
-    //   ],
-    // },
+    {
+      type: 'category',
+      label: 'Guides',
+      collapsed: false,
+      items: [
+        'guides/getting-started',
+        'guides/deployment',
+      ],
+    },
     {
       type: 'category',
       label: 'References',
@@ -22,5 +22,12 @@ module.exports = {
        'references/server-apis',
       ]
     },
+    {
+      type: 'category',
+      label: 'Internals',
+      items: [
+        'internals/client-protocol',
+      ]
+    }
   ],
 };

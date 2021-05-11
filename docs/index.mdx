@@ -44,6 +44,7 @@ The only external dependency is Redis.
     {label: 'TypeScript', value: 'typescript'},
     {label: 'iOS (Swift)', value: 'ios'},
     {label: 'Android (Kotlin)', value: 'android'},
+    {label: 'Golang', value: 'go'},
   ]}>
   <TabItem value="typescript">
 
@@ -200,6 +201,43 @@ class MainActivity : AppCompatActivity(), RoomListener {
     }
 }
 
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go
+import (
+  lksdk "github.com/livekit/livekit-sdk-go"
+)
+
+// Go SDK is a more advanced SDK that gives you programmatic access as a client
+// enabling you to publish and record audio/video/data to the room.
+func main() {
+  host := "<host>"
+  apiKey := "api-key"
+  apiSecret := "api-secret"
+  roomName := "myroom"
+  identity := "botuser"
+	room, err := lksdk.ConnectToRoom(host, lksdk.ConnectInfo{
+		APIKey:              apiKey,
+		APISecret:           apiSecret,
+		RoomName:            roomName,
+		ParticipantIdentity: identity,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+  room.Callback.OnTrackSubscribed = trackSubscribed
+  ...
+  room.Disconnect()
+}
+
+func trackSubscribed(track *webrtc.TrackRemote, publication lksdk.TrackPublication, rp *lksdk.RemoteParticipant) {
+
+}
 ```
 
 </TabItem>
