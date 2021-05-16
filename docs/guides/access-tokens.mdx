@@ -1,5 +1,101 @@
 ---
 title: Access Tokens
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-TBD
+When LiveKit clients connect to the server, they have to pass in an access tokenThe token encodes identity of the participant, name of the room, as well as capabilities & permissions. Access tokens are JWT based and are signed with API secret to prevent forgery.
+
+## Creating a token
+
+<Tabs
+  defaultValue="typescript"
+  groupId="server-sdk"
+  values={[
+    {label: 'Node (TypeScript)', value: 'typescript'},
+    {label: 'Golang', value: 'go'},
+  ]}>
+  <TabItem value="typescript">
+
+```typescript
+import { AccessToken } from 'livekit-server-api';
+
+const roomName = 'name-of-room';
+const participantName = 'user-name';
+
+const at = new AccessToken('api-key', 'secret-key', {
+  identity: participantName,
+});
+at.addGrant({ roomJoin: true, room: roomName, canPublish: true, canSubscribe: true });
+
+const token = at.toJwt();
+console.log('access token', token);
+```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+```go
+import (
+	"time"
+
+	lksdk "github.com/livekit/livekit-sdk-go"
+	"github.com/livekit/protocol/auth"
+)
+
+func getJoinToken(apiKey, apiSecret, room, identity string) (string, error) {
+	at := auth.NewAccessToken(apiKey, apiSecret)
+	grant := &auth.VideoGrant{
+		RoomJoin:     true,
+		Room:         room,
+		CanPublish:   true,
+		CanSubscribe: true,
+	}
+	at.AddGrant(grant).
+		SetIdentity(identity).
+		SetValidFor(time.Hour)
+
+	return at.ToJWT()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Token example
+
+The decoded body of an join token looks like
+
+```json
+{
+  "exp": 1621657263,
+  "iss": "APIMmxiL8rquKztZEoZJV9Fb",
+  "jti": "myidentity",
+  "nbf": 1619065263,
+  "video": {
+    "room": "myroom",
+    "roomJoin": true
+  }
+}
+```
+
+We use `iss` to identify the API key, `jti` to indicate participant identity, and `video` to encode LiveKit VideoGrant.
+
+## Room permissions
+
+Room permissions are encoded in the `video` field. They can have the following fields:
+
+| field        | type   | description                                               |
+| :----------- | :----- | :-------------------------------------------------------- |
+| roomCreate   | bool   | permission to create rooms                                |
+| roomList     | bool   | permission to list available rooms                        |
+| roomJoin     | bool   | permission to join a room                                 |
+| roomAdmin    | bool   | permission to moderate a room                             |
+| room         | string | name of the room, required if join or admin is set        |
+| canPublish   | bool   | allow participant to publish tracks                       |
+| canSubscribe | bool   | allow participant to subscribe to tracks                  |
+
+## Token expiration
+
+Tokens come with an expiration time. We recommend setting it to the expected duration of the session. Clients will store the token for the entire session in case it has to reconnect for any reason.

@@ -23,15 +23,15 @@ WebRTC is a powerful protocol that now has ubiquitous support across all major b
 
 While there are hosted solutions available like Twilio and Agora. They can be cost prohibitive and being proprietary products, create vendor lock-in. Other open source solutions also exist, but they come with a steep learning curve, and can be daunting to customize and deploy.
 
-We built LiveKit because we believe there should be an open source, production-grade implementation of audio/video rooms that is accessible to all, with a lower barrier of entry in cost and technical complexity. LiveKit provides an opinionated, end-to-end implementation of multi-user conferencing with first-party clients for all major platforms.
+We built LiveKit because we believe there should be a free, open source implementation of WebRTC rooms that "just works" for app developers. LiveKit provides an opinionated, end-to-end implementation of multi-user conferencing with first-party clients for all major platforms.
 
 ## Architecture
 
-LiveKit is written in Go. It's made possible because of [pion](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and most importantly, the amazing community behind them.
+LiveKit is written in Go. It's made possible because of [Pion](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and the amazing community behind them.
 
-LiveKit is designed with the ease of deployment in mind: it's scalable horizontally by just adding nodes. You can run LiveKit on one or 100 nodes with identical configuration; they can route node to node to ensure clients in the same room are connected to the same node.
+LiveKit is horizontally scalable: you can run it on one node or 100, with identical configuration. They use peer to peer routing via Redis to ensure clients in the same room are connected to the same node.
 
-The only external dependency is Redis.
+When deployed, its only external dependency is Redis.
 
 ![LiveKit Architecture](/img/architecture.png)
 
