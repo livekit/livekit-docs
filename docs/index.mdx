@@ -21,15 +21,15 @@ LiveKit is an open source project that provides scalable, multi-user conferencin
 
 WebRTC is a powerful protocol that now has ubiquitous support across all major browsers and mobile platforms. However, building apps with it isn't simple; it requires an understanding of core protocol concepts and the user is responsible for complexities like signaling and coordinating connections between peers. As a peer to peer protocol, scaling WebRTC to a large number of peers also becomes challenging.
 
-While there are hosted solutions available like Twilio and Agora. They can be cost prohibitive and being proprietary products, create vendor lock-in. Other open source solutions also exist, but they are typically written in C/C++, and can be daunting to customize and deploy.
+While there are hosted solutions available like Twilio and Agora. They can be cost prohibitive and being proprietary products, create vendor lock-in. Other open source solutions also exist, but they come with a steep learning curve, and can be daunting to customize and deploy.
 
-We built LiveKit because we believe there should be an open source, production-grade implementation of audio/video rooms that is accessible to all, without barrier of entry in high cost or technical complexity. LiveKit provides an opinionated, end-to-end implementation of multi-user conferencing with first-party clients for all major platforms.
+We built LiveKit because we believe there should be an open source, production-grade implementation of audio/video rooms that is accessible to all, with a lower barrier of entry in cost and technical complexity. LiveKit provides an opinionated, end-to-end implementation of multi-user conferencing with first-party clients for all major platforms.
 
 ## Architecture
 
-LiveKit is written in Go. It's made possible because of [Pion](https://github.com/pion/webrtc), an excellent WebRTC implementation in Go.
+LiveKit is written in Go. It's made possible because of [pion](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and most importantly, the amazing community behind them.
 
-LiveKit is designed with the ease of deployment in mind: it's scalable horizontally by just adding nodes. You can run LiveKit on one node, or 100 nodes, they can route node to node to ensure clients in the same room are connected to the same node.
+LiveKit is designed with the ease of deployment in mind: it's scalable horizontally by just adding nodes. You can run LiveKit on one or 100 nodes with identical configuration; they can route node to node to ensure clients in the same room are connected to the same node.
 
 The only external dependency is Redis.
 
@@ -41,7 +41,7 @@ The only external dependency is Redis.
   defaultValue="typescript"
   groupId="client-sdk"
   values={[
-    {label: 'TypeScript', value: 'typescript'},
+    {label: 'Browser (TypeScript)', value: 'typescript'},
     {label: 'iOS (Swift)', value: 'ios'},
     {label: 'Android (Kotlin)', value: 'android'},
     {label: 'Golang', value: 'go'},

@@ -10,6 +10,7 @@ module.exports = {
       collapsed: false,
       items: [
         'guides/getting-started',
+        'guides/access-tokens',
         'guides/deployment',
       ],
     },

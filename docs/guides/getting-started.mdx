@@ -1,0 +1,137 @@
+---
+title: Getting Started
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide will get you running with a LiveKit installation in minutes.
+
+## Overview
+
+LiveKit is a WebRTC SFU at its core. This means it'll act as a WebRTC peer and maintain connections with each participant in the room. All of the client participants connect to LiveKit server, and not with each other.
+
+LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access tokens for authentication. Access tokens are generated with an API key/secret pair with LiveKit server SDKs. This should take place on the server side to avoid embedding the API secret inside clients. The general flow should be:
+
+* your backend server generates an access token using LiveKit server SDKs
+* your client obtains that token from backend
+* your client passes token to LiveKit client SDK
+* LiveKit client connects to livekit server with the token
+* livekit-server validates token and accepts connection
+
+## Setting up the server
+
+### Docker
+
+LiveKit is published to [docker hub](https://hub.docker.com/r/livekit/livekit-server). You could perform everything in this guide by using the published docker image.
+
+### Building from source
+
+Or you can build it on your machine. To do so, ensure Go 1.15+ is installed, and GOPATH/bin is in your PATH.
+
+```shell
+git clone https://github.com/livekit/livekit-server
+cd livekit-server
+./bootstrap.sh
+mage
+```
+
+## Generate API key / secrets
+
+LiveKit server requires one or more set of API key/secret to authenticate clients. For your convenience, we've included a secure key/secret generator with the server binary.
+
+<Tabs
+  defaultValue="docker"
+  groupId="server-build"
+  values={[
+    {label: 'Docker', value: 'docker'},
+    {label: 'From soure', value: 'source'},
+  ]}>
+  <TabItem value="docker">
+
+```shell
+% docker run --rm livekit/livekit-server generate-keys
+```
+
+  </TabItem>
+  <TabItem value="source">
+
+
+```shell
+% ./bin/livekit-server generate-keys
+```
+
+  </TabItem>
+</Tabs>
+
+```
+API Key:  APIxxxxxxxx
+Secret Key:  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+## Start the server
+
+<Tabs
+  defaultValue="docker"
+  groupId="server-build"
+  values={[
+    {label: 'Docker', value: 'docker'},
+    {label: 'From soure', value: 'source'},
+  ]}>
+  <TabItem value="docker">
+
+```shell
+docker run --rm -e LIVEKIT_KEYS="<key>: <secret>" livekit/livekit-server --dev
+```
+
+  </TabItem>
+  <TabItem value="source">
+
+```shell
+LIVEKIT_KEYS="<key>: <secret>" ./bin/livekit-server --dev
+```
+
+  </TabItem>
+</Tabs>
+
+```shell
+2021-05-16T00:17:18.816-0700	INFO	server/main.go:176	configured key provider	{"num_keys": 1}
+2021-05-16T00:17:18.948-0700	INFO	server/main.go:225	using single-node routing
+2021-05-16T00:17:18.951-0700	INFO	service/server.go:162	starting LiveKit server	{"address": ":7880", "nodeId": "ND_nMu0nVnx", "version": "0.9.3", "rtc.tcp_port": 7881, "rtc.udp_port": 7882}
+```
+
+Now you have an instance of LiveKit running in single-node mode. This is the fastest way to run the server for development purposes, and isn't recommended for production.
+
+## Generate access token
+
+You can generate an development access token with the following. $participant_identity should be an unique identifier for each participant.
+
+<Tabs
+  defaultValue="docker"
+  groupId="server-build"
+  values={[
+    {label: 'Docker', value: 'docker'},
+    {label: 'From soure', value: 'source'},
+  ]}>
+  <TabItem value="docker">
+
+```shell
+docker run --rm -e LIVEKIT_KEYS="<key>: <secret>" livekit/livekit-server create-join-token --room myroom --identity $participant_identity
+```
+
+  </TabItem>
+  <TabItem value="source">
+
+```shell
+LIVEKIT_KEYS="<key>: <secret>" ./bin/livekit-server create-join-token --room myroom --identity $participant_identity
+```
+
+  </TabItem>
+</Tabs>
+
+Note: this token has an expiration of a month, which is useful for development & testing, but not appropriate for production use. To generate tokens for production use, see [Access Token guide](access-tokens).
+
+## Connecting to your room
+
+Now you are ready to connect to the room with a client! Head over to our [sample browser client](https://sample-js.livekit.io/), paste the generated token, and voila! You are live with LiveKit.
+
+![browser client screenshot](/img/getting-started/browser-client.png)
