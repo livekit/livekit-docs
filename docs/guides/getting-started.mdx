@@ -8,7 +8,7 @@ This guide will get you running with a LiveKit installation in minutes.
 
 ## Overview
 
-LiveKit is a WebRTC SFU at its core. This means it'll act as a WebRTC peer and maintain connections with each participant in the room. All of the client participants connect to LiveKit server, and not with each other.
+LiveKit is a WebRTC SFU at its core. This means it'll act as a WebRTC peer and maintain connections with each participant in the room. Each client participant connects to LiveKit server, and not to each other.
 
 LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access tokens for authentication. Access tokens are generated with an API key/secret pair with LiveKit server SDKs. This should take place on the server side to avoid embedding the API secret inside clients. The general flow should be:
 
@@ -26,7 +26,13 @@ LiveKit is published to [docker hub](https://hub.docker.com/r/livekit/livekit-se
 
 ### Building from source
 
-Or you can build it on your machine. To do so, ensure Go 1.15+ is installed, and GOPATH/bin is in your PATH.
+Or you can build it on your machine. To do so, there are a few pre-requisites:
+
+* Go 1.15+ is installed
+* GOPATH/bin is in your PATH
+* [protoc](https://grpc.io/docs/protoc-installation/) is installed and in PATH
+
+Then run
 
 ```shell
 git clone https://github.com/livekit/livekit-server

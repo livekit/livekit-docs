@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # abort on errors
 set -e
@@ -28,7 +28,10 @@ popd
 rm -rf static/client-sdk-ios
 cp -R ../client-sdk-ios/Documentation static/client-sdk-ios
 
+if [[ -z "${GIT_USER}" ]]; then
+  GIT_USER=$USER
+fi
 
-GIT_USER=davidzhao DEPLOYMENT_BRANCH=main yarn deploy
+DEPLOYMENT_BRANCH=main yarn deploy
 
 cd -
