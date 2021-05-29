@@ -1,0 +1,75 @@
+---
+title: Publishing Media
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+One or more audio/video tracks can be added to the room at any point during the session. LiveKit has the concept of `TrackPublication` and `Track`. A `TrackPublication` can be thought of as a collection of track metadata registered with the server.
+
+Once a Track is registered with the server, a Publication is created and all participants in the room are notified of it. They may not be subscribed to the Track, but are aware of the presence of it.
+
+Moreover, `TrackPublication` object offers a way to interact with the track, exposing functionalities such as mute, etc.
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser (TypeScript)', value: 'typescript'},
+    {label: 'iOS (Swift)', value: 'ios'},
+    {label: 'Android (Kotlin)', value: 'android'},
+    {label: 'Golang', value: 'go'},
+  ]}>
+
+  <TabItem value="typescript">
+
+  ```typescript
+  async function publishTracks() {
+    const videoTrack = await createLocalVideoTrack({
+      facingMode: { ideal: "user" },
+      // customize capture resolution
+      resolution: VideoPresets.hd
+    })
+    const audioTrack = await createLocalAudioTrack({
+      echoCancellation: true,
+      noiseSuppression: {
+        ideal: true,
+      }
+    })
+
+    const videoPublication = await room.localParticipant.publishTrack(videoTrack)
+    const audioPublication = await room.localParticipant.publishTrack(audioTrack)
+  }
+  ```
+
+  </TabItem>
+
+  <TabItem value="ios">
+
+  ```swift
+  var videoOpts = LocalVideoTrackOptions()
+  videoOpts.captureParameter = VideoPreset.hd.capture
+  let videoTrack = try LocalVideoTrack.createTrack(name: "video", options: videoOpts)
+  let audioTrack = LocalAudioTrack.createTrack(name: "localAudio")
+  let videoPublication = localParticipant.publishVideoTrack(track: videoTrack)
+  let audioPublication = localParticipant.publishAudioTrack(track: audioTrack)
+  ```
+
+  </TabItem>
+  <TabItem value="android">
+
+  </TabItem>
+
+  <TabItem value="go">
+
+  </TabItem>
+
+</Tabs>
+
+## Simulcasting
+
+
+## Muting control
+
+
+
+## Disabling video

@@ -1,0 +1,213 @@
+---
+title: Connection & Callbacks
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Room is the main construct in LiveKit. Once connected, you have a room object to interact with. It gives you access to the **LocalParticipant**, representing the current user, and **RemoteParticipants**, representing other users in the room.
+
+You can also listen to events on the room, that'll notify your callbacks of changes within the room.
+
+For events that are happening to a particular participant, it will also be fired on the `RemoteParticipant` or `LocalParticipant` objects.
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser (TypeScript)', value: 'typescript'},
+    {label: 'iOS (Swift)', value: 'ios'},
+    {label: 'Android (Kotlin)', value: 'android'},
+    {label: 'Golang', value: 'go'},
+  ]}>
+  <TabItem value="typescript">
+
+```typescript
+import {
+  connect,
+  ParticipantEvent,
+  RoomEvent,
+} from 'livekit-client'
+
+const url = 'wss://your_host'
+const token = 'jwt_token'
+
+// after connection, you could set up listeners
+connect(url, token).then(async (room) => {
+  // when a media track is subscribed to, ready for playback
+  room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {})
+
+  // when a media track has been unsubscribed
+  room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {})
+
+  room.on(RoomEvent.ParticipantConnected, (participant) => {
+    participant.on(ParticipantEvent.TrackMuted, (publication) => {})
+  })
+  room.on(RoomEvent.ParticipantDisconnected, (participant) => {})
+
+  // teardown room
+  room.on(RoomEvent.Disconnected, (track, publication, participant) => {})
+})
+```
+
+See listing of [Room events](https://docs.livekit.io/client-sdk-js/enums/roomevent.html) and [Participant events](https://docs.livekit.io/client-sdk-js/enums/participantevent.html)
+
+  </TabItem>
+  <TabItem value="ios">
+
+```swift
+import LiveKit
+import UIKit
+
+class RoomViewController: UIViewController {
+    var room: Room?
+    var remoteVideo: VideoView?
+    var localVideo: VideoView?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+
+        let url: String = "ws://your_host"
+        let token: String = "your_jwt_token"
+
+        room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+    }
+}
+
+extension RoomViewController: RoomDelegate {
+    func didConnect(room: Room) {
+    }
+
+    func didDisconnect(room: Room, error: Error?) {
+    }
+
+    func participantDidConnect(room: Room, participant: RemoteParticipant) {
+      // participant.delegate = <ParticipantDelegate>
+    }
+
+    func participantDidDisconnect(room: Room, participant: RemoteParticipant) {
+    }
+
+    func didSubscribe(track: Track, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+    }
+
+    func didUnsubscribe(track: Track, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+    }
+}
+```
+
+See listing of [Room events](https://docs.livekit.io/client-sdk-ios/RoomDelegate/) and [Participant events](https://docs.livekit.io/client-sdk-ios/ParticipantDelegate/)
+
+:::note
+
+On **iOS**, when connecting to unsecured hosts via ws://, you may get an error message like:
+
+```
+The resource could not be loaded because the App Transport Security policy requires the use of a secure connection
+```
+
+This is due to TLS requirement in iOS apps. To suppress this error, you'll need to add a security exception to your Xcode configs:
+
+1. Open the target's Info.plist (Targets -> target -> Info)
+2. Add a custom iOS property
+3. Enter "App Transport Security Settings" or "NSAppTransportSecurity" as a `Dictionary`
+4. Under that dictionary, add a key "NSAllowsArbitraryLoads" and set it to `YES`
+
+:::
+
+  </TabItem>
+  <TabItem value="android">
+
+
+```kt
+
+class MainActivity : AppCompatActivity(), RoomListener {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ...
+        val url = "wss://your_host";
+        val token = "your_token"
+
+        launch {
+            val room = LiveKit.connect(
+                applicationContext,
+                url,
+                token,
+                ConnectOptions(),
+                this
+            )
+            // room interactions
+        }
+    }
+
+    override fun onTrackSubscribed(
+        track: Track,
+        publication: RemoteTrackPublication,
+        participant: RemoteParticipant,
+        room: Room
+    ) {
+    }
+
+    override fun onTrackPublished(
+        publication: RemoteTrackPublication,
+        participant: RemoteParticipant,
+        room: Room
+    ) {
+    }
+
+    override fun onDisconnect(room: Room, error: Exception?) {
+    }
+
+    override fun onParticipantConnected(
+        room: Room,
+        participant: RemoteParticipant
+    ) {
+        updateParticipants(room)
+    }
+
+    override fun onParticipantDisconnected(
+        room: Room,
+        participant: RemoteParticipant
+    ) {
+        updateParticipants(room)
+    }
+}
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go
+import (
+  lksdk "github.com/livekit/livekit-sdk-go"
+)
+
+// Go SDK is a more advanced SDK that gives you programmatic access as a client
+// enabling you to publish and record audio/video/data to the room.
+func main() {
+  host := "<host>"
+  apiKey := "api-key"
+  apiSecret := "api-secret"
+  roomName := "myroom"
+  identity := "botuser"
+	room, err := lksdk.ConnectToRoom(host, lksdk.ConnectInfo{
+		APIKey:              apiKey,
+		APISecret:           apiSecret,
+		RoomName:            roomName,
+		ParticipantIdentity: identity,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+  // override any of the callbacks on room.Callback
+  room.Callback.OnTrackSubscribed = trackSubscribed
+}
+
+func trackSubscribed(track *webrtc.TrackRemote, publication lksdk.TrackPublication, rp *lksdk.RemoteParticipant) {
+}
+```
+
+</TabItem>
+</Tabs>

@@ -127,13 +127,17 @@ extension RoomViewController: RoomDelegate {
         guard let localParticipant = room.localParticipant else {
             return
         }
-        do {
-            let videoTrack = try LocalVideoTrack.createTrack(name: "localVideo")
-            _ = localParticipant.publishVideoTrack(track: videoTrack)
-            let audioTrack = LocalAudioTrack.createTrack(name: "localAudio")
-            _ = localParticipant.publishAudioTrack(track: audioTrack)
-        } catch {
-            // error publishing
+
+        // perform work in the background, to not block WebRTC threads
+        DispatchQueue.global(qos: .background).async {
+          do {
+              let videoTrack = try LocalVideoTrack.createTrack(name: "localVideo")
+              _ = localParticipant.publishVideoTrack(track: videoTrack)
+              let audioTrack = LocalAudioTrack.createTrack(name: "localAudio")
+              _ = localParticipant.publishAudioTrack(track: audioTrack)
+          } catch {
+              // error publishing
+          }
         }
 
         // attach video view

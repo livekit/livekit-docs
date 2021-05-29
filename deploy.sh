@@ -29,7 +29,7 @@ rm -rf static/client-sdk-ios
 cp -R ../client-sdk-ios/Documentation static/client-sdk-ios
 
 if [[ -z "${GIT_USER}" ]]; then
-  GIT_USER=$USER
+  export GIT_USER=$USER
 fi
 
 DEPLOYMENT_BRANCH=main yarn deploy

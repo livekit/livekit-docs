@@ -10,6 +10,15 @@ module.exports = {
       collapsed: false,
       items: [
         'guides/getting-started',
+        {
+          type: 'category',
+          label: 'Room Basics',
+          collapsed: true,
+          items: [
+            'guides/room/connect',
+            'guides/room/publish',
+          ],
+        },
         'guides/access-tokens',
         'guides/deployment',
       ],
