@@ -14,14 +14,14 @@ For events that are happening to a particular participant, it will also be fired
   defaultValue="typescript"
   groupId="client-sdk"
   values={[
-    {label: 'Browser (TypeScript)', value: 'typescript'},
-    {label: 'iOS (Swift)', value: 'ios'},
-    {label: 'Android (Kotlin)', value: 'android'},
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
     {label: 'Golang', value: 'go'},
   ]}>
   <TabItem value="typescript">
 
-```typescript
+```typescript title="TypeScript"
 import {
   connect,
   ParticipantEvent,
@@ -54,7 +54,7 @@ See listing of [Room events](https://docs.livekit.io/client-sdk-js/enums/roomeve
   </TabItem>
   <TabItem value="ios">
 
-```swift
+```swift title="Swift"
 import LiveKit
 import UIKit
 
@@ -118,7 +118,7 @@ This is due to TLS requirement in iOS apps. To suppress this error, you'll need 
   </TabItem>
   <TabItem value="android">
 
-```kt
+```kt title="Kotlin"
 
 class MainActivity : AppCompatActivity(), RoomListener {
     override fun onCreate(savedInstanceState: Bundle?) {

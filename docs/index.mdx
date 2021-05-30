@@ -41,14 +41,14 @@ When deployed, its only external dependency is Redis.
   defaultValue="typescript"
   groupId="client-sdk"
   values={[
-    {label: 'Browser (TypeScript)', value: 'typescript'},
-    {label: 'iOS (Swift)', value: 'ios'},
-    {label: 'Android (Kotlin)', value: 'android'},
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
     {label: 'Golang', value: 'go'},
   ]}>
   <TabItem value="typescript">
 
-```typescript
+```typescript title="TypeScript"
 import {
   connect,
   createLocalTracks,
@@ -94,7 +94,7 @@ function attachTrack(track: Track, participant: Participant) {
   </TabItem>
   <TabItem value="ios">
 
-```swift
+```swift title="Swift"
 import LiveKit
 import UIKit
 
@@ -159,7 +159,7 @@ extension RoomViewController: RoomDelegate {
   <TabItem value="android">
 
 
-```kt
+```kt title="Kotlin"
 
 class MainActivity : AppCompatActivity(), RoomListener {
     override fun onCreate(savedInstanceState: Bundle?) {

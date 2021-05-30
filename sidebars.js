@@ -17,6 +17,8 @@ module.exports = {
           items: [
             'guides/room/connect',
             'guides/room/publish',
+            'guides/room/receive',
+            'guides/room/data',
           ],
         },
         'guides/access-tokens',

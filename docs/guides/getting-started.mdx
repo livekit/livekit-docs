@@ -143,9 +143,6 @@ Now you are ready to connect to the room with a client! Head over to our [sample
 
 ![browser client screenshot](/img/getting-started/browser-client.png)
 
-Go ahead and checkout [source code](https://github.com/livekit/client-sdk-js/blob/main/example/sample.ts) of the sample app, or read on to learn more.
-
-
 ## Integrating Client SDKs
 
 <Tabs
@@ -159,15 +156,16 @@ Go ahead and checkout [source code](https://github.com/livekit/client-sdk-js/blo
 
   <TabItem value="typescript">
 
-  livekit-client is [published to NPM](https://www.npmjs.com/package/livekit-client)
+  The JS client SDK is [published to npm](https://www.npmjs.com/package/livekit-client).
+  Here's an [example app](https://github.com/livekit/client-sdk-js/blob/main/example/sample.ts) using the JS SDK.
 
-  ### via Yarn
+  **yarn**
 
   ```shell
   yarn add livekit-client
   ```
 
-  ### via NPM
+  **npm**
 
   ```shell
   npm install --save livekit-client
@@ -178,8 +176,9 @@ Go ahead and checkout [source code](https://github.com/livekit/client-sdk-js/blo
   <TabItem value="ios">
 
   The iOS SDK is available as a Swift package.
+  Here's an [example app](https://github.com/livekit/ios-test-apps) using the iOS SDK.
 
-  ### Package.swift
+  **Package.swift**
 
   Add the dependency and also to your target
 
@@ -198,19 +197,20 @@ Go ahead and checkout [source code](https://github.com/livekit/client-sdk-js/blo
   }
   ```
 
-  ### XCode
-
-  <img src={xcodeSwiftPackageImageUrl} height={400} />
+  **XCode**
 
   Go to Project Settings -> Swift Packages.
 
   Add a new package and enter: `https://github.com/livekit/client-sdk-ios`
 
+  <img src={xcodeSwiftPackageImageUrl} height={400} width={678}/>
+
   </TabItem>
 
   <TabItem value="android">
 
-  Android Client SDK is [published to Maven](https://search.maven.org/artifact/io.livekit/livekit-android).
+  Android client SDK is [published to Maven](https://search.maven.org/artifact/io.livekit/livekit-android).
+  Here's an [example app](https://github.com/livekit/client-sdk-android/tree/master/sample-app) using the Android SDK.
 
   ```groovy title="build.gradle"
   ...
@@ -237,15 +237,15 @@ The following server SDKs are designed to be used by your backend code. To provi
   ]}>
   <TabItem value="node">
 
-  Server SDK is [published on NPM](https://www.npmjs.com/package/livekit-server-api)
+  Server SDK is [published to npm](https://www.npmjs.com/package/livekit-server-api)
 
-  ### via Yarn
+  **yarn**
 
   ```shell
   yarn add livekit-server-api
   ```
 
-  ### via NPM
+  **npm**
 
   ```shell
   npm install --save livekit-server-api
