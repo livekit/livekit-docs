@@ -3,6 +3,7 @@ title: Getting Started
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import xcodeSwiftPackageImageUrl from '@site/static/img/getting-started/swift-package-xcode.png'
 
 This guide will get you running with a LiveKit installation in minutes.
 
@@ -143,3 +144,120 @@ Now you are ready to connect to the room with a client! Head over to our [sample
 ![browser client screenshot](/img/getting-started/browser-client.png)
 
 Go ahead and checkout [source code](https://github.com/livekit/client-sdk-js/blob/main/example/sample.ts) of the sample app, or read on to learn more.
+
+
+## Integrating Client SDKs
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Javascript', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+
+  <TabItem value="typescript">
+
+  livekit-client is [published to NPM](https://www.npmjs.com/package/livekit-client)
+
+  ### via Yarn
+
+  ```shell
+  yarn add livekit-client
+  ```
+
+  ### via NPM
+
+  ```shell
+  npm install --save livekit-client
+  ```
+
+  </TabItem>
+
+  <TabItem value="ios">
+
+  The iOS SDK is available as a Swift package.
+
+  ### Package.swift
+
+  Add the dependency and also to your target
+
+  ```swift title="Package.swift"
+  let package = Package(
+    ...
+    dependencies: [
+      .package(name: "LiveKit", url: "https://github.com/livekit/client-sdk-ios.git", .upToNextMajor("version")),
+    ],
+    targets: [
+      .target(
+        name: "MyApp",
+        dependencies: ["LiveKit"]
+      )
+    ]
+  }
+  ```
+
+  ### XCode
+
+  <img src={xcodeSwiftPackageImageUrl} height={400} />
+
+  Go to Project Settings -> Swift Packages.
+
+  Add a new package and enter: `https://github.com/livekit/client-sdk-ios`
+
+  </TabItem>
+
+  <TabItem value="android">
+
+  Android Client SDK is [published to Maven](https://search.maven.org/artifact/io.livekit/livekit-android).
+
+  ```groovy title="build.gradle"
+  ...
+  dependencies {
+    implementation "io.livekit:livekit-android:<version>"
+  }
+  ```
+
+  </TabItem>
+
+</Tabs>
+
+
+## Integrating Server SDKs
+
+The following server SDKs are designed to be used by your backend code. To provide access control to your rooms, the server SDKs generate and sign a one-time token for each client that connects to the room.
+
+<Tabs
+  defaultValue="node"
+  groupId="server-sdk"
+  values={[
+    {label: 'Node', value: 'node'},
+    {label: 'Golang', value: 'go'},
+  ]}>
+  <TabItem value="node">
+
+  Server SDK is [published on NPM](https://www.npmjs.com/package/livekit-server-api)
+
+  ### via Yarn
+
+  ```shell
+  yarn add livekit-server-api
+  ```
+
+  ### via NPM
+
+  ```shell
+  npm install --save livekit-server-api
+  ```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+  ```shell
+  go get https://github.com/livekit/livekit-sdk-go
+  ```
+
+  </TabItem>
+</Tabs>

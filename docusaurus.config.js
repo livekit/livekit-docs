@@ -32,21 +32,8 @@ module.exports = {
       ],
     },
     footer: {
-      style: 'dark',
+      style: 'light',
       links: [
-        // {
-        //   title: 'Docs',
-        //   items: [
-        //     {
-        //       label: 'Style Guide',
-        //       to: 'docs/',
-        //     },
-        //     {
-        //       label: 'Second Doc',
-        //       to: 'docs/doc2/',
-        //     },
-        //   ],
-        // },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} LiveKit, Inc.`,
     },
@@ -57,7 +44,7 @@ module.exports = {
     },
     prism: {
       theme: require('prism-react-renderer/themes/nightOwl'),
-      additionalLanguages: ["swift", "kotlin", "go"],
+      additionalLanguages: ["swift", "kotlin", "go", "groovy"],
     },
   },
   presets: [

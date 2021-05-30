@@ -11,13 +11,14 @@ The token encodes identity of the participant, name of the room, as well as capa
 ## Creating a token
 
 <Tabs
-  defaultValue="typescript"
+  defaultValue="node"
   groupId="server-sdk"
   values={[
-    {label: 'Node (TypeScript)', value: 'typescript'},
+    {label: 'Node (TypeScript)', value: 'node'},
     {label: 'Golang', value: 'go'},
+    {label: 'Other', value: 'other'},
   ]}>
-  <TabItem value="typescript">
+  <TabItem value="node">
 
 ```typescript
 import { AccessToken } from 'livekit-server-api';
@@ -63,6 +64,17 @@ func getJoinToken(apiKey, apiSecret, room, identity string) (string, error) {
 ```
 
   </TabItem>
+
+  <TabItem value="other">
+
+  For other platforms, you could either implement token generation yourself or use the `livekit-cli` command.
+
+  Token signing is fairly straight forward, see [js implementation](https://github.com/livekit/server-api-js/blob/main/src/AccessToken.ts) as a reference.
+
+  LivKit CLI is available at https://github.com/livekit/livekit-cli
+
+  </TabItem>
+
 </Tabs>
 
 ### Token example

@@ -4,11 +4,9 @@ title: Publishing Media
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-One or more audio/video tracks can be added to the room at any point during the session. LiveKit has the concept of `TrackPublication` and `Track`. A `TrackPublication` can be thought of as a collection of track metadata registered with the server.
+One or more audio/video tracks can be added to the room at any point during the session. LiveKit represent Tracks with two concepts: `TrackPublication` and `Track`. A `TrackPublication` can be thought of as metadata of the track that's registered with the server. Every participant has a view of all of the TrackPublications in the room, even when they are not subscribed to them. `TrackPublication` also lets you mute the track.
 
-Once a Track is registered with the server, a Publication is created and all participants in the room are notified of it. They may not be subscribed to the Track, but are aware of the presence of it.
-
-Moreover, `TrackPublication` object offers a way to interact with the track, exposing functionalities such as mute, etc.
+Once subscribed, the Track object allows you to play media, or to be integrated within the UI.
 
 <Tabs
   defaultValue="typescript"
@@ -17,7 +15,6 @@ Moreover, `TrackPublication` object offers a way to interact with the track, exp
     {label: 'Browser (TypeScript)', value: 'typescript'},
     {label: 'iOS (Swift)', value: 'ios'},
     {label: 'Android (Kotlin)', value: 'android'},
-    {label: 'Golang', value: 'go'},
   ]}>
 
   <TabItem value="typescript">
@@ -26,7 +23,7 @@ Moreover, `TrackPublication` object offers a way to interact with the track, exp
   async function publishTracks() {
     const videoTrack = await createLocalVideoTrack({
       facingMode: { ideal: "user" },
-      // customize capture resolution
+      // preset resolutions
       resolution: VideoPresets.hd
     })
     const audioTrack = await createLocalAudioTrack({
@@ -54,22 +51,118 @@ Moreover, `TrackPublication` object offers a way to interact with the track, exp
   let audioPublication = localParticipant.publishAudioTrack(track: audioTrack)
   ```
 
+  When creating a video track, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-ios/VideoPreset/) for convenience. You also have control over the encoding bitrate with [publishing options](https://docs.livekit.io/client-sdk-ios/LocalVideoTrackPublishOptions/)
+
+  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-ios/LocalAudioTrackOptions/) as well.
+
   </TabItem>
   <TabItem value="android">
 
-  </TabItem>
+  ```kotlin
+  val localParticipant = room.localParticipant
+  val audioTrack = localParticipant.createAudioTrack("audio")
+  localParticipant.publishAudioTrack(audioTrack)
 
-  <TabItem value="go">
+  val videoTrack = localParticipant.createVideoTrack("video", LocalVideoTrackOptions(
+    CameraPosition.FRONT,
+    VideoPreset.QHD.capture
+  ))
+  localParticipant.publishVideoTrack(videoTrack)
+  ```
+
+  When creating a video track, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-video-preset/index.html) for convenience.
+
+  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-local-audio-track-options/index.html) as well.
 
   </TabItem>
 
 </Tabs>
 
-## Simulcasting
+## Audio on mobile
 
+When using audio on iOS and Android, it's important to take note of the audio stack in order to play well with other apps.
 
-## Muting control
+<Tabs
+  defaultValue="ios"
+  groupId="client-sdk"
+  values={[
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
 
+  <TabItem value="ios">
 
+On iOS, LiveKit provides automatic management of AVAudioSession. It acquires the session when you join a room, and releases it after you disconnect from the room. It may be desirable to override the default settings. To do so you would call [LiveKit.configureAudioSession](https://docs.livekit.io/client-sdk-ios/LiveKit/#livekit.configureaudiosession(category:mode:policy:options:)) prior to connecting to a room.
+
+```swift
+LiveKit.configureAudioSession(category: .playAndRecord, mode: .videoChat)
+LiveKit.connect(...)
+```
+
+:::note
+
+Not all of the Category, Mode, RouteSharingPolicy, and CategoryOptions are compatible with each other. It's quite tricky to find the right combinations as AVFoundation docs aren't great on this topic.
+
+:::
+
+  </TabItem>
+
+  <TabItem value="android">
+
+On Android, you'll want request audio focus from AudioManager.
+
+```kotlin
+val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+with(audioManager) {
+    isSpeakerphoneOn = true
+    isMicrophoneMute = false
+    mode = AudioManager.MODE_IN_COMMUNICATION
+}
+val result = audioManager.requestAudioFocus(
+    focusChangeListener,
+    AudioManager.STREAM_VOICE_CALL,
+    AudioManager.AUDIOFOCUS_GAIN,
+)
+```
+
+and after you are done, reset
+
+```kotlin
+with(audioManager) {
+    isSpeakerphoneOn = false
+    isMicrophoneMute = true
+    abandonAudioFocus(focusChangeListener)
+    mode = AudioManager.MODE_NORMAL
+}
+```
+
+  </TabItem>
+
+</Tabs>
+
+## Mute & Unmute
+
+For each track, it's possible to mute it so that it stops sending data to the server. When you mute a track, LiveKit will also trigger a `TrackMuted` event for all of the participants in the room, enabling your app's UI to display the appropriate update to the user.
+
+You can mute/unmute a track on its `LocalTrackPublication`
 
 ## Disabling video
+
+With video tracks from the camera, muting them does not turn off the recording indicator on the camera, even though no data is being transmitted from the camera.
+
+To work around this limitation, you could unpublish the video track when a user disables their video. When a user re-enables video, you could recreate the video track and republish it.
+
+## Video Simulcasting
+
+Currently only available in the browser client.
+
+Simulcasting lets the client publish multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate for each participant's available bandwidth.
+
+To enable simulcasting, pass a flag when publishing the track.
+
+```typescript title="Browser (typescript)"
+const videoTrack = await createLocalVideoTrack()
+const videoPublication = await room.localParticipant.publishTrack(videoTrack, {
+  simulcast: true
+})
+```
