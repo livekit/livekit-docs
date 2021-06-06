@@ -10,7 +10,7 @@ We officially support client wrappers for the following platforms. Since the ser
 
 | Platform | Package                                                                | Docs                                                         |
 | :------- | :--------------------------------------------------------------------- | :----------------------------------------------------------- |
-| Node.js  | [livekit-server-api](https://www.npmjs.com/package/livekit-server-api) | [docs](https://docs.livekit.io/server-api-js)                |
+| Node.js  | [livekit-server-api](https://www.npmjs.com/package/livekit-server-api) | [docs](https://docs.livekit.io/server-api-js/index.html)     |
 | Go       | [livekit-sdk-go](https://github.com/livekit/livekit-sdk-go)            | [docs](https://pkg.go.dev/github.com/livekit/livekit-sdk-go) |
 
 Go server SDK also has WebRTC capabilities, allowing you to build publishing, recording, and other track interactions in your apps.
