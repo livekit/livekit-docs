@@ -13,10 +13,10 @@ module.exports = {
   themeConfig: {
     navbar: {
       title: 'LiveKit Docs',
-      // logo: {
-      //   alt: 'My Site Logo',
-      //   src: 'img/logo.svg',
-      // },
+      logo: {
+        alt: 'LiveKit Logo',
+        src: 'img/logo.svg',
+      },
       items: [
         // {
         //   to: '/',
