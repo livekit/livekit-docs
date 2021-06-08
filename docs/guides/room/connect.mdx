@@ -1,14 +1,14 @@
 ---
-title: Connection & Callbacks
+title: Connection and callbacks
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Room is the main construct in LiveKit. Once connected, you have a room object to interact with. It gives you access to the **LocalParticipant**, representing the current user, and **RemoteParticipants**, representing other users in the room.
+A room is the main construct in LiveKit. Upon successful connection, you're provided a room object to interact with. The two key properties on a room object are the **LocalParticipant** object, representing the current user, and **RemoteParticipants**, an array of other users in the room.
 
-You can also listen to events on the room, that'll notify your callbacks of changes within the room.
+You can also listen for room events. Your callbacks will be invoked whenever various states of the room change.
 
-For events that are happening to a particular participant, it will also be fired on the `RemoteParticipant` or `LocalParticipant` objects.
+For events happening to a specific participant, they will also be fired on the appropriate `RemoteParticipant` or `LocalParticipant` object.
 
 <Tabs
   defaultValue="typescript"
