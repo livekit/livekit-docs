@@ -2,7 +2,7 @@
 title: Client SDKs
 ---
 
-Client SDKs are used to add audio/video functionality to your apps. LiveKit provides official client SDKs for web, iOS, and Android.
+Client SDKs are used to add audio/video functionality to your apps. LiveKit provides official client SDKs for JavaScript, iOS (Swift), and Android (Kotlin). SDKs for React, React Native, Flutter, and Unity/C# are under development. 
 
 ## Documentation
 
