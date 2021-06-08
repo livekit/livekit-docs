@@ -4,9 +4,9 @@ title: Publishing Media
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-One or more audio/video tracks can be added to the room at any point during the session. LiveKit represent Tracks with two concepts: `TrackPublication` and `Track`. A `TrackPublication` can be thought of as metadata of the track that's registered with the server. Every participant has a view of all of the TrackPublications in the room, even when they are not subscribed to them. `TrackPublication` also lets you mute the track.
+One or more audio/video tracks can be added to a room at any point during the session. LiveKit models tracks with two constructs: `TrackPublication` and `Track`. Think of a `TrackPublication` as metadata for a track registered with the server. Every participant can access all track publications in a room, even if they aren't subscribed to them. You may also mute a track via `TrackPublication`.
 
-Once subscribed, the Track object allows you to play media, or to be integrated within the UI.
+Once subscribed, the `Track` object allows you to play its associated media or add the information it contains to your application's interface.
 
 <Tabs
   defaultValue="typescript"
@@ -51,9 +51,9 @@ Once subscribed, the Track object allows you to play media, or to be integrated 
   let audioPublication = localParticipant.publishAudioTrack(track: audioTrack)
   ```
 
-  When creating a video track, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-ios/VideoPreset/) for convenience. You also have control over the encoding bitrate with [publishing options](https://docs.livekit.io/client-sdk-ios/LocalVideoTrackPublishOptions/)
+  For convenience, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-ios/VideoPreset/) when creating a video track. You also have control over the encoding bitrate with [publishing options](https://docs.livekit.io/client-sdk-ios/LocalVideoTrackPublishOptions/).
 
-  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-ios/LocalAudioTrackOptions/) as well.
+  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-ios/LocalAudioTrackOptions/).
 
   </TabItem>
   <TabItem value="android">
@@ -70,9 +70,9 @@ Once subscribed, the Track object allows you to play media, or to be integrated 
   localParticipant.publishVideoTrack(videoTrack)
   ```
 
-  When creating a video track, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-video-preset/index.html) for convenience.
+  For convenience, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-video-preset/index.html) when creating a video track.
 
-  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-local-audio-track-options/index.html) as well.
+  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-local-audio-track-options/index.html).
 
   </TabItem>
 
@@ -80,7 +80,7 @@ Once subscribed, the Track object allows you to play media, or to be integrated 
 
 ## Audio on mobile
 
-When using audio on iOS and Android, it's important to take note of the audio stack in order to play well with other apps.
+When using audio on iOS or Android, it's important to consider the device's audio stack, in order to behave well with other apps.
 
 <Tabs
   defaultValue="ios"
@@ -92,7 +92,7 @@ When using audio on iOS and Android, it's important to take note of the audio st
 
   <TabItem value="ios">
 
-On iOS, LiveKit provides automatic management of AVAudioSession. It acquires the session when you join a room, and releases it after you disconnect from the room. It may be desirable to override the default settings. To do so you would call [LiveKit.configureAudioSession](https://docs.livekit.io/client-sdk-ios/LiveKit/#livekit.configureaudiosession(category:mode:policy:options:)) prior to connecting to a room.
+On iOS, LiveKit provides automatic management of `AVAudioSession`. It acquires the session when you join a room, and releases it after you disconnect from the room. It may be desirable to override the default settings. To do so, call [LiveKit.configureAudioSession](https://docs.livekit.io/client-sdk-ios/LiveKit/#livekit.configureaudiosession(category:mode:policy:options:)) before connecting to a room.
 
 ```swift
 LiveKit.configureAudioSession(category: .playAndRecord, mode: .videoChat)
@@ -101,7 +101,7 @@ LiveKit.connect(...)
 
 :::note
 
-Not all of the Category, Mode, RouteSharingPolicy, and CategoryOptions are compatible with each other. It's quite tricky to find the right combinations as AVFoundation docs aren't great on this topic.
+Some combinations of `Category`, `Mode`, `RouteSharingPolicy`, and `CategoryOptions` are incompatible. `AVFoundation` documentation isn't very good, making it tricky to set the right combination of values for these properties.
 
 :::
 
@@ -140,25 +140,25 @@ with(audioManager) {
 
 </Tabs>
 
-## Mute & Unmute
+## Mute and unmute
 
-For each track, it's possible to mute it so that it stops sending data to the server. When you mute a track, LiveKit will also trigger a `TrackMuted` event for all of the participants in the room, enabling your app's UI to display the appropriate update to the user.
+You can mute any track to stop it from sending data to the server. When a track is muted, LiveKit will trigger a `TrackMuted` event on all participants in the room. You can use this event to update your app's UI and reflect the correct state to all users in the room.
 
-You can mute/unmute a track on its `LocalTrackPublication`
+Mute/unmute a track using its corresponding `LocalTrackPublication` object.
 
 ## Disabling video
 
-With video tracks from the camera, muting them does not turn off the recording indicator on the camera, even though no data is being transmitted from the camera.
+While a muted video track with a camera source won't transmit any data, the camera recording indicator will remain on.
 
-To work around this limitation, you could unpublish the video track when a user disables their video. When a user re-enables video, you could recreate the video track and republish it.
+One workaround is to unpublish the video track when a user disables their video. If/when that same user re-enables their video, recreate the video track and republish it.
 
-## Video Simulcasting
+## Video simulcasting
 
-Currently only available in the browser client.
+Currently, simulcasting is only available in browser-based SDKs.
 
-Simulcasting lets the client publish multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate for each participant's available bandwidth.
+With simulcasting, clients publish multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate given each participant's available bandwidth.
 
-To enable simulcasting, pass a flag when publishing the track.
+To enable simulcasting, pass a flag when publishing a video track.
 
 ```typescript title="Browser (typescript)"
 const videoTrack = await createLocalVideoTrack()
