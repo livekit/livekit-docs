@@ -4,7 +4,7 @@ name: Publish Docs
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -42,6 +42,15 @@ jobs:
         uses: ItsKarma/aws-cli@v1.70.0
         with:
           args: s3 cp build/ s3://livekit-docs/ --recursive
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOY_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOY_AWS_API_SECRET }}
+          AWS_DEFAULT_REGION: "us-east-1"
+
+      - name: Invalidate CloudFront
+        uses: ItsKarma/aws-cli@v1.70.0
+        with:
+          args: cloudfront create-invalidation --distribution-id ${{ secrets.DOCS_DISTRIBUTION }} --paths "/*"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOY_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOY_AWS_API_SECRET }}
