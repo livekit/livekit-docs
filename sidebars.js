@@ -22,7 +22,16 @@ module.exports = {
           ],
         },
         'guides/access-tokens',
-        'guides/deployment',
+        {
+          type: 'category',
+          label: 'Deployment',
+          collapsed: true,
+          items: [
+            'guides/deploy/deploy',
+            'guides/deploy/tuning',
+            'guides/deploy/kubernetes',
+          ],
+        }
       ],
     },
     {

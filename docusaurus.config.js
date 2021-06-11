@@ -44,7 +44,7 @@ module.exports = {
     },
     prism: {
       theme: require('prism-react-renderer/themes/nightOwl'),
-      additionalLanguages: ["swift", "kotlin", "go", "groovy"],
+      additionalLanguages: ["swift", "kotlin", "go", "groovy", "ini"],
     },
   },
   presets: [
