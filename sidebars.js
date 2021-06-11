@@ -27,7 +27,7 @@ module.exports = {
           label: 'Deployment',
           collapsed: true,
           items: [
-            'guides/deploy/deploy',
+            'guides/deploy',
             'guides/deploy/tuning',
             'guides/deploy/kubernetes',
           ],
