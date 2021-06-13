@@ -21,17 +21,17 @@ LiveKit is an open source project that provides scalable, multi-user conferencin
 
 WebRTC is a powerful protocol that now has ubiquitous support across all major browsers and mobile platforms. However, building apps with it isn't simple; it requires an understanding of core protocol concepts and developers are responsible for complexities like signaling and coordinating connections between peers. As a peer-to-peer protocol, scaling WebRTC to large numbers of peers also becomes challenging.
 
-While hosted solutions like Twilio and Agora exist, they're cost-prohibitive, have limited flexibility and as proprietary products, create vendor lock-in. Other open source solutions also exist, but they have a steep learning curve and are daunting to customize and deploy.
+While hosted solutions like Twilio and Agora exist, they can be costly, have limited flexibility and as proprietary products, create vendor lock-in. Other open source solutions also exist, but they have a steep learning curve and are daunting to customize and deploy.
 
 We built LiveKit because we believe developers should have a free, open source implementation of WebRTC rooms that "just works". LiveKit provides an opinionated, end-to-end implementation of multi-user conferencing with first-party clients for all the major software platforms.
 
 ## Architecture
 
-LiveKit is written in Go. It's made possible by [Pion](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and the amazing communities behind them both.
+LiveKit is written in Go. It's made possible by [Pion](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and the amazing community behind them.
 
 LiveKit is horizontally-scalable. You can run it on one node or 100, with an identical configuration. Nodes use peer-to-peer routing via Redis to ensure clients in the same room are connected to the same node.
 
-When deployed, LiveKit's only external dependency is Redis.
+LiveKit has no external dependencies when running in single-node. Redis is required for a distributed setup spanning multiple nodes.
 
 ![LiveKit Architecture](/img/architecture.png)
 
@@ -61,25 +61,25 @@ import {
 const url = 'wss://your_host'
 const token = 'jwt_token'
 
-connect(url, token).then(async (room) => {
-  // set up listeners
-  room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
-    attachTrack(track, participant)
-  })
+const room = await connect(url, token)
 
-  const tracks = await createLocalTracks({
-    audio: true,
-    video: true,
-  })
-  for (let track of tracks) {
-    // publish to the room
-    const publication = await room.localParticipant.publishTrack(track)
-    // attach to DOM only if it's video
-    if (track instanceof VideoTrack) {
-      attachTrack(track, room.localParticipant)
-    }
-  }
+// set up listeners
+room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+  attachTrack(track, participant)
 })
+
+const tracks = await createLocalTracks({
+  audio: true,
+  video: true,
+})
+for (let track of tracks) {
+  // publish to the room
+  const publication = await room.localParticipant.publishTrack(track)
+  // attach to DOM only if it's video
+  if (track instanceof VideoTrack) {
+    attachTrack(track, room.localParticipant)
+  }
+}
 
 function attachTrack(track: Track, participant: Participant) {
   // creates a new audio or video element
@@ -88,7 +88,6 @@ function attachTrack(track: Track, participant: Participant) {
   ...
   target.appendChild(element)
 }
-
 ```
 
   </TabItem>

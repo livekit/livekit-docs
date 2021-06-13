@@ -1,5 +1,5 @@
 ---
-title: Deploying for production
+title: Preparing for production
 ---
 
 ## Ports
@@ -24,7 +24,7 @@ The scalability of LiveKit is bound by bandwidth and CPU. We recommend running p
 
 When deploying on cloud providers, compute-optimized instance types are the most suitable for LiveKit.
 
-If running in a Dockerized environment, host networking should be used to optimize for performance.
+If running in a Dockerized environment, host networking should be used for optimal performance.
 
 ## Configuration
 
@@ -63,10 +63,10 @@ To see the list of metrics that we export, see [stats.go](https://github.com/liv
 
 ## Multi-node routing
 
-If Redis is configured, LiveKit automatically switches to a distributed setup by using Redis for room data as well as a message bus. Each node reports their statistics to Redis periodically so they are aware of everyone's availability and load.
+If Redis is configured, LiveKit automatically switches to a distributed setup by using Redis for room data as well as a message bus. In this mode, each node periodically reports their stats to Redis; this enables them to be aware of the entire cluster and make routing decisions based on availability and load.
 
-When a new room is created, we select an available node to host the room. Currently the selection algorithm is random.
+When a new room is created, the node that received that request is able to choose an available node from the cluster to host the room.
 
 When a client establishes a signal connection to LiveKit, it creates a persistent WebSocket connection with one of the instances. That instance will then acts as a signaling bridge, proxying messages between the node where the room is hosted and the client.
 
-In a multi-node setup, LiveKit can support an large number of concurrent rooms. However, there are limits to the number of participants in a room, since a room must fit on a single node (for now). See benchmarks
+In a multi-node setup, LiveKit can support an large number of concurrent rooms. However, there are limits to the number of participants in a room, since a room must fit on a single node (for now).
