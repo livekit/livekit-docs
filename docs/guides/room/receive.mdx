@@ -3,3 +3,181 @@ title: Receiving media
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+
+While connected to a room, the server may send down one or more audio/video/data tracks at any time. By default, a client automatically subscribes to a received track, and lets your app know by invoking callbacks on the room object and associated participant who published the track. 
+
+As mentioned in our guide on [publishing media](https://docs.livekit.io/guides/room/publish), LiveKit models tracks with two constructs: `TrackPublication` and `Track`. Think of a `TrackPublication` as metadata for a track registered with the server and `Track` as the raw media stream.
+
+Track subscription callbacks provide your app with both the `Track` and `TrackPublication` objects.
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+
+  <TabItem value="typescript">
+
+  ```typescript title="TypeScript"
+  import {
+    connect,
+    RoomEvent,
+  } from 'livekit-client';
+
+  connect('ws://localhost:7800', token, {
+    audio: true,
+    video: true,
+  }).then((room) => {
+    room
+      .on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
+  });
+
+  function handleTrackSubscribed(
+    track: RemoteTrack,
+    publication: RemoteTrackPublication,
+    participant: RemoteParticipant
+  ) {
+    if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
+      // attach it to a new HTMLVideoElement or HTMLAudioElement
+      const element = track.attach();
+      parentElement.appendChild(element);
+    }
+  }
+  ```
+
+  </TabItem>
+
+  <TabItem value="ios">
+
+  ```swift title="Swift"
+  let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+  ...
+  func didSubscribe(track: Track, 
+                    publication: RemoteTrackPublication, 
+                    participant: RemoteParticipant) {
+  
+    /* do things with track, publication or participant */
+  }
+  ```
+
+  For convenience, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-ios/VideoPreset/) when creating a video track. You also have control over the encoding bitrate with [publishing options](https://docs.livekit.io/client-sdk-ios/LocalVideoTrackPublishOptions/).
+
+  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-ios/LocalAudioTrackOptions/).
+
+  </TabItem>
+  <TabItem value="android">
+
+  ```kotlin title="Kotlin"
+  remoteParticipant.listener = object : ParticipantListener {
+    override fun onTrackSubscribed(
+      track: Track,
+      publication: RemoteTrackPublication,
+      participant: RemoteParticipant
+    ) 
+    {
+      /* do things with track, publication or participant */
+    }
+  }
+  ```
+
+  For convenience, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-video-preset/index.html) when creating a video track.
+
+  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-local-audio-track-options/index.html).
+
+  </TabItem>
+
+</Tabs>
+
+## Track metadata
+
+## Audio on mobile
+
+When using audio on iOS or Android, it's important to consider the device's audio stack, in order to behave well with other apps.
+
+<Tabs
+  defaultValue="ios"
+  groupId="client-sdk"
+  values={[
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+
+  <TabItem value="ios">
+
+On iOS, LiveKit provides automatic management of `AVAudioSession`. It acquires the session when you join a room, and releases it after you disconnect from the room. It may be desirable to override the default settings. To do so, call [LiveKit.configureAudioSession](https://docs.livekit.io/client-sdk-ios/LiveKit/#livekit.configureaudiosession(category:mode:policy:options:)) before connecting to a room.
+
+```swift
+LiveKit.configureAudioSession(category: .playAndRecord, mode: .videoChat)
+LiveKit.connect(...)
+```
+
+:::note
+
+Some combinations of `Category`, `Mode`, `RouteSharingPolicy`, and `CategoryOptions` are incompatible. `AVFoundation` documentation isn't very good, making it tricky to set the right combination of values for these properties.
+
+:::
+
+  </TabItem>
+
+  <TabItem value="android">
+
+On Android, you'll want request audio focus from AudioManager.
+
+```kotlin
+val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+with(audioManager) {
+    isSpeakerphoneOn = true
+    isMicrophoneMute = false
+    mode = AudioManager.MODE_IN_COMMUNICATION
+}
+val result = audioManager.requestAudioFocus(
+    focusChangeListener,
+    AudioManager.STREAM_VOICE_CALL,
+    AudioManager.AUDIOFOCUS_GAIN,
+)
+```
+
+and after you are done, reset
+
+```kotlin
+with(audioManager) {
+    isSpeakerphoneOn = false
+    isMicrophoneMute = true
+    abandonAudioFocus(focusChangeListener)
+    mode = AudioManager.MODE_NORMAL
+}
+```
+
+  </TabItem>
+
+</Tabs>
+
+## Mute and unmute
+
+You can mute any track to stop it from sending data to the server. When a track is muted, LiveKit will trigger a `TrackMuted` event on all participants in the room. You can use this event to update your app's UI and reflect the correct state to all users in the room.
+
+Mute/unmute a track using its corresponding `LocalTrackPublication` object.
+
+## Disabling video
+
+While a muted video track with a camera source won't transmit any data, the camera recording indicator will remain on.
+
+One workaround is to unpublish the video track when a user disables their video. If/when that same user re-enables their video, recreate the video track and republish it.
+
+## Video simulcasting
+
+Currently, simulcasting is only available in browser-based SDKs.
+
+With simulcasting, clients publish multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate given each participant's available bandwidth.
+
+To enable simulcasting, pass a flag when publishing a video track.
+
+```typescript title="Browser (typescript)"
+const videoTrack = await createLocalVideoTrack()
+const videoPublication = await room.localParticipant.publishTrack(videoTrack, {
+  simulcast: true
+})
+```
