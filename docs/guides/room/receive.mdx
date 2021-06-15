@@ -272,7 +272,7 @@ While the default behavior for LiveKit clients is to subscribe to all newly publ
 
 Client implementations seeking fine-grain control over bandwidth consumption can enable or disable tracks at their discretion. A track is enabled by default. When a track is disabled, the client will not receive any new data for that track. If a disabled track is subsequently enabled, new data will be received by the client.
 
-The `disable` action is useful when optimzing for a client's bandwidth consumption. For example, if a particular user's video track is offscreen or has been manually turned off, disabling this track will reduce bytes from being sent by the LiveKit server until the track's data is needed again.
+The `disable` action is useful when optimzing for a client's bandwidth consumption. For example, if a particular user's video track is offscreen or has been manually turned off by the receiving user, disabling this track will reduce bytes from being sent by the LiveKit server until the track's data is needed again.
 
 <Tabs
   defaultValue="typescript"
@@ -353,4 +353,77 @@ The difference between these two actions is *negotiation*. Subscribing requires 
 
 ## Simulcast controls
 
-i.e. set max quality to low if UI is only displaying a thumbnail)
+If a video track has simulcast enabled, a receiving client may want to manually specify the maximum receivable quality. This would result a quality and bandwidth reduction for the target track. This might come in handy, for instance, when an application's user interface is displaying a small thumbnail for a particular user's video track.
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+
+  <TabItem value="typescript">
+
+  ```typescript title="TypeScript"
+  import {
+    connect,
+    RoomEvent,
+  } from 'livekit-client';
+
+  connect('ws://your_host', token, {
+    audio: true,
+    video: true,
+  }).then((room) => {
+    room
+      .on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
+  });
+
+  function handleTrackSubscribed(
+    track: RemoteTrack,
+    publication: RemoteTrackPublication,
+    participant: RemoteParticipant
+  ) {
+    if (track.kind === Track.Kind.Video) {
+      publication.setVideoQuality(VideoQuality.LOW)
+    }
+  }
+  ```
+
+  </TabItem>
+
+  <TabItem value="ios">
+
+  ```swift title="Swift"
+  let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+  ...
+  func didSubscribe(track: Track, 
+                    publication: RemoteTrackPublication, 
+                    participant: RemoteParticipant) {
+  
+   if let _ = track as? VideoTrack {
+     publication.setVideoQuality(.low)
+   }
+  }
+  ```
+
+  </TabItem>
+  <TabItem value="android">
+
+  ```kotlin title="Kotlin"
+  remoteParticipant.listener = object : ParticipantListener {
+    override fun onTrackSubscribed(
+      track: Track,
+      publication: RemoteTrackPublication,
+      participant: RemoteParticipant
+    ) 
+    {
+      publication.setVideoQuality(LivekitRtc.VideoQuality.LOW)
+    }
+  }
+  ```
+
+  </TabItem>
+
+</Tabs>
