@@ -199,3 +199,158 @@ On mobile (iOS and Android), once subscribed to an audio track, live playback be
 </Tabs>
 
 ## Subscriber controls
+
+While the default behavior for LiveKit clients is to subscribe to all newly published tracks, LiveKit supports selective subscription. Both client and server APIs are available to setup a connection for selective subscription and once configured, only explicitly subscribed tracks are sent down to the client.
+
+### Client-side selective subscription
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+
+  <TabItem value="typescript">
+
+  ```typescript title="TypeScript"
+  let room = await room.connect(url, token, {
+    autoSubscribe: false,
+  })
+  
+  room.on(RoomEvent.TrackPublished, (track, publication, participant) => {
+    publication.setSubscribed(true)
+  })
+  ```
+
+  </TabItem>
+
+  <TabItem value="ios">
+
+  ```swift title="Swift"
+  let connectOptions = ConnectOptions(
+    url: "ws://<your_host>", 
+    token: "<your_token>",
+    autoSubscribe: false
+  )
+  let room = LiveKit.connect(options: connectOptions, delegate: self)
+  
+  func didPublishRemoteTrack(publication: RemoteTrackPublication, participant: RemoteParticipant) {
+      publication.setSubscribed(true)
+  }
+  ```  
+
+  </TabItem>
+  <TabItem value="android">
+
+  ```kotlin title="Kotlin"
+  class ViewModel(...) : RoomListener {
+    init {
+      val room = LiveKit.connect(
+        application,
+        url,
+        token,
+        ConnectOptions(autoSubscribe = false),
+        this@ViewModel)
+    }
+    
+    override fun onTrackUnpublished(publication: TrackPublication, participant: RemoteParticipant, room: Room) {
+      publication.setSubscribed(true)
+    }
+  }
+  ```
+ 
+  </TabItem>
+
+</Tabs>
+
+### Server-side selective subscription
+
+## Enabling/disabling tracks
+
+Client implementations seeking fine-grain control over bandwidth consumption can enable or disable tracks at their discretion. A track is enabled by default. When a track is disabled, the client will not receive any new data for that track. If a disabled track is subsequently enabled, new data will be received by the client.
+
+The `disable` action is useful when optimzing for a client's bandwidth consumption. For example, if a particular user's video track is offscreen or has been manually turned off, disabling this track will reduce bytes from being sent by the LiveKit server until the track's data is needed again.
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+
+  <TabItem value="typescript">
+
+  ```typescript title="TypeScript"
+  import {
+    connect,
+    RoomEvent,
+  } from 'livekit-client';
+
+  connect('ws://your_host', token, {
+    audio: true,
+    video: true,
+  }).then((room) => {
+    room
+      .on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
+  });
+
+  function handleTrackSubscribed(
+    track: RemoteTrack,
+    publication: RemoteTrackPublication,
+    participant: RemoteParticipant
+  ) {
+    publication.setEnabled(false)
+  }
+  ```
+
+  </TabItem>
+
+  <TabItem value="ios">
+
+  ```swift title="Swift"
+  let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+  ...
+  func didSubscribe(track: Track, 
+                    publication: RemoteTrackPublication, 
+                    participant: RemoteParticipant) {
+  
+   publication.setEnabled(false)
+  }
+  ```
+
+  </TabItem>
+  <TabItem value="android">
+
+  ```kotlin title="Kotlin"
+  remoteParticipant.listener = object : ParticipantListener {
+    override fun onTrackSubscribed(
+      track: Track,
+      publication: RemoteTrackPublication,
+      participant: RemoteParticipant
+    ) 
+    {
+      publication.setEnabled(false)
+    }
+  }
+  ```
+
+  </TabItem>
+
+</Tabs>
+
+:::note
+
+You may be wondering how `subscribe` and `unsubscribe` differs from `enable` and `disable`. A track must be subscribed to and enabled for data to be received by the client. If a track has not been subscribed to (or was unsubscribed) or disabled, the client performing these actions will not receive that track's data. 
+
+The difference between these two actions is *negotiation*. Subscribing requires a negotiation handshake with the LiveKit server, while enable/disable does not. Depending on one's use case, this can make enable/disable more efficient, especially when a track may be turned on or off frequently.
+
+:::
+
+## Simulcast controls
+
+i.e. set max quality to low if UI is only displaying a thumbnail)
