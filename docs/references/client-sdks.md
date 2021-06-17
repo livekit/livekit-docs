@@ -6,7 +6,7 @@ Client SDKs are used to add audio/video functionality to your apps. LiveKit prov
 
 ## Documentation
 
-| Platform    | Repo                                                                | Docs                                                                                                         |
+| Platform    | Repo                                                                | Links                                                                                                        |
 | :---------- | :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
 | Android     | [client-sdk-android](https://github.com/livekit/client-sdk-android) | [docs](https://docs.livekit.io/client-sdk-android/index.html)                                                |
 | iOS         | [client-sdk-ios](https://github.com/livekit/client-sdk-ios)         | [docs](https://docs.livekit.io/client-sdk-ios/index.html)                                                    |

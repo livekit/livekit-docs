@@ -8,10 +8,10 @@ These APIs interact directly with the `RoomService` exposed by LiveKit server, a
 
 We officially support client wrappers for the following platforms. Since the service is HTTP-based, you are welcome to call it directly without using the client wrappers. `RoomService` is built on top of [Twirp](https://twitchtv.github.io/twirp/docs/intro.html).
 
-| Platform | Package                                                                | Docs                                                         |
-| :------- | :--------------------------------------------------------------------- | :----------------------------------------------------------- |
-| Node.js  | [livekit-server-api](https://www.npmjs.com/package/livekit-server-api) | [docs](https://docs.livekit.io/server-api-js/index.html)     |
-| Go       | [livekit-sdk-go](https://github.com/livekit/livekit-sdk-go)            | [docs](https://pkg.go.dev/github.com/livekit/livekit-sdk-go) |
+| Platform | Repo                                                        | Links                                                                                                            |
+| :------- | :---------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| Node.js  | [server-api-js](https://github.com/livekit/server-api-js)   | [npm](https://www.npmjs.com/package/livekit-server-api) [docs](https://docs.livekit.io/server-api-js/index.html) |
+| Go       | [livekit-sdk-go](https://github.com/livekit/livekit-sdk-go) | [docs](https://pkg.go.dev/github.com/livekit/livekit-sdk-go)                                                     |
 
 :::note
 

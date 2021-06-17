@@ -157,9 +157,9 @@ One workaround is to unpublish the video track when a user disables their video.
 
 ## Video simulcasting
 
-Currently, simulcasting is only available in browser-based SDKs.
+Currently, simulcasting is currently only available in browser-based SDKs.
 
-With simulcasting, clients publish multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate given each participant's available bandwidth.
+With simulcasting, a client publishes multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate given each receiving participant's available bandwidth. This process happens in automatically on the server side when the server detects a participant is bandwidth constrainted. When the participant's bandwidth improves, the server will then upgrade the stream to a higher resolution.
 
 To enable simulcasting, pass a flag when publishing a video track.
 

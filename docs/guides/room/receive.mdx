@@ -4,21 +4,24 @@ title: Receiving Media
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-While connected to a room, the server may send down one or more audio/video/data tracks at any time. By default, a client automatically subscribes to a received track, and lets your app know by invoking callbacks on the room object and associated participant who published the track. 
+While connected to a room, the server may send down one or more audio/video/data tracks at any time. By default, a client automatically subscribes to a received track, and lets your app know by invoking callbacks on the room object and associated participant who published the track.
 
 ## Track subscription
 
-Receiving tracks from the server starts with a subscription. 
+Receiving tracks from the server starts with a subscription.
 
 As mentioned in our guide on [publishing media](https://docs.livekit.io/guides/room/publish), LiveKit models tracks with two constructs: `TrackPublication` and `Track`. Think of a `TrackPublication` as metadata for a track registered with the server and `Track` as the raw media stream.
 
 Track subscription callbacks provide your app with both the `Track` and `TrackPublication` objects.
+
+Subscribed callback will be fired on both `Room` and `RemoteParticipant` objects.
 
 <Tabs
   defaultValue="typescript"
   groupId="client-sdk"
   values={[
     {label: 'Browser', value: 'typescript'},
+    {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
   ]}>
@@ -49,16 +52,27 @@ Track subscription callbacks provide your app with both the `Track` and `TrackPu
   ```
 
   </TabItem>
+  <TabItem value="react">
 
+```typescript title="TypeScript"
+import { useParticipant } from 'livekit-react';
+
+export const MyComponent = ({ participant }) => {
+  const { subscribedTracks } = useParticipant(participant);
+  ...
+}
+```
+
+  </TabItem>
   <TabItem value="ios">
 
   ```swift title="Swift"
   let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
   ...
-  func didSubscribe(track: Track, 
-                    publication: RemoteTrackPublication, 
+  func didSubscribe(track: Track,
+                    publication: RemoteTrackPublication,
                     participant: RemoteParticipant) {
-  
+
     /* do things with track, publication or participant */
   }
   ```
@@ -76,7 +90,7 @@ Track subscription callbacks provide your app with both the `Track` and `TrackPu
       track: Track,
       publication: RemoteTrackPublication,
       participant: RemoteParticipant
-    ) 
+    )
     {
       /* do things with track, publication or participant */
     }
@@ -137,6 +151,7 @@ On mobile (iOS and Android), once subscribed to an audio track, live playback be
   groupId="client-sdk"
   values={[
     {label: 'Browser', value: 'typescript'},
+    {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
   ]}>
@@ -149,16 +164,27 @@ On mobile (iOS and Android), once subscribed to an audio track, live playback be
     publication: RemoteTrackPublication,
     participant: RemoteParticipant
   ) {
-    if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
-      // attach track to a new HTMLVideoElement or HTMLAudioElement
-      const element = track.attach();
-      parentElement.appendChild(element);
-    }
+    // attach track to a new HTMLVideoElement or HTMLAudioElement
+    const element = track.attach();
+    parentElement.appendChild(element);
   }
   ```
 
   </TabItem>
+  <TabItem value="react">
 
+```tsx title="TypeScript"
+export const MyComponent = ({audioTrack, videoTrack}) => {
+  return (
+    <div>
+      <VideoRenderer track={videoTrack} isLocal={false} />
+      <AudioRenderer track={audioTrack} isLocal={false} />
+    </div>
+  )
+}
+```
+
+  </TabItem>
   <TabItem value="ios">
 
   ```swift title="Swift"
@@ -168,14 +194,14 @@ On mobile (iOS and Android), once subscribed to an audio track, live playback be
         let videoView = VideoView(frame: .zero)
         videoView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(videoView)
-        
+
         /* Add any app-specific layout constraints */
 
         videoTrack.addRenderer(videoView.renderer)
       }
     }
   }
-  ```  
+  ```
 
   </TabItem>
   <TabItem value="android">
@@ -193,7 +219,7 @@ On mobile (iOS and Android), once subscribed to an audio track, live playback be
     }
   }
   ```
- 
+
   </TabItem>
 
 </Tabs>
@@ -219,7 +245,7 @@ While the default behavior for LiveKit clients is to subscribe to all newly publ
   let room = await room.connect(url, token, {
     autoSubscribe: false,
   })
-  
+
   room.on(RoomEvent.TrackPublished, (track, publication, participant) => {
     publication.setSubscribed(true)
   })
@@ -231,16 +257,16 @@ While the default behavior for LiveKit clients is to subscribe to all newly publ
 
   ```swift title="Swift"
   let connectOptions = ConnectOptions(
-    url: "ws://<your_host>", 
+    url: "ws://<your_host>",
     token: "<your_token>",
     autoSubscribe: false
   )
   let room = LiveKit.connect(options: connectOptions, delegate: self)
-  
+
   func didPublishRemoteTrack(publication: RemoteTrackPublication, participant: RemoteParticipant) {
       publication.setSubscribed(true)
   }
-  ```  
+  ```
 
   </TabItem>
   <TabItem value="android">
@@ -255,24 +281,26 @@ While the default behavior for LiveKit clients is to subscribe to all newly publ
         ConnectOptions(autoSubscribe = false),
         this@ViewModel)
     }
-    
+
     override fun onTrackUnpublished(publication: TrackPublication, participant: RemoteParticipant, room: Room) {
       publication.setSubscribed(true)
     }
   }
   ```
- 
+
   </TabItem>
 
 </Tabs>
 
 ### Server-side selective subscription
 
+These controls are also available with the server APIs.
+
 ## Enabling/disabling tracks
 
 Client implementations seeking fine-grain control over bandwidth consumption can enable or disable tracks at their discretion. A track is enabled by default. When a track is disabled, the client will not receive any new data for that track. If a disabled track is subsequently enabled, new data will be received by the client.
 
-The `disable` action is useful when optimzing for a client's bandwidth consumption. For example, if a particular user's video track is offscreen or has been manually turned off by the receiving user, disabling this track will reduce bytes from being sent by the LiveKit server until the track's data is needed again.
+The `disable` action is useful when optimzing for a client's bandwidth consumption. For example, if a particular user's video track is offscreen, disabling this track will reduce bytes from being sent by the LiveKit server until the track's data is needed again.
 
 <Tabs
   defaultValue="typescript"
@@ -291,13 +319,8 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
     RoomEvent,
   } from 'livekit-client';
 
-  connect('ws://your_host', token, {
-    audio: true,
-    video: true,
-  }).then((room) => {
-    room
-      .on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
-  });
+  const room = await connect('ws://your_host', token);
+  room.on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
 
   function handleTrackSubscribed(
     track: RemoteTrack,
@@ -315,10 +338,10 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
   ```swift title="Swift"
   let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
   ...
-  func didSubscribe(track: Track, 
-                    publication: RemoteTrackPublication, 
+  func didSubscribe(track: Track,
+                    publication: RemoteTrackPublication,
                     participant: RemoteParticipant) {
-  
+
    publication.setEnabled(false)
   }
   ```
@@ -332,7 +355,7 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
       track: Track,
       publication: RemoteTrackPublication,
       participant: RemoteParticipant
-    ) 
+    )
     {
       publication.setEnabled(false)
     }
@@ -345,7 +368,7 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
 
 :::note
 
-You may be wondering how `subscribe` and `unsubscribe` differs from `enable` and `disable`. A track must be subscribed to and enabled for data to be received by the client. If a track has not been subscribed to (or was unsubscribed) or disabled, the client performing these actions will not receive that track's data. 
+You may be wondering how `subscribe` and `unsubscribe` differs from `enable` and `disable`. A track must be subscribed to and enabled for data to be received by the client. If a track has not been subscribed to (or was unsubscribed) or disabled, the client performing these actions will not receive that track's data.
 
 The difference between these two actions is *negotiation*. Subscribing requires a negotiation handshake with the LiveKit server, while enable/disable does not. Depending on one's use case, this can make enable/disable more efficient, especially when a track may be turned on or off frequently.
 
@@ -398,10 +421,10 @@ If a video track has simulcast enabled, a receiving client may want to manually 
   ```swift title="Swift"
   let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
   ...
-  func didSubscribe(track: Track, 
-                    publication: RemoteTrackPublication, 
+  func didSubscribe(track: Track,
+                    publication: RemoteTrackPublication,
                     participant: RemoteParticipant) {
-  
+
    if let _ = track as? VideoTrack {
      publication.setVideoQuality(.low)
    }
@@ -417,7 +440,7 @@ If a video track has simulcast enabled, a receiving client may want to manually 
       track: Track,
       publication: RemoteTrackPublication,
       participant: RemoteParticipant
-    ) 
+    )
     {
       publication.setVideoQuality(LivekitRtc.VideoQuality.LOW)
     }
