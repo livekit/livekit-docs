@@ -38,6 +38,8 @@ Once subscribed, the `Track` object allows you to play its associated media or a
   }
   ```
 
+  Tracks need to be published one at a time. It's important to `await` the first publishTrack call before attempting to publish again.
+
   </TabItem>
 
   <TabItem value="ios">
@@ -77,6 +79,7 @@ Once subscribed, the `Track` object allows you to play its associated media or a
   </TabItem>
 
 </Tabs>
+
 
 ## Audio on mobile
 

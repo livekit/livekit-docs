@@ -15,6 +15,7 @@ For events happening to a specific participant, they will also be fired on the a
   groupId="client-sdk"
   values={[
     {label: 'Browser', value: 'typescript'},
+    {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
     {label: 'Golang', value: 'go'},
@@ -50,6 +51,26 @@ connect(url, token).then(async (room) => {
 ```
 
 See listing of [Room events](https://docs.livekit.io/client-sdk-js/enums/roomevent.html) and [Participant events](https://docs.livekit.io/client-sdk-js/enums/participantevent.html)
+
+  </TabItem>
+  <TabItem value="react">
+
+```typescript title="TypeScript"
+import { useRoom } from 'livekit-react'
+
+export const MyComponent = () => {
+  const { connect, isConnecting, room, error, participants } = useRoom();
+
+  useEffect(() => {
+    connect(url, token)
+      .then((room) => {
+        // publish tracks
+      })
+  }, [])
+  ...
+}
+```
+The React SDK has a peer dependency on the JS SDK, for publishing and other interactions, refer to the JS SDK.
 
   </TabItem>
   <TabItem value="ios">

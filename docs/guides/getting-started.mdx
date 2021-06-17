@@ -144,7 +144,7 @@ This token expires after a month, which is useful for development and testing, b
 
 ## Connecting to your room
 
-You are now ready to connect to the room with a client. Head over to our [sample browser client](https://sample-js.livekit.io/), paste the token you generated, and voilà! You are live with LiveKit.
+You are now ready to connect to the room with a client. Head over to our [example browser client](https://example.livekit.io/), paste the token you generated, and voilà! You are live with LiveKit.
 
 ![browser client screenshot](/img/getting-started/browser-client.png)
 
@@ -155,26 +155,46 @@ You are now ready to connect to the room with a client. Head over to our [sample
   groupId="client-sdk"
   values={[
     {label: 'JavaScript', value: 'typescript'},
+    {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
   ]}>
 
   <TabItem value="typescript">
 
-  The JS client SDK is [published to npm](https://www.npmjs.com/package/livekit-client).
-  Here's an [example app](https://github.com/livekit/client-sdk-js/blob/main/example/sample.ts) using the JS SDK.
+The JS client SDK is [published to npm](https://www.npmjs.com/package/livekit-client).
+Here's an [example app](https://github.com/livekit/client-sdk-js/blob/main/example/sample.ts) using the JS SDK.
 
-  **yarn**
+**yarn**
 
-  ```shell
-  yarn add livekit-client
-  ```
+```shell
+yarn add livekit-client
+```
 
-  **npm**
+**npm**
 
-  ```shell
-  npm install --save livekit-client
-  ```
+```shell
+npm install --save livekit-client
+```
+
+  </TabItem>
+
+  <TabItem value="react">
+
+The React client SDK is [published to npm](https://www.npmjs.com/package/livekit-react).
+Here's an [example app](https://github.com/livekit/livekit-react/tree/master/example) using the React SDK.
+
+**yarn**
+
+```shell
+yarn add livekit-react livekit-client
+```
+
+**npm**
+
+```shell
+npm install --save livekit-react livekit-client
+```
 
   </TabItem>
 

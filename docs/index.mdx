@@ -42,6 +42,7 @@ LiveKit has no external dependencies when running in single-node. Redis is requi
   groupId="client-sdk"
   values={[
     {label: 'Browser', value: 'typescript'},
+    {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
     {label: 'Golang', value: 'go'},
@@ -87,6 +88,30 @@ function attachTrack(track: Track, participant: Participant) {
   // find the target element for participant
   ...
   target.appendChild(element)
+}
+```
+
+  </TabItem>
+  <TabItem value="react">
+
+```typescript title="TypeScript"
+import { LiveKitRoom } from 'livekit-react'
+
+export const RoomPage = () => {
+  const url = 'wss://your_host'
+  const token = 'your_token'
+  return (
+    <div className="roomContainer">
+      <LiveKitRoom url={url} token={token} onConnected={room => onConnected(room)}/>
+    </div>
+  )
+}
+
+function onConnected() {
+  const audioTrack = await createLocalAudioTrack()
+  await room.localParticipant.publishTrack(audioTrack)
+  const videoTrack = await createLocalVideoTrack();
+  await room.localParticipant.publishTrack(videoTrack)
 }
 ```
 
