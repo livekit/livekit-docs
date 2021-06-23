@@ -41,12 +41,13 @@ connect(url, token).then(async (room) => {
   room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {})
 
   room.on(RoomEvent.ParticipantConnected, (participant) => {
+    // set up any per-participant callbacks
     participant.on(ParticipantEvent.TrackMuted, (publication) => {})
   })
   room.on(RoomEvent.ParticipantDisconnected, (participant) => {})
 
   // teardown room
-  room.on(RoomEvent.Disconnected, (track, publication, participant) => {})
+  room.on(RoomEvent.Disconnected, () => {})
 })
 ```
 
@@ -66,6 +67,10 @@ export const MyComponent = () => {
       .then((room) => {
         // publish tracks
       })
+    // teardown
+    return () => {
+      room.disconnect()
+    }
   }, [])
   ...
 }
