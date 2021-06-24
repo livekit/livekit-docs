@@ -25,6 +25,7 @@
 .navbar__title {
   font-weight: normal;
   color: var(--lk-white-darker);
+  line-height: 1.1rem;
 }
 
 .navbar__items--right .navbar__item {
