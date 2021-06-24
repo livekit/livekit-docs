@@ -4,7 +4,173 @@ title: Working with data
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Working with Custom Data
-Mainly talk about how LiveKit could allow users to send/receive arbitrary data.
-1. per participant metadata, can be updated by server API, broadcasted to all participants. could encode anything application specific
-2. arbitrary data messages, use LocalParticipant.publishData, have reliable vs lossy options, etc
+With LiveKit maintaining room state, you can use it to pass around custom application data. We have a flexible system that enables you to pass messages from both the backend, and between participants.
+
+## Participant metadata from backend
+
+LiveKit participants have a `metadata` field that you could use to store application-specific metadata for each participant. For example, this could be the seat number around a table, or the other state.
+
+Metadata is encoded in the [access token](../access-tokens) that participants use to connect to the room.
+
+With our server SDKs, you can update the metadata from your backend. LiveKit will broadcast metadata changes to all participants in the room. You can receive these updates by listening to the MetadataUpdated callback/event.
+
+### Example: Updating metadata from server API
+
+<Tabs
+  defaultValue="node"
+  groupId="server-sdk"
+  values={[
+    {label: 'Node', value: 'node'},
+    {label: 'Golang', value: 'go'},
+  ]}>
+  <TabItem value="node">
+
+```typescript title="TypeScript"
+import { RoomServiceClient } from 'livekit-server-api';
+
+const client = new RoomServiceClient("myhost", "api-key", "my secret")
+
+const data = JSON.stringify({
+  some: "values",
+})
+client.updateParticipant("myroom", "participant-identity", data)
+```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+```go title="Go"
+import (
+  lksdk "github.com/livekit/livekit-sdk-go"
+)
+
+func updateMetadata(values interface{}) {
+  roomClient := lksdk.NewRoomServiceClient(host, apiKey, apiSecret)
+
+  data, err := json.Marshal(values)
+
+  _, err = roomClient.UpdateParticipant(context.Background(), &livekit.UpdateParticipantRequest{
+    Room: "myroom",
+    Identity: "participant-identity",
+    Metadata: string(data),
+  })
+}
+```
+
+  </TabItem>
+
+</Tabs>
+
+## Data message from participants
+
+From the client side, LiveKit lets you publish arbirary data messages to any participants in the room via the `LocalParticipant.publishData` API. Room data is published to the SFU via WebRTC data channels; and LiveKit server would forward that data to one or more participants in the room.
+
+Since the data is sent via UDP, it's possible for the packets to be lost. We offer two modes of delivery: lossy or reliable. Reliable mode enables WebRTC to retransmit the data until it's received, similar to TCP. For use-cases such as in-room chat, this is preferable.
+
+We suggest sending small chunks of data (under 1.4kB) to ensure that the packet doesn't exceed network MTU.
+
+<Tabs
+  defaultValue="typescript"
+  groupId="client-sdk"
+  values={[
+    {label: 'Browser', value: 'typescript'},
+    {label: 'iOS', value: 'ios'},
+    {label: 'Android', value: 'android'},
+  ]}>
+  <TabItem value="typescript">
+
+```typescript title="TypeScript"
+const strData = JSON.stringify({some: "data"})
+const encoder = new TextEncoder()
+const decoder = new TextEncoder()
+
+// publishData takes in a Uint8Array, so we need to convert it
+const data = encoder.encode(strData);
+
+// publish to everyone in the room
+room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)
+
+// publish to specific participants
+room.localParticipant.publishData(data, DataPacket_Kind.LOSSY, ['participant_sid'])
+
+// receive data from other participants
+room.on(RoomEvent.DataPacketReceived, (payload: Uint8Array, participant: Participant, kind: DataPacket_Kind) => {
+  const strData = decoder.decode(payload)
+  ...
+})
+```
+
+See listing of [Room events](https://docs.livekit.io/client-sdk-js/enums/roomevent.html) and [Participant events](https://docs.livekit.io/client-sdk-js/enums/participantevent.html)
+
+  </TabItem>
+  <TabItem value="react">
+
+```typescript title="TypeScript"
+import { useRoom } from 'livekit-react'
+
+export const MyComponent = () => {
+  const { connect, isConnecting, room, error, participants } = useRoom();
+
+  useEffect(() => {
+    connect(url, token)
+      .then((room) => {
+        // publish tracks
+      })
+    // teardown
+    return () => {
+      room.disconnect()
+    }
+  }, [])
+  ...
+}
+```
+The React SDK has a peer dependency on the JS SDK, for publishing and other interactions, refer to the JS SDK.
+
+  </TabItem>
+  <TabItem value="ios">
+
+```swift title="Swift"
+import LiveKit
+
+public class DataExample {
+  func publishData(localParticipant: LocalParticipant)  {
+    val someVal = "your value"
+
+    // publish lossy packet to everyone in the room
+    localParticipant.publish(data: someVal.data(using: .utf8), reliability: .lossy)
+
+    // publish reliable packet to specific participants
+    localParticipant.publish(data: someVal.data(using: .utf8), reliability: .reliable, ["sid1", "sid2"])
+  }
+}
+
+extension DataExample: RoomDelegate {
+  func didReceive(data: Data, participant: RemoteParticipant) {
+
+  }
+}
+
+```
+
+  </TabItem>
+  <TabItem value="android">
+
+```kt title="Kotlin"
+
+class DataExample : RoomListener {
+    fun publishData(localParticipant: LocalParticipant, data: ByteArray) {
+      // publish lossy data to the entire room
+      localParticipant.publishData(data, DataPublishReliability.LOSSY)
+
+      // publish reliable data to a set of participants
+      localParticipant.publishData(data, DataPublishReliability.RELIABLE, listOf("sid1", "sid2"))
+    }
+
+    override fun onDataReceived(data: ByteArray, participant: RemoteParticipant, room: Room) {} {
+        // process received data
+    }
+}
+```
+  </TabItem>
+</Tabs>

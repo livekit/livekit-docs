@@ -14,13 +14,13 @@ This token encodes the identity of a participant, name of the room, capabilities
   defaultValue="node"
   groupId="server-sdk"
   values={[
-    {label: 'Node (TypeScript)', value: 'node'},
+    {label: 'Node', value: 'node'},
     {label: 'Golang', value: 'go'},
     {label: 'Other', value: 'other'},
   ]}>
   <TabItem value="node">
 
-```typescript
+```typescript title="TypeScript"
 import { AccessToken } from 'livekit-server-api';
 
 const roomName = 'name-of-room';
@@ -39,7 +39,7 @@ console.log('access token', token);
 
   <TabItem value="go">
 
-```go
+```go title="Go"
 import (
 	"time"
 
@@ -90,7 +90,8 @@ Here's an example of the decoded body of a join token:
   "video": {
     "room": "myroom",
     "roomJoin": true
-  }
+  },
+  "metadata": ""
 }
 ```
 
@@ -113,3 +114,9 @@ Room permissions are specified in the `video` field of a decoded join token. It 
 ## Token expiration
 
 A tokens has an expiration time. We recommend setting it to the expected duration of a session. A LiveKit client will store a token for the entire session duration, in case it needs to reconnect.
+
+## Participant metadata
+
+You may also attach any arbirary metadata onto each participant via the `metadata` field. This data is opaque to LiveKit.
+
+When provided, LiveKit will attach the metadata to the participant object that the clients would receive.
