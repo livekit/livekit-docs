@@ -20,6 +20,9 @@
     --ifm-background-color: var(--lk-black);
     --ifm-font-color-base:var(--lk-white);
     --ifm-toc-border-color: var(--lk-border-color);
+    --ifm-color-emphasis-300: var(--lk-border-color);
+    
+    --ifm-pagination-nav-border-radius: 0.5rem;
 
     --ifm-navbar-padding-vertical: 1.25rem; 
     --ifm-navbar-padding-horizontal: 2rem;
@@ -33,6 +36,9 @@
     --ifm-menu-link-padding-vertical: 0.75rem;
     --ifm-menu-link-padding-horizontal: 1rem;
     --ifm-menu-link-sublist-icon: url(/img/chevron.svg);
+
+    --ifm-footer-color: var(--lk-white-darker);
+    --ifm-footer-background-color: var(--lk-black);
 
     --ifm-link-color: var(--lk-blue);
     --ifm-color-primary: var(--lk-green);
