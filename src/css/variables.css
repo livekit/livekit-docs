@@ -30,6 +30,9 @@
     --ifm-menu-color-background-active: var(--lk-dark-blue);
     --ifm-menu-color-active: var(--lk-white);
     --ifm-menu-color: var(--lk-white);
+    --ifm-menu-link-padding-vertical: 0.75rem;
+    --ifm-menu-link-padding-horizontal: 1rem;
+    --ifm-menu-link-sublist-icon: url(/img/chevron.svg);
 
     --ifm-link-color: var(--lk-blue);
     --ifm-color-primary: var(--lk-green);
