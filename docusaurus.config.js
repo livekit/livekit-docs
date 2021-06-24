@@ -43,7 +43,7 @@ module.exports = {
       disableSwitch: true,
     },
     prism: {
-      theme: require('prism-react-renderer/themes/nightOwl'),
+      theme: require('./themes/livekit'),
       additionalLanguages: ["swift", "kotlin", "go", "groovy", "ini"],
     },
   },
