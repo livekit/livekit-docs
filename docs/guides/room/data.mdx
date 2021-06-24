@@ -8,7 +8,7 @@ With LiveKit maintaining room state, you can use it to pass around custom applic
 
 ## Participant metadata from backend
 
-LiveKit participants have a `metadata` field that you could use to store application-specific metadata for each participant. For example, this could be the seat number around a table, or the other state.
+LiveKit participants have a `metadata` field that you could use to store application-specific data. For example, this could be the seat number around a table, or other state.
 
 Metadata is encoded in the [access token](../access-tokens) that participants use to connect to the room.
 
@@ -68,7 +68,7 @@ From the client side, LiveKit lets you publish arbirary data messages to any par
 
 Since the data is sent via UDP, it's possible for the packets to be lost. We offer two modes of delivery: lossy or reliable. Reliable mode enables WebRTC to retransmit the data until it's received, similar to TCP. For use-cases such as in-room chat, this is preferable.
 
-We suggest sending small chunks of data (under 1.4kB) to ensure that the packet doesn't exceed network MTU.
+We suggest keeping data packets small (under 1.4kB) to ensure that the packet doesn't exceed network MTU.
 
 <Tabs
   defaultValue="typescript"
@@ -102,30 +102,6 @@ room.on(RoomEvent.DataPacketReceived, (payload: Uint8Array, participant: Partici
 ```
 
 See listing of [Room events](https://docs.livekit.io/client-sdk-js/enums/roomevent.html) and [Participant events](https://docs.livekit.io/client-sdk-js/enums/participantevent.html)
-
-  </TabItem>
-  <TabItem value="react">
-
-```typescript title="TypeScript"
-import { useRoom } from 'livekit-react'
-
-export const MyComponent = () => {
-  const { connect, isConnecting, room, error, participants } = useRoom();
-
-  useEffect(() => {
-    connect(url, token)
-      .then((room) => {
-        // publish tracks
-      })
-    // teardown
-    return () => {
-      room.disconnect()
-    }
-  }, [])
-  ...
-}
-```
-The React SDK has a peer dependency on the JS SDK, for publishing and other interactions, refer to the JS SDK.
 
   </TabItem>
   <TabItem value="ios">
