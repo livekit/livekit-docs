@@ -5,21 +5,39 @@
  * work well for content-centric websites.
  */
 
-/* You can override the default Infima variables here. */
-:root {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: rgb(33, 175, 144);
-  --ifm-color-primary-darker: rgb(31, 165, 136);
-  --ifm-color-primary-darkest: rgb(26, 136, 112);
-  --ifm-color-primary-light: rgb(70, 203, 174);
-  --ifm-color-primary-lighter: rgb(102, 212, 189);
-  --ifm-color-primary-lightest: rgb(146, 224, 208);
-  --ifm-code-font-size: 95%;
-}
+ @import "variables";
+ @import "fonts";
 
 .docusaurus-highlight-code-line {
   background-color: rgb(72, 77, 91);
   display: block;
   margin: 0 calc(-1 * var(--ifm-pre-padding));
   padding: 0 var(--ifm-pre-padding);
+}
+
+/* Infima overrides */
+.menu {
+  font-weight: normal;
+}
+.navbar__brand {
+  align-items: flex-end;
+}
+.navbar__title {
+  font-weight: normal;
+  color: var(--lk-white-darker);
+}
+
+.navbar__items--right .navbar__item {
+  background-image: url(/img/github-icon.svg);
+  background-size: 1.25rem;
+  background-repeat: no-repeat;
+  background-position-y: 50%;
+  padding: 0;
+  padding-left: 1.875rem;
+}
+
+@media (min-width: 997px) {
+  .menu_node_modules-\@docusaurus-theme-classic-lib-next-theme-DocSidebar- {
+      padding: 1.25rem 1rem !important;
+  }
 }

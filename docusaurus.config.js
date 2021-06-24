@@ -1,7 +1,7 @@
 const repoUrl = 'https://github.com/livekit/livekit-server'
 
 module.exports = {
-  title: 'LiveKit Docs',
+  title: 'docs',
   tagline: 'The tagline of my site',
   url: 'https://docs.livekit.io/',
   baseUrl: '/',
@@ -12,7 +12,7 @@ module.exports = {
   projectName: 'docs',
   themeConfig: {
     navbar: {
-      title: 'LiveKit Docs',
+      title: 'docs',
       logo: {
         alt: 'LiveKit Logo',
         src: 'img/logo.svg',
