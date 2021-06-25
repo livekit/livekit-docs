@@ -54,6 +54,10 @@
   border-top: 1px solid var(--lk-border-color);
 }
 
+code {
+  border: 0.1rem solid var(--lk-border-color);
+}
+
 @media (min-width: 997px) {
   .menu_node_modules-\@docusaurus-theme-classic-lib-next-theme-DocSidebar- {
       padding: 1.25rem 1rem !important;

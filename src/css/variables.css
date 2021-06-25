@@ -40,8 +40,14 @@
     --ifm-footer-color: var(--lk-white-darker);
     --ifm-footer-background-color: var(--lk-black);
 
+    --ifm-color-gray-900: var(--lk-white);
+    --ifm-color-secondary: var(--lk-border-color);
+
     --ifm-link-color: var(--lk-blue);
     --ifm-color-primary: var(--lk-green);
+
+    --ifm-code-background: var(--lk-border-color);
+    --ifm-table-stripe-background: transparent;
 
     /* infima defaults */
     --ifm-color-primary-dark: rgb(33, 175, 144);
