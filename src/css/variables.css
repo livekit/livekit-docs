@@ -18,6 +18,7 @@
     --ifm-heading-font-weight: var(--lk-black-weight);
 
     --ifm-background-color: var(--lk-black);
+    --ifm-background-surface-color: var(--lk-dark-blue);
     --ifm-font-color-base:var(--lk-white);
     --ifm-toc-border-color: var(--lk-border-color);
     --ifm-color-emphasis-300: var(--lk-border-color);
@@ -45,6 +46,7 @@
 
     --ifm-link-color: var(--lk-blue);
     --ifm-color-primary: var(--lk-green);
+    --ifm-color-secondary-dark: var(--lk-blue);
 
     --ifm-code-background: var(--lk-border-color);
     --ifm-table-stripe-background: transparent;

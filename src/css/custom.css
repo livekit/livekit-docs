@@ -28,6 +28,10 @@
   line-height: 1.1rem;
 }
 
+.navbar-sidebar {
+  background-color: var(--lk-dark-blue);
+}
+
 .navbar__items--right .navbar__item {
   background-image: url(/img/github-icon.svg);
   background-size: 1.25rem;
