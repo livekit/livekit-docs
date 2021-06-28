@@ -41,6 +41,12 @@ var theme = {
         color: "#85EFE3",
       },
     },
+    { 
+      types: ["method"],
+      style: {
+        color: "#8DF253",
+      },
+    },
     {
       types: ["regex", "important", "variable"],
       style: {
@@ -66,7 +72,7 @@ var theme = {
       }
     },
     {
-      types: ["function", "tag", "boolean", "number", "constant", "symbol", "deleted"],
+      types: ["tag", "boolean", "number", "constant", "symbol", "deleted"],
       style: {
         color: "#8158F6",
       },
