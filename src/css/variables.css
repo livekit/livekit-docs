@@ -5,7 +5,7 @@
     --lk-white-darker: rgba(255,255,255,0.5);
     --lk-black: #000;
     --lk-border-color: rgba(255,255,255,0.1);
-    --lk-blue: #2D68F3;
+    --lk-blue: #5A8BFF;
     --lk-green: #6EE2E2;
     --lk-gradient-horizontal: linear-gradient(262.65deg, var(--lk-green) 0%, var(--lk-blue) 100%);
 
@@ -22,10 +22,10 @@
     --ifm-font-color-base:var(--lk-white);
     --ifm-toc-border-color: var(--lk-border-color);
     --ifm-color-emphasis-300: var(--lk-border-color);
-    
+
     --ifm-pagination-nav-border-radius: 0.5rem;
 
-    --ifm-navbar-padding-vertical: 1.25rem; 
+    --ifm-navbar-padding-vertical: 1.25rem;
     --ifm-navbar-padding-horizontal: 2rem;
     --ifm-navbar-height: auto;
     --ifm-navbar-background-color: #000;
@@ -50,6 +50,8 @@
 
     --ifm-code-background: var(--lk-border-color);
     --ifm-table-stripe-background: transparent;
+
+    --ifm-toc-link-color: var(--lk-white-darker);
 
     /* infima defaults */
     --ifm-color-primary-dark: rgb(33, 175, 144);

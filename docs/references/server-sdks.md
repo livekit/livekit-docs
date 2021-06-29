@@ -2,11 +2,7 @@
 title: Server SDKs
 ---
 
-In addition to client interactions within a room, LiveKit also exposes a set of APIs allowing you manage rooms, control participants within one, and generate access tokens.
-
-These APIs interact directly with the `RoomService` exposed by LiveKit server, and thus, should only be invoked by your backend code.
-
-We officially support client wrappers for the following platforms. Since the service is HTTP-based, you are welcome to call it directly without using the client wrappers. `RoomService` is built on top of [Twirp](https://twitchtv.github.io/twirp/docs/intro.html).
+We officially support client wrappers for the following platforms. Since the service is HTTP-based, you are welcome to call it directly without using the client wrappers. In addition to Room APIs, the server SDKs also enables you to generate access tokens.
 
 | Platform | Repo                                                        | Links                                                                                                            |
 | :------- | :---------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |

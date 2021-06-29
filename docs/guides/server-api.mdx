@@ -2,13 +2,15 @@
 title: Server APIs
 ---
 
-LiveKit has built-in APIs that lets you to manage rooms, update and moderate participants.
+LiveKit has built-in APIs that lets you to manage rooms, update and moderate participants. These APIs are designed to be used by your backend.
 
-Room APIs are built on top of Twirp, and differ from a traditional REST interface. Arguments are passed via POSTing JSON body to the endpoints. The APIs will be servied at `/twirp/livekit.RoomService/<MethodName>`. For example, ListRooms is available at `/twirp/livekit.RoomService/ListRooms`
+Room APIs are built on top of [Twirp](https://twitchtv.github.io/twirp/docs/intro.html), and differ from a traditional REST interface. Arguments are passed via POSTing JSON body to the endpoints. The APIs are available at `/twirp/livekit.RoomService/<MethodName>`. For example, ListRooms would be `/twirp/livekit.RoomService/ListRooms`
 
 Room APIs are fully distributed across multiple nodes. Each instance is capable of fulfilling requests about any room or participant.
 
 ## APIs
+
+For SDKs wrapping the API calls, see [server sdks](../references/server-sdks)
 
 ### CreateRoom
 

@@ -8,6 +8,10 @@
  @import "variables";
  @import "fonts";
 
+body {
+  font-family: var(--ifm-font-family-base);
+}
+
 .docusaurus-highlight-code-line {
   background-color: rgb(72, 77, 91);
   display: block;
@@ -41,6 +45,10 @@
   padding-left: 1.875rem;
 }
 
+.navbar__toggle {
+  display: none;
+}
+
 .menu__link--sublist:after {
   background: no-repeat center var(--ifm-menu-link-sublist-icon);
   transform: none;
@@ -53,6 +61,18 @@
 .table-of-contents {
   font-size: 0.875rem;
 }
+
+table td {
+  color: var(--lk-white-darker);
+}
+
+table th {
+
+}
+
+/* .table-of-contents__link {
+  color: rgba(255, 255, 255, 0.7)
+} */
 
 .footer {
   border-top: 1px solid var(--lk-border-color);
