@@ -28,7 +28,7 @@ body {
 }
 .navbar__title {
   font-weight: normal;
-  color: var(--lk-white-darker);
+  color: var(--lk-secondary-text);
   line-height: 1.1rem;
 }
 
