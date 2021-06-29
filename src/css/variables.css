@@ -50,6 +50,7 @@
 
     --ifm-code-background: var(--lk-border-color);
     --ifm-table-stripe-background: transparent;
+    --ifm-table-border-color: var(--lk-white-darker);
 
     --ifm-toc-link-color: var(--lk-white-darker);
 

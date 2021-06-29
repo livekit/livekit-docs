@@ -37,7 +37,7 @@ Deletes an existing room by name or id. Requires `roomCreate` permission.
 DeleteRoom will disconnect all participants that are currently in the room.
 
 | Parameter | Type   | Description      |
-| --------- | ------ | ---------------- |
+| :-------- | :----- | :--------------- |
 | room      | string | name of the room |
 
 ### ListParticipants
@@ -45,7 +45,7 @@ DeleteRoom will disconnect all participants that are currently in the room.
 Lists participants in a room, Requires `roomAdmin`
 
 | Parameter | Type   | Description      |
-| --------- | ------ | ---------------- |
+| :-------- | :----- | :--------------- |
 | room      | string | name of the room |
 
 Returns List<[ParticipantInfo](#participantinfo)>
@@ -55,7 +55,7 @@ Returns List<[ParticipantInfo](#participantinfo)>
 Gets information on a specific participant, Requires `roomAdmin`
 
 | Parameter | Type   | Description                 |
-| --------- | ------ | --------------------------- |
+| :-------- | :----- | :-------------------------- |
 | room      | string | name of the room            |
 | identity  | string | identity of the participant |
 
@@ -66,7 +66,7 @@ Returns [ParticipantInfo](#participantinfo)
 Removes a participant from room. Requires `roomAdmin`
 
 | Parameter | Type   | Description                 |
-| --------- | ------ | --------------------------- |
+| :-------- | :----- | :-------------------------- |
 | room      | string | name of the room            |
 | identity  | string | identity of the participant |
 
@@ -75,7 +75,7 @@ Removes a participant from room. Requires `roomAdmin`
 Mute/unmute a participant's track, Requires `roomAdmin`
 
 | Parameter | Type   | Description                          |
-| --------- | ------ | ------------------------------------ |
+| :-------- | :----- | :----------------------------------- |
 | room      | string | name of the room                     |
 | identity  | string |                                      |
 | track_sid | string | sid of the track to mute             |
@@ -86,7 +86,7 @@ Mute/unmute a participant's track, Requires `roomAdmin`
 Update participant metadata, will cause updates to be broadcasted to everyone in the room. Requires `roomAdmin`
 
 | Parameter  | Type                                            | Description                                        |
-| ---------- | ----------------------------------------------- | -------------------------------------------------- |
+| :--------- | :---------------------------------------------- | :------------------------------------------------- |
 | room       | string                                          |                                                    |
 | identity   | string                                          |                                                    |
 | metadata   | string                                          | metadata to update. skipping updates if left empty |
@@ -97,7 +97,7 @@ Update participant metadata, will cause updates to be broadcasted to everyone in
 Subscribes or unsubscribe a participant from tracks
 
 | Parameter  | Type         | Description                                                |
-| ---------- | ------------ | ---------------------------------------------------------- |
+| :--------- | :----------- | :--------------------------------------------------------- |
 | room       | string       |                                                            |
 | identity   | string       |                                                            |
 | track_sids | List<[string]> | list of sids of tracks                                     |
@@ -108,7 +108,7 @@ Subscribes or unsubscribe a participant from tracks
 ### Room
 
 | Field            | Type   |
-| ---------------- | ------ |
+| :--------------- | :----- |
 | sid              | string |
 | name             | string |
 | empty_timeout    | string |
@@ -119,7 +119,7 @@ Subscribes or unsubscribe a participant from tracks
 ### ParticipantInfo
 
 | Field     | Type                          | Description                            |
-| --------- | ----------------------------- | -------------------------------------- |
+| :-------- | :---------------------------- | :------------------------------------- |
 | sid       | string                        | server generated identifier            |
 | identity  | string                        | client provided identity               |
 | state     | TrackInfo_State               |                                        |
@@ -130,7 +130,7 @@ Subscribes or unsubscribe a participant from tracks
 ### TrackInfo
 
 | Field     | Type      | Description                                   |
-| --------- | --------- | --------------------------------------------- |
+| :-------- | :-------- | :-------------------------------------------- |
 | sid       | string    | server generated identifier                   |
 | type      | TrackType | audio or video                                |
 | name      | string    | name given at publish time                    |
@@ -142,6 +142,6 @@ Subscribes or unsubscribe a participant from tracks
 ### ParticipantPermission
 
 | Field         | Type | Description                                                |
-| ------------- | ---- | ---------------------------------------------------------- |
+| :------------ | :--- | :--------------------------------------------------------- |
 | can_subscribe | bool | allow participant to subscribe to other tracks in the room |
 | can_publish   | bool | allow participant to publish new tracks to room            |
