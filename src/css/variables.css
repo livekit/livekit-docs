@@ -8,6 +8,7 @@
     --lk-blue: #5A8BFF;
     --lk-green: #6EE2E2;
     --lk-gradient-horizontal: linear-gradient(262.65deg, var(--lk-green) 0%, var(--lk-blue) 100%);
+    --lk-secondary-text: rgba(255, 255, 255, 0.7);
 
     /* lk font weights */
     --lk-regular-weight: 400;
@@ -52,7 +53,7 @@
     --ifm-table-stripe-background: transparent;
     --ifm-table-border-color: var(--lk-white-darker);
 
-    --ifm-toc-link-color: var(--lk-white-darker);
+    --ifm-toc-link-color: var(--lk-secondary-text);
 
     /* infima defaults */
     --ifm-color-primary-dark: rgb(33, 175, 144);

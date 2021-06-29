@@ -63,7 +63,7 @@ body {
 }
 
 table td {
-  color: var(--lk-white-darker);
+  color: var(--lk-secondary-text);
 }
 
 table td, table th {
