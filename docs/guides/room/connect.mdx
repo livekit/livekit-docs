@@ -10,6 +10,8 @@ You can also listen for room events. Your callbacks will be invoked whenever var
 
 For events happening to a specific participant, they will also be fired on the appropriate `RemoteParticipant` or `LocalParticipant` object.
 
+## Connecting to a room
+
 <Tabs
   defaultValue="typescript"
   groupId="client-sdk"
@@ -75,7 +77,7 @@ export const MyComponent = () => {
   ...
 }
 ```
-The React SDK has a peer dependency on the JS SDK, for publishing and other interactions, refer to the JS SDK.
+The React SDK depends on the JS SDK. For publishing and other interactions, refer to the JS SDK.
 
   </TabItem>
   <TabItem value="ios">
@@ -236,3 +238,21 @@ func trackSubscribed(track *webrtc.TrackRemote, publication lksdk.TrackPublicati
 
 </TabItem>
 </Tabs>
+
+## Connectivity
+
+LiveKit configures WebRTC to enable connectivity from a wide variety of network conditions. It'll try the following in order of preference.
+
+1. ICE over UDP: ideal connection type, used in majority of conditions
+2. ICE over TCP: used when network disallows UDP (i.e. over VPN or corporate firewalls)
+3. TURN with TLS: used when firewall only allows outbound TLS connections
+
+ICE over UDP and TCP works automatically, while TURN/TLS requires additional configurations and your own SSL certificate.
+
+## Network changes and reconnection
+
+With WiFi and cellular networks, users may sometimes run into network changes that cause the connection to the server to be interrupted. This could include switching from WiFi to cellular or going through spots with poor connection.
+
+When this happens, LiveKit will attempt to re-establish the connection behind the scenes. It'll fire off an `Reconnecting` event so your client could display additional UI to inform the user. If the reconnection is successful, you will receive a `Reconnected` callback to let you know that things are back to normal. Otherwise, it'll disconnect you from the room.
+
+During the reconnection, the video/audio tracks may stop sending/receiving data for a few seconds. When the connection is re-established, the tracks will then "unfreeze".

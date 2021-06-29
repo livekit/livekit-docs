@@ -22,6 +22,7 @@ module.exports = {
           ],
         },
         'guides/access-tokens',
+        'guides/server-api',
         {
           type: 'category',
           label: 'Deployment',
