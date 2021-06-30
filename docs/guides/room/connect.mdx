@@ -239,6 +239,10 @@ func trackSubscribed(track *webrtc.TrackRemote, publication lksdk.TrackPublicati
 </TabItem>
 </Tabs>
 
+## Leaving a room
+
+When your client is leaving a room, you should notify LiveKit of leave events by calling `Room.close()`. If the application is closed without notifying the LiveKit, it will continue to display the participant as being in the room for more than 20 seconds.
+
 ## Connectivity
 
 LiveKit configures WebRTC to enable connectivity from a wide variety of network conditions. It'll try the following in order of preference.

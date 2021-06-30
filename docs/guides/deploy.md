@@ -63,7 +63,7 @@ To see the list of metrics that we export, see [stats.go](https://github.com/liv
 
 ## Multi-node routing
 
-If Redis is configured, LiveKit automatically switches to a distributed setup by using Redis for room data as well as a message bus. In this mode, each node periodically reports their stats to Redis; this enables them to be aware of the entire cluster and make routing decisions based on availability and load.
+If Redis is configured, LiveKit automatically switches to a distributed setup by using Redis for room data as well as a message bus. In this mode, each node periodically reports their stats to Redis; this enables them to be aware of the entire cluster and make routing decisions based on availability and load. We recommend this setup for a redundant deployment.
 
 When a new room is created, the node that received that request is able to choose an available node from the cluster to host the room.
 
