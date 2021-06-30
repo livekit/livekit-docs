@@ -14,7 +14,7 @@ Using LiveKit in your app does not require you to understand the underlying prot
 
 LiveKit clients use a WebSocket to communicate with the server over Protocol Buffers. Clients additionally open two WebRTC PeerConnections, used for publishing and receiving streams, respectively.
 
-![Client-Server Connection](/img/client-server-connection.png)
+![Client-Server Connection](/img/client-server-connection.svg)
 
 ### Protobufs
 
@@ -63,7 +63,7 @@ The client must also be ready to act upon other changes in the room. The server 
 
 - `ParticipantUpdate`: when participants join or leave, or if there are changes to their tracks
 - `ActiveSpeakerUpdate`: when the active speakers in the room change
-- `LeaveRequest`: when the participant should immediately disconnect 
+- `LeaveRequest`: when the participant should immediately disconnect
 
 ## Client-initiated control
 
