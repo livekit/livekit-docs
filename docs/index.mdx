@@ -11,9 +11,9 @@ LiveKit is an open source project that provides scalable, multi-user conferencin
 ## Features
 
 - Horizontally-scalable WebRTC Selective Forwarding Unit (SFU)
-- Modern, full-featured [client SDKs](references/client-sdks) for JavaScript, Swift, and Kotlin (React, React Native, Unity/C# and Flutter in development)
+- Modern, full-featured [client SDKs](references/client-sdks) for JavaScript, React, Swift, and Kotlin (React Native, Unity/C# and Flutter in development)
 - Built for production - JWT authentication and [server APIs](guides/server-api)
-- Robust networking & connectivity over UDP and TCP
+- Robust networking & connectivity over UDP, TCP, and built-in TURN/TLS
 - Easy to deploy: one binary and just three ports to forward
 - Advanced features like simulcasting, selective subscription, and moderation APIs.
 
@@ -23,11 +23,11 @@ WebRTC is a powerful protocol that now has ubiquitous support across all major b
 
 While hosted solutions like Twilio and Agora exist, they can be costly, have limited flexibility and as proprietary products, create vendor lock-in. Other open source solutions also exist, but they have a steep learning curve and are daunting to customize and deploy.
 
-We built LiveKit because we believe developers should have a free, open source implementation of WebRTC rooms that "just works". LiveKit provides an opinionated, end-to-end implementation of multi-user conferencing with first-party clients for all the major software platforms.
+We set out to build a free and open source implementation of WebRTC rooms that's easily embeddable within any app. LiveKit provides an opinionated, end-to-end real time communications solution with first-party SDKs for all the major software platforms.
 
 ## Architecture
 
-LiveKit is written in Go. It's made possible by [Pion](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and the amazing community behind them.
+LiveKit is written in Go. It's made possible by [Pion WebRTC](https://github.com/pion/webrtc), [ion-sfu](https://github.com/pion/ion-sfu), and the amazing community behind them.
 
 LiveKit is horizontally-scalable. You can run it on one node or 100, with an identical configuration. Nodes use peer-to-peer routing via Redis to ensure clients in the same room are connected to the same node.
 

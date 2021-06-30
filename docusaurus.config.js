@@ -19,7 +19,7 @@ module.exports = {
       },
       items: [
         // {
-        //   to: '/',
+        //   // href: 'https://livekit.io'
         //   activeBasePath: '/',
         //   label: 'Docs',
         //   position: 'left',
@@ -35,7 +35,7 @@ module.exports = {
       style: 'light',
       links: [
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} LiveKit, Inc.`,
+      copyright: `Copyright © ${new Date().getFullYear()} LiveKit`,
     },
     colorMode: {
       respectPrefersColorScheme: false,
