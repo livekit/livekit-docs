@@ -80,7 +80,7 @@ var theme = {
     {
       types: ["selector", "attr-name", "string", "char", "builtin", "inserted"],
       style: {
-        color: "#446FF2",
+        color: "#5A8BFF",
       },
     },
     {
