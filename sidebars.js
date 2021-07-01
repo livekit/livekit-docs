@@ -31,6 +31,7 @@ module.exports = {
             'guides/deploy',
             'guides/deploy/tuning',
             'guides/deploy/kubernetes',
+            'guides/deploy/benchmark',
           ],
         }
       ],
