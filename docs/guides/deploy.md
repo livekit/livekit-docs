@@ -18,6 +18,10 @@ LiveKit uses several ports to communicate with clients:
 
 7881 by default. This is used to support ICE over TCP, which is used when the current network does not support UDP (VPN, corporate firewalls). `rtc.tcp_port` needs to be open on the firewall, and directly accessible from the internet (not behind a load balancer).
 
+## TURN
+
+Some clients behind vpns or strict corporate firewalls will not be able to communicate with either of the rtc ports. For these cases, you can enable the TURN server. A TLS certificate signed by a Certificate Authority is required. When not using a load balancer, `turn.tls_port` needs to be set to 443.
+
 ## Resources
 
 The scalability of LiveKit is bound by bandwidth and CPU. We recommend running production setups on 10Gbps ethernet or faster.
@@ -53,6 +57,12 @@ keys:
   # your_api_key: <api_secret>
 # when enabled, LiveKit will expose prometheus metrics on :6789/metrics
 #prometheus_port: 6789
+turn:
+  enabled: true
+  # domain must match tls certificate
+  domain: <turn.myhost.com>
+  # defaults to 3478. If not using a load balancer, must be set to 443.
+  tls_port: 3478
 ```
 
 ## Prometheus
