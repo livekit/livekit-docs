@@ -7,7 +7,7 @@ We officially support client wrappers for the following platforms. Since the ser
 | Platform | Repo                                                        | Links                                                                                                            |
 | :------- | :---------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | Node.js  | [server-sdk-js](https://github.com/livekit/server-sdk-js)   | [npm](https://www.npmjs.com/package/livekit-server-api) [docs](https://docs.livekit.io/server-sdk-js/index.html) |
-| Go       | [livekit-sdk-go](https://github.com/livekit/livekit-sdk-go) | [docs](https://pkg.go.dev/github.com/livekit/livekit-sdk-go)                                                     |
+| Go       | [server-sdk-go](https://github.com/livekit/server-sdk-go) | [docs](https://pkg.go.dev/github.com/livekit/server-sdk-go)                                                     |
 
 :::note
 
