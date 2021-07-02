@@ -4,7 +4,7 @@ title: Benchmarking
 
 ## Measuring performance
 
-LiveKit can scale to many simulteneous rooms via scaling horizontally, but each room must fit within a single node. For this reason, benchmarks below will be focused on stressing the number of concurrent users in a room.
+LiveKit can scale to many simulteneous rooms by running a distributed setup across multiple nodes. However, each room must fit within a single node. For this reason, benchmarks below will be focused on stressing the number of concurrent users in a room.
 
 With WebRTC SFUs, the main proxy for how much work the server is doing is total fowarded bitrate.
 
