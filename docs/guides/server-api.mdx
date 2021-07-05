@@ -10,12 +10,18 @@ Room APIs are fully distributed across multiple nodes. Each instance is capable 
 
 ## APIs
 
-For SDKs wrapping the API calls, see [server sdks](../references/server-sdks)
+All of the APIs require a signed access token. The token should be set in HTTP headers as
+
+```
+Authorization: Bearer <token>
+```
+
+Our [server sdks](../references/server-sdks) will include the authentication header automatically.
 
 ### CreateRoom
 
 Creates a room with settings. Requires `roomCreate` permission.
-This method is optional; rooms are automatically created when clients connect to them for the first time.
+This method is optional; rooms are created automatically when clients connect to them for the first time.
 
 | Parameter        | Type   | Description                                             |
 | :--------------- | :----- | :------------------------------------------------------ |

@@ -2,7 +2,7 @@ const repoUrl = 'https://github.com/livekit/livekit-server'
 
 module.exports = {
   title: 'docs',
-  tagline: 'The tagline of my site',
+  tagline: 'LiveKit Documentation',
   url: 'https://docs.livekit.io/',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -18,15 +18,20 @@ module.exports = {
         src: 'img/logo.svg',
       },
       items: [
-        // {
-        //   // href: 'https://livekit.io'
-        //   activeBasePath: '/',
-        //   label: 'Docs',
-        //   position: 'left',
-        // },
+        {
+          href: 'https://livekit.io',
+          label: 'Home',
+          position: 'right',
+        },
         {
           href: repoUrl,
           label: 'GitHub',
+          position: 'right',
+          className: 'github',
+        },
+        {
+          href: 'https://livekit.io/playground',
+          label: 'Playground',
           position: 'right',
         },
       ],
