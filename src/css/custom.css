@@ -50,7 +50,7 @@ body {
   padding-left: 2rem;
 } */
 
-.navbar__items--right .iconExternalLink_node_modules-\@docusaurus-theme-classic-lib-next-theme-IconExternalLink- {
+.navbar__items--right .navbar__link span svg {
   display: none;
 }
 
