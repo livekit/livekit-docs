@@ -111,6 +111,22 @@ Room permissions are specified in the `video` field of a decoded join token. It 
 | canPublish   | bool   | allow participant to publish tracks                       |
 | canSubscribe | bool   | allow participant to subscribe to tracks                  |
 
+### Example: subscribe-only token
+
+To create a token where the participant can only subscribe, and not publish into the room, you would use the following grant:
+
+```json
+{
+  ...
+  "video": {
+    "room": "myroom",
+    "roomJoin": true,
+    "canSubscribe": true,
+    "canPublish": false
+  }
+}
+```
+
 ## Token expiration
 
 A tokens has an expiration time. We recommend setting it to the expected duration of a session. A LiveKit client will store a token for the entire session duration, in case it needs to reconnect.
