@@ -6,25 +6,27 @@ title: Preparing for production
 
 LiveKit uses several ports to communicate with clients:
 
-**HTTP/WebSocket**
+### HTTP/WebSocket
 
 7880 by default. This port should be placed behind a load balancer that can terminate SSL. LiveKit services are homonegeous: any client could connect to any backend instance, regardless of the room that they are in.
 
-**rtc.udp_port**
+### rtc.port_range_start - rtc.port_range_end
 
-7882 by default. This is the primary port for incoming UDP data from clients. LiveKit advertises this port as a WebRTC host ICE candidate. `rtc.udp_port` needs to be open on the firewall, and directly accessible from the internet (not behind a load balancer).
+50000-60000 by default. These are the primary ports for UDP data with WebRTC clients. LiveKit advertises these ports as WebRTC host candidates (each participant in the room will use two ports). This port range needs to be open on the firewall, and directly accessible from the internet.
 
-**rtc.tcp_port**
+### rtc.tcp_port
 
 7881 by default. This is used to support ICE over TCP, which is used when the current network does not support UDP (VPN, corporate firewalls). `rtc.tcp_port` needs to be open on the firewall, and directly accessible from the internet (not behind a load balancer).
 
 ## TURN
 
-Some clients behind vpns or strict corporate firewalls will not be able to communicate with either of the rtc ports. For these cases, you can enable the TURN server. A TLS certificate signed by a Certificate Authority is required. When not using a load balancer, `turn.tls_port` needs to be set to 443.
+Some corporate firewalls block not only traffic going over UDP, but also non-TLS TCP traffic. In those cases, TURN/TLS is useful to ensure those clients could still connect. LiveKit has a TURN server built-in.
+
+To use it, you will need a TLS certificate signed by a Certificate Authority. This port could sit behind a load balancer, or exposed directly. When not using a load balancer, `turn.tls_port` needs to be set to 443.
 
 ## Resources
 
-The scalability of LiveKit is bound by bandwidth and CPU. We recommend running production setups on 10Gbps ethernet or faster.
+The scalability of LiveKit is bound by CPU and bandwidth. We recommend running production setups on 10Gbps ethernet or faster.
 
 When deploying on cloud providers, compute-optimized instance types are the most suitable for LiveKit.
 
@@ -40,18 +42,17 @@ Below is a recommend config for a production deploy. To see other customization 
 port: 7880
 log_level: info
 rtc:
-  udp_port: 7882
   tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 60000
   # use_external_ip should be set to true for most cloud environments where
   # the host has a public IP address, but is not exposed to the process.
   # LiveKit will attempt to use STUN to discover the true IP, and advertise
   # that IP with its clients
   use_external_ip: true
-redis: {}
-  # address:
-  # db: 0
-  # username:
-  # password:
+redis:
+  # redis is recommended for production deploys
+  address: my-redis-server.name:6379
 keys:
   # key value pairs
   # your_api_key: <api_secret>
