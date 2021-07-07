@@ -74,7 +74,7 @@ var theme = {
     {
       types: ["tag", "boolean", "number", "constant", "symbol", "deleted"],
       style: {
-        color: "#8158F6",
+        color: "#9F83FF",
       },
     },
     {
