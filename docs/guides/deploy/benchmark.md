@@ -22,7 +22,9 @@ We have a couple of different tools to help you understand the limits of your de
 
 For publishing, it sends packets simulating a particular bitrate. This makes it a good approximation for audio streams, but less so for video. With real video tracks, the publisher responds to downstream feedback such as PLI packets and would then produce I frames.
 
-When it's used as a subscriber, it will compute packet loss and produce NACKs, but does not produce PLI.
+As a subscriber, it will compute packet loss and produce NACKs, but does not produce PLI.
+
+When benchmarking with the load tester, be sure to run it on a machine with plenty of resources, and that the [sysctl parameters](tuning) have been tuned.
 
 ### Headless chrome
 
@@ -32,23 +34,22 @@ Chrometester can join only as a subscriber, since it doesn't have a camera or mi
 
 ## Benchmarks
 
-We've ran benchmarks for a few different scenarios to give a general understanding of performance. All benchmarks are ran with the server running on an `c2-standard-8` instance on Google Cloud.
+We've ran benchmarks for a few different scenarios to give a general understanding of performance. All benchmarks are ran with the server running on a 16-core, compute optimized instance on Google Cloud. ( `c2-standard-16`)
 
 ### Audio only
 
 This simulates an audio only experience with various number of speakers and listeners. It's performed using CLI load tester using a bitrate of 20kbps.
 
-| Publishers | Subscribers | Tracks | Latency | Packet loss |
-| ---------- | ----------- | ------ | ------- | ----------- |
-| 9          | 0           | 72     | 46.6ms  | 0.0000%     |
-| 9          | 100         | 972    | 47.6ms  | 0.0002%     |
-| 50         | 0           | 2450   | 47.7ms  | 0.0005%     |
-| 9          | 500         | 4572   | 186.9ms | 0.0010%     |
-| 100        | 0           | 9900   | 368.9ms | 0.0002%     |
-| 10         | 1000        | 10090  | 384.0ms | 0.0001%     |
+| Pubs | Subs | Tracks | Audio | Latency | Packet loss |
+| :--- | :--- | :----- | :---- | :------ | :---------- |
+| 9    | 0    | 71     | Yes   | 46.7ms  | 0.000%      |
+| 9    | 100  | 971    | Yes   | 46.3ms  | 0.000%      |
+| 50   | 0    | 2450   | Yes   | 46.5ms  | 0.000%      |
+| 9    | 500  | 4572   | Yes   | 47.9ms  | 0.000%      |
+| 100  | 0    | 9899   | Yes   | 48.9ms  | 0.000%      |
+| 10   | 1000 | 10090  | Yes   | 53.6ms  | 0.014%      |
+| 10   | 2500 | 25090  | Yes   | 93.1ms  | 0.145%      |
 
 ### Video room
 
-This simulates a large room with a limited number of publishers and many viewers. We started 6 publishers (using example.livekit.io) each publishing audio and video (960x540) with simulcast enabled. We then spun up instances of Chrometester on Kubernetes, joining the same room as subscribers. At around 320 subscribers, we started experiencing video artifacts caused by high packet loss.
-
-There is still opportunity to optimize this use case. When the limits were reached, we noticed only some of the cores on the machine were fully utilized, while others still had capacity for more. This is on our roadmap for improving in the near future, and we welcome contributions!
+This simulates a large room with a limited number of publishers and many viewers. We started **4 publishers** (using example.livekit.io) each publishing audio and video (960x540) with simulcast enabled. We then spun up instances of Chrometester on Kubernetes, joining the same room as subscribers. At around **440** subscribers, we started experiencing video artifacts caused by high packet loss. When that happened, we observed the server instance had maxed out on CPU usage.
