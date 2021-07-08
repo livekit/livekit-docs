@@ -40,15 +40,14 @@ We've ran benchmarks for a few different scenarios to give a general understandi
 
 This simulates an audio only experience with various number of speakers and listeners. It's performed using CLI load tester using a bitrate of 20kbps.
 
-| Pubs | Subs | Tracks | Audio | Latency | Packet loss |
-| :--- | :--- | :----- | :---- | :------ | :---------- |
-| 9    | 0    | 71     | Yes   | 46.7ms  | 0.000%      |
-| 9    | 100  | 971    | Yes   | 46.3ms  | 0.000%      |
-| 50   | 0    | 2450   | Yes   | 46.5ms  | 0.000%      |
-| 9    | 500  | 4572   | Yes   | 47.9ms  | 0.000%      |
-| 100  | 0    | 9899   | Yes   | 48.9ms  | 0.000%      |
-| 10   | 1000 | 10090  | Yes   | 53.6ms  | 0.014%      |
-| 10   | 2500 | 25090  | Yes   | 93.1ms  | 0.145%      |
+| Pubs | Subs | Tracks | Latency | Packet loss |
+| :--- | :--- | :----- | :------ | :---------- |
+| 10   | 0    | 90     | 46.5ms  | 0.000%      |
+| 10   | 100  | 1090   | 47ms    | 0.000%      |
+| 50   | 0    | 2450   | 46.7ms  | 0.000%      |
+| 10   | 500  | 5090   | 48.3ms  | 0.001%      |
+| 100  | 0    | 9900   | 49.2ms  | 0.020%      |
+| 10   | 1000 | 10090  | 52.1ms  | 1.529%      |
 
 ### Video room
 
