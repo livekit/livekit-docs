@@ -1,6 +1,8 @@
 ---
 title: Preparing for production
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 ## Ports
 
@@ -65,6 +67,41 @@ turn:
   # defaults to 3478. If not using a load balancer, must be set to 443.
   tls_port: 3478
 ```
+
+## Firewall
+
+When hosting in cloud environments, the ports configured above will have to be opened on the firewall.
+
+<Tabs
+  defaultValue="aws"
+  groupId="cloud"
+  values={[
+    {label: 'AWS', value: 'aws'},
+    {label: 'Google Cloud', value: 'gcloud'},
+  ]}>
+  <TabItem value="aws">
+
+Navigate to the VPC dashboard, choose `Security Groups`, and select the security group that LiveKit is deployed to.
+Open `Inbound rules` tab and select `Edit Inbound Rules`
+
+![AWS inbound rules](/img/deploy/aws-inbound-rules.png)
+
+Then add the following rules (assuming using default ports)
+
+![AWS add rules](/img/deploy/aws-inbound-rules-2.png)
+
+  </TabItem>
+  <TabItem value="gcloud">
+
+Navigate to VPC network, then select `Firewall` on the left. Then select `Create Firewall Rule` on the top menu.
+
+The firewall rule should look something like this:
+
+![Google Cloud firewall rules](/img/deploy/gcloud-firewall-rules.png)
+
+  </TabItem>
+</Tabs>
+
 
 ## Prometheus
 
