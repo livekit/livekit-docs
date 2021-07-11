@@ -9,7 +9,7 @@ This guide will get you running with a LiveKit installation in minutes.
 
 ## Overview
 
-At its core, LiveKit is a WebRTC SFU. This means it acts as a WebRTC peer and maintains connections with each participant in a room. Each client participant connects to the LiveKit server, not to each other.
+At its core, LiveKit is a WebRTC SFU. This means it acts as a WebRTC peer and maintains connections with each participant in a room. Unlike vanilla WebRTC, each client participant connects to the LiveKit server, not to one another.
 
 LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access tokens for authentication. Using LiveKit's server SDK, access tokens are generated with an API key and secret pair. This exchange takes place on the server side to avoid embedding secret keys in client code. Here's the general flow:
 
