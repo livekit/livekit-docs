@@ -87,8 +87,17 @@ Secret Key:  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   <TabItem value="docker">
 
 ```shell
-docker run --rm -p 7880:7880 -p 7881:7881 -e LIVEKIT_KEYS="<key>: <secret>" livekit/livekit-server --dev
+docker run --rm \
+  -p 7880:7880 \
+  -p 7881:7881 \
+  -p 7882:7882/udp \
+  -e LIVEKIT_KEYS="<key>: <secret>" \
+  livekit/livekit-server \
+  --dev \
+  --node-ip=<machine-ip>
 ```
+
+`--node-ip` is required when running via Docker with bridge networking (default).
 
   </TabItem>
   <TabItem value="source">
