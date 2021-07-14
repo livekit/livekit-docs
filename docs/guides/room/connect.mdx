@@ -12,6 +12,10 @@ For events happening to a specific participant, they will also be fired on the a
 
 ## Connecting to a room
 
+Connecting to a room requires two parameters: a `url` and a `token`. The `url` points to your LiveKit server instance, which, if you followed [this guide](https://docs.livekit.io/guides/getting-started/#setting-up-the-server), is likely `ws://localhost:7880`. 
+
+The `token` is an access token representing the particular local participant. You can use the aformentioned guide to generate a token via CLI, or you can use our [server SDK](https://docs.livekit.io/references/server-sdks) to create one.
+
 <Tabs
   defaultValue="typescript"
   groupId="client-sdk"
