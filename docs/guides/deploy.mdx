@@ -4,6 +4,16 @@ title: Preparing for production
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+Deploying WebRTC servers can be tricky, especially on cloud environments. While LiveKit simplifies some aspects of the deployment, there are a few things to understand.
+
+## Domain, SSL certificates, and load balancer
+
+In order to have a secure LiveKit desployment, you will need a domain as well as a SSL certificate for that domain. This domain will be used as the primary endpoint for LiveKit clients, for example: `wss://livekit.yourhost.com`. The SSL certificate must be signed by a trusted certificate authority; self-signed certs do not work here.
+
+You will also need to set up HTTPS/SSL termination with a load balancer or a reverse proxy.
+
+If you are using TURN (see below), then a separate TURN domain & SSL cert will be needed as well. Since the TURN server would need to be deployed to port 443 as well, you cannot use the same domain as the primary LiveKit endpoint.
+
 ## Ports
 
 LiveKit uses several ports to communicate with clients:
@@ -20,11 +30,22 @@ LiveKit uses several ports to communicate with clients:
 
 7881 by default. This is used to support ICE over TCP, which is used when the current network does not support UDP (VPN, corporate firewalls). `rtc.tcp_port` needs to be open on the firewall, and directly accessible from the internet (not behind a load balancer).
 
+### turn.tls_port
+
+optional; used by the embedded TURN server (see below)
+
 ## TURN
 
-Some corporate firewalls block not only traffic going over UDP, but also non-TLS TCP traffic. In those cases, TURN/TLS is useful to ensure those clients could still connect. LiveKit has a TURN server built-in.
+Certain corporate firewalls block not only traffic going over UDP, but also non-secure TCP traffic. In those cases, it's helpful to use the embedded TURN server within LiveKit. [Here's](https://bloggeek.me/webrtc-turn/) a good resource if you are interested in reading more about how TURN is used.
 
-To use it, you will need a TLS certificate signed by a Certificate Authority. This port could sit behind a load balancer, or exposed directly. When not using a load balancer, `turn.tls_port` needs to be set to 443.
+Because of the existing connectivity methods LiveKit already supports, TURN is only useful when both
+
+- TLS is enabled
+- The port advertised to clients is the same as HTTPS (443)
+
+With TURN/TLS, LiveKit will perform the termination, so you will have to specify the certificates in the LiveKit configuration. When running multiple LiveKit instances, you can place a layer 4 load balancer in front of it.
+
+If you are not using a load balancer, `turn.tls_port` needs to be set to 443, as that will be the port that's advertised to clients.
 
 ## Resources
 
