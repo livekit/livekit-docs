@@ -138,9 +138,11 @@ On **iOS**, when connecting to unsecured hosts via ws://, you may get an error m
 The resource could not be loaded because the App Transport Security policy requires the use of a secure connection
 ```
 
-This is due to the TLS requirement in iOS apps. To suppress this error, you'll need to add a security exception to your Xcode configs:
+This is due to the TLS requirement in iOS apps. To suppress this error, you'll need to add a security exception to your Xcode configuration:
 
-1. Open the target's Info.plist (Targets -> target -> Info)
+1. Click on the `.xcodeproj` file in Xcode
+2. Select a target from the Targets list
+2. Click the "Info" tab
 2. Add a custom iOS property
 3. Enter "App Transport Security Settings" or "NSAppTransportSecurity" as a `Dictionary`
 4. Under that dictionary, add a key "NSAllowsArbitraryLoads" and set it to `YES`
