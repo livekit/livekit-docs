@@ -10,9 +10,9 @@ Deploying WebRTC servers can be tricky, especially in cloud environments. This g
 
 In order to have a secure LiveKit desployment, you will need a domain as well as a SSL certificate for that domain. This domain will be used as the primary endpoint for LiveKit clients, for example: `wss://livekit.yourhost.com`. The SSL certificate must be signed by a trusted certificate authority; self-signed certs do not work here.
 
-You will also need to set up HTTPS/SSL termination with a load balancer or a reverse proxy.
+You will also need to set up HTTPS/SSL termination with a load balancer or reverse proxy.
 
-If you are using TURN (see below), then a separate TURN domain & SSL cert will be needed as well. This is because in order to use TURN/TLS correctly, it'll also need to listen on port 443.
+If you are using TURN (see below), then a separate TURN domain and SSL cert will be needed, as well. In order to use TURN/TLS correctly, the server needs to listen on port 443.
 
 ## Ports
 
@@ -20,15 +20,15 @@ LiveKit uses several ports to communicate with clients:
 
 ### HTTP/WebSocket
 
-7880 by default. This port should be placed behind a load balancer that can terminate SSL. LiveKit services are homonegeous: any client could connect to any backend instance, regardless of the room that they are in.
+7880 by default. This port should be placed behind a load balancer that can terminate SSL. LiveKit services are homogenous: any client could connect to any backend instance, regardless of the room they are in.
 
 ### rtc.port_range_start - rtc.port_range_end
 
-50000-60000 by default. These are the primary ports for UDP data with WebRTC clients. LiveKit advertises these ports as WebRTC host candidates (each participant in the room will use two ports). This port range needs to be open on the firewall, and directly accessible from the internet.
+50000-60000 by default. These are the primary ports for UDP data with WebRTC clients. LiveKit advertises these ports as WebRTC host candidates (each participant in the room will use two ports). This port range needs to be open in the firewall, and directly accessible from the Internet.
 
 ### rtc.tcp_port
 
-7881 by default. This is used to support ICE over TCP, which is used when the current network does not support UDP (VPN, corporate firewalls). `rtc.tcp_port` needs to be open on the firewall, and directly accessible from the internet (not behind a load balancer).
+7881 by default. This is used to support ICE over TCP, which is used when the current network configuration does not support UDP (e.g. VPN, corporate firewalls). `rtc.tcp_port` needs to be open in the firewall, and directly accessible from the Internet (i.e. not behind a load balancer).
 
 ### turn.tls_port
 
@@ -36,11 +36,11 @@ optional; used by the embedded TURN server (see below)
 
 ## TURN
 
-Certain corporate firewalls block not only traffic going over UDP, but also non-secure TCP traffic. In those cases, it's helpful to use a TURN server. [Here's](https://bloggeek.me/webrtc-turn/) a good resource if you are interested in reading more about how TURN is used.
+Certain corporate firewalls block not only UDP traffic, but non-secure TCP traffic, as well. In those cases, it's helpful to use a TURN server. [Here's](https://bloggeek.me/webrtc-turn/) a good resource if you're interested in reading more about how TURN is used.
 
-The good news is LiveKit includes an embedded TURN server. We have a secure TURN/TLS implementation that has integrated authentication with the rest of LiveKit. This ensures that only clients that are authenticated to join the room can connect to TURN.
+The good news is LiveKit includes an embedded TURN server. We have a secure TURN/TLS implementation that has integrated authentication with the rest of LiveKit. This ensures that only clients authenticated to join the room can connect to TURN.
 
-Because of the existing connectivity methods LiveKit already supports, TURN is only useful when both
+Because of the existing connectivity methods LiveKit already supports, TURN is only useful when both:
 
 - TLS is enabled
 - The port advertised to clients is the same as HTTPS (443)
@@ -53,15 +53,15 @@ If you are not using a load balancer, `turn.tls_port` needs to be set to 443, as
 
 The scalability of LiveKit is bound by CPU and bandwidth. We recommend running production setups on 10Gbps ethernet or faster.
 
-When deploying on cloud providers, compute-optimized instance types are the most suitable for LiveKit.
+When deploying to cloud providers, compute-optimized instance types are the most suitable for LiveKit.
 
 If running in a Dockerized environment, host networking should be used for optimal performance.
 
 ## Configuration
 
-For production deploys, we recommend using a config file. The config file could be pass in via `--config` flag, or the body of the YAML can be set as `LIVEKIT_CONFIG` environment variable.
+For production deploys, we recommend using a config file. The config file can be passed in via `--config` flag, or the body of the YAML can be set with a `LIVEKIT_CONFIG` environment variable.
 
-Below is a recommend config for a production deploy. To see other customization options, see [config-sample.yaml](https://github.com/livekit/livekit-server/blob/master/config-sample.yaml)
+Below is a recommended config for a production deploy. To view other customization options, see [config-sample.yaml](https://github.com/livekit/livekit-server/blob/master/config-sample.yaml)
 
 ```yaml title="config.yaml"
 port: 7880
@@ -93,7 +93,7 @@ turn:
 
 ## Firewall
 
-When hosting in cloud environments, the ports configured above will have to be opened on the firewall.
+When hosting in cloud environments, the ports configured above will have to be opened in the firewall.
 
 <Tabs
   defaultValue="aws"
@@ -105,18 +105,18 @@ When hosting in cloud environments, the ports configured above will have to be o
   <TabItem value="aws">
 
 Navigate to the VPC dashboard, choose `Security Groups`, and select the security group that LiveKit is deployed to.
-Open `Inbound rules` tab and select `Edit Inbound Rules`
+Open the `Inbound rules` tab and select `Edit Inbound Rules`
 
 ![AWS inbound rules](/img/deploy/aws-inbound-rules.png)
 
-Then add the following rules (assuming using default ports)
+Then add the following rules (assuming use of default ports):
 
 ![AWS add rules](/img/deploy/aws-inbound-rules-2.png)
 
   </TabItem>
   <TabItem value="gcloud">
 
-Navigate to VPC network, then select `Firewall` on the left. Then select `Create Firewall Rule` on the top menu.
+Navigate to VPC network, then select `Firewall` on the left. Then select `Create Firewall Rule` in the top menu.
 
 The firewall rule should look something like this:
 
@@ -128,16 +128,16 @@ The firewall rule should look something like this:
 
 ## Prometheus
 
-When configured, LiveKit exposes Prometheus stats on an /metrics endpoint. We export metrics related to rooms, participants, and packet transmissions.
+When configured, LiveKit exposes Prometheus stats via /metrics endpoint. We export metrics related to rooms, participants, and packet transmissions.
 
-To see the list of metrics that we export, see [stats.go](https://github.com/livekit/livekit-server/blob/master/pkg/rtc/stats.go)
+To view the list of metrics we export, see [stats.go](https://github.com/livekit/livekit-server/blob/master/pkg/rtc/stats.go)
 
 ## Multi-node routing
 
 If Redis is configured, LiveKit automatically switches to a distributed setup by using Redis for room data as well as a message bus. In this mode, each node periodically reports their stats to Redis; this enables them to be aware of the entire cluster and make routing decisions based on availability and load. We recommend this setup for a redundant deployment.
 
-When a new room is created, the node that received that request is able to choose an available node from the cluster to host the room.
+When a new room is created, the node that received this request is able to choose an available node from the cluster to host the room.
 
 When a client establishes a signal connection to LiveKit, it creates a persistent WebSocket connection with one of the instances. That instance will then acts as a signaling bridge, proxying messages between the node where the room is hosted and the client.
 
-In a multi-node setup, LiveKit can support an large number of concurrent rooms. However, there are limits to the number of participants in a room, since a room must fit on a single node (for now).
+In a multi-node setup, LiveKit can support a large number of concurrent rooms. However, there are limits to the number of participants in a room since, for now, a room must fit on a single node.
