@@ -4,28 +4,29 @@ title: Recording (Beta)
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Our recorder can be used standalone to record any webpage, or deployed as a service to be managed by your LiveKit server.
+With LiveKit Recorder, you can record your session for livestreaming or archival. The web recorder runs Chrome underneath, which allows you to customize recording layout however you'd like. In many cases, you could leverage your application's existing Room UI with little change. We also provide a couple of pre-built recording views, a `speaker` layout and `grid` layout.
 
-It's highly customizable - control dimensions and scaling, framerate, and bitrates.
+The recorder can output the session to a file or S3 object (as an mp4). If you are planning to livestream the session, it can be streamed to any RTMP endpoint.
 
-You can download your recordings, upload them to s3, or forward them to RTMP streams.
+![Recorder architecture](/img/recorder/recorder-architecture.svg)
 
 ## Standalone
 
-Start recording in seconds with our standalone recorder. No setup required.
+Start recording in seconds with our standalone recorder. The recorder is published as a docker image, and can be used with no setup required.
 
 Try one of the demos below, or find all the recording options along with more in-depth examples [here](https://github.com/livekit/livekit-recorder/tree/main/recorder).
 
 
 ### URL demo
 
-Try it now by running the following:
+You can record any web page (even unrelated to LiveKit). Try it now by running the following:
+
 ```bash
-mkdir ~/livekit/recordings
+mkdir -p ~/livekit/recordings
 
 docker run --rm --name demo \
-    -e LIVEKIT_RECORDER_CONFIG='{"input":{"url":"https://www.youtube.com/v/dQw4w9WgXcQ"},"output":{"file":"/app/out/url-recording.mp4"}}' \
-    -v ~/livekit/recordings:/app/out \
+    -e LIVEKIT_RECORDER_CONFIG='{"input":{"url":"https://www.youtube.com/v/dQw4w9WgXcQ"},"output":{"file":"/output/url-recording.mp4"}}' \
+    -v ~/livekit/recordings:/output \
     livekit/livekit-recorder & \
 sleep 60 && docker stop demo
 ```
@@ -34,24 +35,24 @@ After a minute, you'll find `url-recording.mp4` at ~/livekit/recordings.
 
 ### Room demo
 
-Record your own LiveKit room just as easily using our recording templates.
+Record your own LiveKit room just as easily using our recording templates. (choose from `grid-light`, `grid-dark`, `speaker-light`, `speaker-dark`)
 
 Create a `config.json` and fill in your `api_key`, `api_secret`, `ws_url`, and `room_name`:
 
 ```json title="config.json"
 {
-    "api_key": "<key>",
-    "api_secret": "<secret>",
-    "input": {
-        "template": {
-            "type": "speaker-dark",
-            "ws_url": "<wss://your-livekit-address.com>",
-            "room_name": "<room-to-record>"
-        }
-    },
-    "output": {
-        "file": "/app/out/room-recording.mp4"
+  "api_key": "<key>",
+  "api_secret": "<secret>",
+  "input": {
+    "template": {
+      "type": "grid-dark",
+      "ws_url": "<wss://your-livekit-address.com>",
+      "room_name": "<room-to-record>"
     }
+  },
+  "output": {
+    "file": "/output/room-recording.mp4"
+  }
 }
 ```
 
@@ -60,15 +61,31 @@ mkdir ~/livekit/recordings
 
 docker run --rm --name demo \
     -e LIVEKIT_RECORDER_CONFIG="$(cat config.json)" \
-    -v ~/livekit/recordings:/app/out \
+    -v ~/livekit/recordings:/output \
     livekit/livekit-recorder
 ```
 
 Once you leave the room, the recording will end, and you'll find `room-recording.mp4` at ~/livekit/recordings.
 
+When using an existing LiveKit template, we will automatically create a JWT token with the provided api_key and api_secret. The token is created to be a hidden, subscribe-only participant. This means the recorder connects to the room, but does not appear to other participants.
+
+## Creating your templates
+
+You likely already have a room UI built with LiveKit web SDKs. The recording UI can be similar to your existing room UI, with a few differences:
+
+- Do not render the local participant - in this case, the local participant will be the recorder instance
+- Token permissions - the recorder should have `canSubscribe` and `hidden` set to true
+- Room controls (mute, leave, etc) should not be visible
+
+Source code to our default room templates can be [found here](https://github.com/livekit/livekit-recorder/tree/main/web).
+
 ## Service
 
-[Deploy](deploy/recorder) the recording service and manage your recordings through our sdks, or with our [cli](https://github.com/livekit/livekit-cli).
+While standalone mode is easy to get started, you may want to [deploy](deploy/recorder) the recorder as a service for programmatic access to recording. Once deployed, rooms can be recorded by indicating as such during room creation.
+
+![Recorder service](/img/recorder/recorder-service.svg)
+
+In this mode, recorder service instances listen to Redis for recording jobs requested by LiveKit server. Only one instance of the service will be assigned to a single job. You can start multiple instances of the service to ensure spare capacity when rooms need to be recorded.
 
 ### Create a recorded room
 

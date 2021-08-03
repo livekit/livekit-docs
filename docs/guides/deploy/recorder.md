@@ -7,7 +7,7 @@ The recording service only requires access to the same redis cluster as your Liv
 ## Config
 
 The only required field is your redis address.
-Additionally, if you'll be starting template recordings by room name (instead of token), you'll need to supply your server api key and token. 
+Additionally, if you'll be starting template recordings by room name (instead of token), you'll need to supply your server api key and token.
 
 ```yaml
 redis:
@@ -47,7 +47,7 @@ $ helm repo add livekit https://helm.livekit.io
 ```
 
 Create a values.yaml for your deployment, using [recorder-sample.yaml](https://github.com/livekit/livekit-helm/blob/master/recorder-sample.yaml) as a template.
-Each instance can record one room at a time, so be sure to either enable autoscaling, or set replicaCount >= the number of rooms you'll need to simultaneously record. 
+Each instance can record one room at a time, so be sure to either enable autoscaling, or set replicaCount >= the number of rooms you'll need to simultaneously record.
 
 Then install the chart
 
