@@ -24,7 +24,7 @@ Try it now by running the following:
 mkdir ~/livekit/recordings
 
 docker run --rm --name demo \
-    -e LIVEKIT_RECORDER_CONFIG="{\"input\":{\"url\":\"https://www.youtube.com/v/dQw4w9WgXcQ\"},\"output\":{\"file\":\"/app/out/url-recording.mp4\"}}" \
+    -e LIVEKIT_RECORDER_CONFIG='{"input":{"url":"https://www.youtube.com/v/dQw4w9WgXcQ"},"output":{"file":"/app/out/url-recording.mp4"}}' \
     -v ~/livekit/recordings:/app/out \
     livekit/livekit-recorder & \
 sleep 60 && docker stop demo
