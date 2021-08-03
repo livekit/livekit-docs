@@ -24,7 +24,7 @@ Then add the LiveKit repo
 $ helm repo add livekit https://helm.livekit.io
 ```
 
-Create a values.yaml for your deployment, using [values-sample.yaml](https://github.com/livekit/livekit-helm/blob/master/values-sample.yaml) as a template.
+Create a values.yaml for your deployment, using [server-sample.yaml](https://github.com/livekit/livekit-helm/blob/master/server-sample.yaml) as a template.
 
 Then install the chart
 

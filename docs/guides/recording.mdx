@@ -1,0 +1,261 @@
+---
+title: Recording (Beta)
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Our recorder can be used standalone to record any webpage, or deployed as a service to be managed by your LiveKit server.
+
+It's highly customizable - control dimensions and scaling, framerate, and bitrates.
+
+You can download your recordings, upload them to s3, or forward them to RTMP streams.
+
+## Standalone
+
+Start recording in seconds with our standalone recorder. No setup required.
+
+Try one of the demos below, or find all the recording options along with more in-depth examples [here](https://github.com/livekit/livekit-recorder/tree/main/recorder).
+
+
+### URL demo
+
+Try it now by running the following:
+```bash
+mkdir ~/livekit/recordings
+
+docker run --rm --name demo \
+    -e LIVEKIT_RECORDER_CONFIG="{\"input\":{\"url\":\"https://www.youtube.com/v/dQw4w9WgXcQ\"},\"output\":{\"file\":\"/app/out/url-recording.mp4\"}}" \
+    -v ~/livekit/recordings:/app/out \
+    livekit/livekit-recorder & \
+sleep 60 && docker stop demo
+```
+
+After a minute, you'll find `url-recording.mp4` at ~/livekit/recordings.
+
+### Room demo
+
+Record your own LiveKit room just as easily using our recording templates.
+
+Create a `config.json` and fill in your `api_key`, `api_secret`, `ws_url`, and `room_name`:
+
+```json title="config.json"
+{
+    "api_key": "<key>",
+    "api_secret": "<secret>",
+    "input": {
+        "template": {
+            "type": "speaker-dark",
+            "ws_url": "<wss://your-livekit-address.com>",
+            "room_name": "<room-to-record>"
+        }
+    },
+    "output": {
+        "file": "/app/out/room-recording.mp4"
+    }
+}
+```
+
+```bash
+mkdir ~/livekit/recordings
+
+docker run --rm --name demo \
+    -e LIVEKIT_RECORDER_CONFIG="$(cat config.json)" \
+    -v ~/livekit/recordings:/app/out \
+    livekit/livekit-recorder
+```
+
+Once you leave the room, the recording will end, and you'll find `room-recording.mp4` at ~/livekit/recordings.
+
+## Service
+
+[Deploy](deploy/recorder) the recording service and manage your recordings through our sdks, or with our [cli](https://github.com/livekit/livekit-cli).
+
+### Create a recorded room
+
+<Tabs
+  defaultValue="node"
+  groupId="server-sdk"
+  values={[
+    {label: 'Node', value: 'node'},
+    {label: 'Golang', value: 'go'},
+    {label: 'Cli', value: 'cli'},
+  ]}>
+  <TabItem value="node">
+
+```typescript title="TypeScript"
+import { RoomServiceClient } from 'livekit-server-sdk';
+const livekitHost = 'https://my.livekit.host';
+const svc = new RoomServiceClient(livekitHost, 'api-key', 'secret-key');
+
+const opts = {
+    name: 'my-room',
+    recording: {
+        input: {
+            template: {
+                type: 'grid-dark',
+                ws_url: 'wss://your-livekit-address.com',
+                room_name: 'my-room'
+            }
+        },
+        output: {
+            s3: {
+                bucket: 'mybucket',
+                key: 'recording.mp4'
+            }
+        }
+    }
+}
+
+svc.createRoom(opts)
+```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+```go title="Go"
+req := &livekit.CreateRoomRequest{
+    Name: "my-room",
+    Recording: &livekit.RecordRoomRequest{
+        Input: &livekit.RecordingInput{
+            Template: &livekit.RecordingTemplate{
+                Type: "grid-dark",
+                WsUrl: "wss://your-livekit-address.com",
+                RoomName: "my-room",
+            },
+        },
+        Output: &livekit.RecordingOutput{
+            S3: &livekit.RecordingS3Output{
+                Bucket: "mybucket",
+                Key: "recording.mp4",
+            },
+        },
+    },
+}
+
+room, err := roomServiceClient.CreateRoom(context.Background(), req)
+```
+
+  </TabItem>
+
+  <TabItem value="cli">
+
+When using the cli, you must create the room first and then use the `start-recording` command.
+
+  </TabItem>
+
+</Tabs>
+
+### Record an existing room (or another website)
+
+To record a webpage, use the `Url` recording input instead of `Template`.
+
+<Tabs
+  defaultValue="node"
+  groupId="server-sdk"
+  values={[
+    {label: 'Node', value: 'node'},
+    {label: 'Golang', value: 'go'},
+    {label: 'Cli', value: 'cli'},
+  ]}>
+  <TabItem value="node">
+
+```typescript title="TypeScript"
+const input = {
+    template: {
+        type: 'grid-dark',
+        ws_url: 'wss://your-livekit-address.com',
+        room_name: 'my-room'
+    }
+}
+
+const output = {
+    s3: {
+        bucket: 'mybucket',
+        key: 'recording.mp4'
+    }
+}
+
+const recordingId = await svc.startRecording(input, output)
+```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+```go title="Go"
+req := &livekit.RecordRoomRequest{
+    Input: &livekit.RecordingInput{
+        Template: &livekit.RecordingTemplate{
+            Type: "grid-dark",
+            WsUrl: "wss://your-livekit-address.com",
+            RoomName: "my-room",
+        }
+    },
+    Output: &livekit.RecordingOutput{
+        S3: &livekit.RecordingS3Output{
+            Bucket: "mybucket",
+            Key: "recording.mp4",
+        },
+    },
+}
+
+resp, err := roomServiceClient.StartRecording(context.Background(), req)
+recordingID := resp.RecordingId
+```
+
+  </TabItem>
+
+  <TabItem value="cli">
+
+```bash
+livekit-cli start-recording --url https://your-livekit-address.com --config path/to/config.json
+```
+Prints your recording ID:
+```
+Recording started. Recording ID: RR_XXXXXXXXXXXX
+```
+
+  </TabItem>
+
+</Tabs>
+
+### End a recording
+
+<Tabs
+  defaultValue="node"
+  groupId="server-sdk"
+  values={[
+    {label: 'Node', value: 'node'},
+    {label: 'Golang', value: 'go'},
+    {label: 'Cli', value: 'cli'},
+  ]}>
+  <TabItem value="node">
+
+```typescript title="TypeScript"
+svc.endRecording(recordingId)
+```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+```go title="Go"
+req := &livekit.EndRecordingRequest{
+    RecordingId: recordingID,
+}
+
+_, err := roomServiceClient.EndRecording(context.Background(), req)
+```
+
+  </TabItem>
+
+  <TabItem value="cli">
+
+```bash
+livekit-cli end-recording --url https://your-livekit-address.com --id RR_XXXXXXXXXXXX
+```
+
+  </TabItem>
+
+</Tabs>
