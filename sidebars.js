@@ -23,6 +23,7 @@ module.exports = {
         },
         'guides/access-tokens',
         'guides/server-api',
+        // 'guides/recording',
         {
           type: 'category',
           label: 'Deployment',
@@ -32,8 +33,9 @@ module.exports = {
             'guides/deploy/tuning',
             'guides/deploy/kubernetes',
             'guides/deploy/benchmark',
+            // 'guides/deploy/recorder',
           ],
-        }
+        },
       ],
     },
     {
