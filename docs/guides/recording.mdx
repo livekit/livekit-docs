@@ -45,7 +45,7 @@ Create a `config.json` and fill in your `api_key`, `api_secret`, `ws_url`, and `
   "api_secret": "<secret>",
   "input": {
     "template": {
-      "type": "grid-dark",
+      "layout": "grid-dark",
       "ws_url": "<wss://your-livekit-address.com>",
       "room_name": "<room-to-record>"
     }
@@ -87,47 +87,37 @@ While standalone mode is easy to get started, you may want to [deploy](/guides/d
 
 In this mode, recorder service instances listen to Redis for recording jobs requested by LiveKit server. Only one instance of the service will be assigned to a single job. You can start multiple instances of the service to ensure spare capacity when rooms need to be recorded.
 
-### Create a recorded room
+### Start a recording
 
-Add a recording config to a `create room` request, and the recording will start once the room is created.
-
-The recording will end when the last participant leaves.
+To record a webpage, use the `Url` recording input instead of `Template`.
 
 <Tabs
-  defaultValue="node"
-  groupId="server-sdk"
-  values={[
-    {label: 'Node', value: 'node'},
-    {label: 'Golang', value: 'go'},
-    {label: 'Cli', value: 'cli'},
-  ]}>
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
   <TabItem value="node">
 
 ```typescript title="TypeScript"
-import { RoomServiceClient } from 'livekit-server-sdk';
-const livekitHost = 'https://my.livekit.host';
-const svc = new RoomServiceClient(livekitHost, 'api-key', 'secret-key');
-
-const opts = {
-    name: 'my-room',
-    recording: {
-        input: {
-            template: {
-                type: 'grid-dark',
-                ws_url: 'wss://your-livekit-address.com',
-                room_name: 'my-room'
-            }
-        },
-        output: {
-            s3: {
-                bucket: 'mybucket',
-                key: 'recording.mp4'
-            }
-        }
+const input = {
+    template: {
+        layout: 'grid-dark',
+        ws_url: 'wss://your-livekit-address.com',
+        room_name: 'my-room'
     }
 }
-
-svc.createRoom(opts)
+const output = {
+    s3: {
+        bucket: 'mybucket',
+        key: 'recording.mp4'
+        access_key: 'aws-access-key',
+        secret: 'aws-secret'
+    }
+}
+const recordingId = await svc.startRecording(input, output)
 ```
 
   </TabItem>
@@ -135,54 +125,84 @@ svc.createRoom(opts)
   <TabItem value="go">
 
 ```go title="Go"
-req := &livekit.CreateRoomRequest{
-    Name: "my-room",
-    Recording: &livekit.RecordRoomRequest{
-        Input: &livekit.RecordingInput{
-            Template: &livekit.RecordingTemplate{
-                Type: "grid-dark",
-                WsUrl: "wss://your-livekit-address.com",
-                RoomName: "my-room",
-            },
-        },
-        Output: &livekit.RecordingOutput{
-            S3: &livekit.RecordingS3Output{
-                Bucket: "mybucket",
-                Key: "recording.mp4",
-            },
+req := &livekit.RecordRoomRequest{
+    Input: &livekit.RecordingInput{
+        Template: &livekit.RecordingTemplate{
+            Layout: "grid-dark",
+            WsUrl: "wss://your-livekit-address.com",
+            RoomName: "my-room",
+        }
+    },
+    Output: &livekit.RecordingOutput{
+        S3: &livekit.RecordingS3Output{
+            Bucket: "mybucket",
+            Key: "recording.mp4",
+            AccessKey: "aws-access-key",
+            Secret: "aws-secret",
         },
     },
 }
-
-room, err := roomServiceClient.CreateRoom(context.Background(), req)
+resp, err := roomServiceClient.StartRecording(context.Background(), req)
+recordingID := resp.RecordingId
 ```
 
   </TabItem>
 
   <TabItem value="cli">
 
-```json title="record.json"
-{
-    "api_key": "<key>",
-    "api_secret": "<secret>",
-    "input": {
-        "template": {
-        "type": "grid-dark",
-        "ws_url": "<wss://your-livekit-address.com>",
-        "room_name": "<room-to-record>"
-    },
-    "output": {
-        "file": "/output/room-recording.mp4"
-    }
-}
+```bash
+livekit-cli start-recording \
+      --api-key server-api-key \
+      --api-secret server-api-secret \
+      --url https://your-livekit-address.com \
+      --config path/to/config.json
+```
+Prints your recording ID:
+```
+Recording started. Recording ID: RR_XXXXXXXXXXXX
 ```
 
+  </TabItem>
+
+</Tabs>
+
+### End a recording
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+  <TabItem value="node">
+
+```typescript title="TypeScript"
+svc.endRecording(recordingId)
+```
+
+  </TabItem>
+
+  <TabItem value="go">
+
+```go title="Go"
+req := &livekit.EndRecordingRequest{
+    RecordingId: recordingID,
+}
+_, err := roomServiceClient.EndRecording(context.Background(), req)
+```
+
+  </TabItem>
+
+  <TabItem value="cli">
+
 ```bash
-livekit-cli create-room \
-      --url https://your-livekit-host.com \
-      --api-key yourapikey
-      --api-secret yourapisecret
-      --recording-config record.json
+livekit-cli end-recording \
+      --api-key server-api-key \
+      --api-secret server-api-secret \
+      --url https://your-livekit-address.com \
+      --id RR_XXXXXXXXXXXX
 ```
 
   </TabItem>
