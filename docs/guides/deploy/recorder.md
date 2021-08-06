@@ -17,28 +17,25 @@ redis:
     db: redis db (optional)
 api_key: livekit server api key (required if using templates without supplying tokens)
 api_secret: livekit server api secret (required if using templates without supplying tokens)
-# default recording input options (optional)
-input:
-    width: defaults to 1920
-    height: defaults to 1080
+# default recording options (optional)
+options:
+    input_width: defaults to 1920
+    input_height: defaults to 1080
+    output_width: defaults to 0 (no scaling)
+    output_height: defaults to 0 (no scaling)
     depth: defaults to 24
     framerate: defaults to 30
-# default recording output options (optional)
-output:
-    width: defaults to 0 (no scaling)
-    height: defaults to 0 (no scaling)
     audio_bitrate: defaults to "128k"
     audio_frequency: defaults to "44100"
     video_bitrate: defaults to "2976k"
-    video_buffer: defaults to "5952k". Using (videoBitrate * 2) is recommended.
 log_level: valid levels are debug, info, warn, error, fatal, or panic (optional)
 ```
 
 ## Ensuring availability
 
-Each instance of the recorder service can record one job at a time. Recording at 1080p, the recorder service uses about 
-400 MB and 2.5 CPU on average. Since the service uses a minimum of ~380 MB while recording and only ~20 MB while idle,
-we recommend autoscaling based on memory utilization.
+Each instance of the recorder service can record one job at a time. Since memory utilization is more stable than CPU 
+utilization, we recommend autoscaling based on memory. Recording at 1080p/30fps/4500kbps (the defaults), the recorder 
+service uses about 400 MB and 2.5 CPU on average, so we use the following resource request and autoscaling:
 
 ```yaml
 autoscaling:
