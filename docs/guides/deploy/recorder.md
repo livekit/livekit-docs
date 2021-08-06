@@ -34,7 +34,29 @@ output:
 log_level: valid levels are debug, info, warn, error, fatal, or panic (optional)
 ```
 
-## Kubernetes
+## Ensuring availability
+
+Each instance of the recorder service can record one job at a time. Recording at 1080p, the recorder service uses about 
+400 MB and 2.5 CPU on average. Since the service uses a minimum of ~380 MB while recording and only ~20 MB while idle,
+we recommend autoscaling based on memory utilization.
+
+```yaml
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetMemoryUtilizationPercentage: 50
+  
+resources:
+   requests:
+     cpu: 3000m
+     memory: 500Mi
+   limits:
+     cpu: 5000m
+     memory: 1500Mi
+```
+
+## Helm
 
 If you already deployed the server using our Helm chart, jump to `helm install` below.
 
