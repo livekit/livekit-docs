@@ -19,6 +19,7 @@ api_key: livekit server api key (required if using templates without supplying t
 api_secret: livekit server api secret (required if using templates without supplying tokens)
 # default recording options (optional)
 options:
+    preset: valid options are 720p30, 720p60, 1080p30, 1080p60
     input_width: defaults to 1920
     input_height: defaults to 1080
     output_width: defaults to 0 (no scaling)
