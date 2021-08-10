@@ -23,6 +23,7 @@ module.exports = {
         },
         'guides/access-tokens',
         'guides/server-api',
+        'guides/webhooks',
         // 'guides/recording',
         {
           type: 'category',

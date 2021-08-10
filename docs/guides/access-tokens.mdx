@@ -85,7 +85,7 @@ Here's an example of the decoded body of a join token:
 {
   "exp": 1621657263,
   "iss": "APIMmxiL8rquKztZEoZJV9Fb",
-  "jti": "myidentity",
+  "sub": "myidentity",
   "nbf": 1619065263,
   "video": {
     "room": "myroom",
@@ -95,7 +95,7 @@ Here's an example of the decoded body of a join token:
 }
 ```
 
-We use `iss` to identify the API key, `jti` to indicate participant identity, and `video` to encode LiveKit VideoGrant.
+We use `iss` to identify the API key, `sub` to indicate participant identity, and `video` to encode LiveKit VideoGrant.
 
 ## Room permissions
 
