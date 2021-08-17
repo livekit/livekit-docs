@@ -83,7 +83,7 @@ We suggest keeping data packets small (under 1.4kB) to ensure that the packet do
 ```typescript title="TypeScript"
 const strData = JSON.stringify({some: "data"})
 const encoder = new TextEncoder()
-const decoder = new TextEncoder()
+const decoder = new TextDecoder()
 
 // publishData takes in a Uint8Array, so we need to convert it
 const data = encoder.encode(strData);
@@ -95,7 +95,7 @@ room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)
 room.localParticipant.publishData(data, DataPacket_Kind.LOSSY, ['participant_sid'])
 
 // receive data from other participants
-room.on(RoomEvent.DataPacketReceived, (payload: Uint8Array, participant: Participant, kind: DataPacket_Kind) => {
+room.on(RoomEvent.DataReceived, (payload: Uint8Array, participant: Participant, kind: DataPacket_Kind) => {
   const strData = decoder.decode(payload)
   ...
 })
