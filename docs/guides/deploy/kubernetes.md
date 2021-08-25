@@ -26,7 +26,17 @@ $ helm repo add livekit https://helm.livekit.io
 
 Create a values.yaml for your deployment, using [server-sample.yaml](https://github.com/livekit/livekit-helm/blob/master/server-sample.yaml) as a template.
 
-Then install the chart
+### Importing SSL Certificates
+
+In order to set up TURN/TLS and HTTPS on the load balancer, you may need to import your SSL certificate(s) into as a Kubernetes Secret. This can be done with:
+
+```shell
+kubectl create secret tls <name> --cert <cert-file> --key <key-file> --namespace <namespace>
+```
+
+Note, please ensure that the secret is created in the same namespace as the deployment.
+
+### Install & Upgrade
 
 ```shell
 $ helm install <instance_name> livekit/livekit-server --namespace <namespace> --values values.yaml
