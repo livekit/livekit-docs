@@ -48,9 +48,8 @@ import (
 )
 
 func getJoinToken(apiKey, apiSecret, room, identity string) (string, error) {
-
-  canPublish := true
-  canSubscribe := true
+    canPublish := true
+    canSubscribe := true
 
 	at := auth.NewAccessToken(apiKey, apiSecret)
 	grant := &auth.VideoGrant{
