@@ -15,6 +15,7 @@ Once subscribed, the `Track` object allows you to play its associated media or a
     {label: 'Browser', value: 'typescript'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -77,7 +78,25 @@ Once subscribed, the `Track` object allows you to play its associated media or a
   When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-local-audio-track-options/index.html).
 
   </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+try {
+  // video will fail when running in ios simulator
+  var localVideo = await LocalVideoTrack.createCameraTrack(LocalVideoTrackOptions(
+    position: CameraPosition.FRONT,
+    params: VideoPresets.hd,
+  ));
+  await room.localParticipant.publishVideoTrack(localVideo);
+} catch (e) {
+  print('could not publish video: $e');
+}
+
+var localAudio = await LocalAudioTrack.createTrack();
+await room.localParticipant.publishAudioTrack(localAudio);
+```
+
+  </TabItem>
 </Tabs>
 
 
@@ -149,19 +168,15 @@ You can mute any track to stop it from sending data to the server. When a track 
 
 Mute/unmute a track using its corresponding `LocalTrackPublication` object.
 
-## Disabling video
-
-While a muted video track with a camera source won't transmit any data, the camera recording indicator will remain on.
-
-One workaround is to unpublish the video track when a user disables their video. If/when that same user re-enables their video, recreate the video track and republish it.
-
 ## Video simulcasting
 
-Currently, simulcasting is currently only available in the browser/JS SDK.
+Currently, simulcast is currently only available in the browser/JS SDK.
 
 With simulcasting, a client publishes multiple versions of the same video track with varying resolutions. This allows LiveKit to dynamically forward the stream that's most appropriate given each receiving participant's available bandwidth and desired resolution. This process happens in automatically on the SFU when the server detects that a participant is bandwidth constrainted. When the participant's bandwidth improves, the server will then upgrade the stream to a higher resolution.
 
-To enable simulcasting, pass a flag when publishing a video track.
+For more information about Simulcast, see [an introduction to WebRTC simulcast](https://blog.livekit.io/an-introduction-to-webrtc-simulcast-6c5f1f6402eb).
+
+To enable simulcast, pass a flag when publishing a video track.
 
 ```typescript title="Browser (typescript)"
 const videoTrack = await createLocalVideoTrack()

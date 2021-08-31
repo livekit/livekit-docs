@@ -77,6 +77,7 @@ We suggest keeping data packets small (under 1.4kB) to ensure that the packet do
     {label: 'Browser', value: 'typescript'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
   <TabItem value="typescript">
 
@@ -146,5 +147,27 @@ class DataExample : RoomListener {
     }
 }
 ```
+  </TabItem>
+  <TabItem value="flutter">
+
+```dart title="Dart"
+class DataExample with RoomDelegate {
+  Room room;
+
+  void publishData() {
+    // publish lossy data to the entire room
+    room.localParticipant.publishData(data, DataPacket_Kind.LOSSY);
+
+    // publish reliable data to a set of participants
+    room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE, ["sid1", "sid2"]);
+  }
+
+  @override
+  void onDataReceived(RemoteParticipant participant, List<int> data) {
+    // process received data
+  }
+}
+```
+
   </TabItem>
 </Tabs>

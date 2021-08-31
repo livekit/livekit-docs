@@ -12,7 +12,7 @@ For events happening to a specific participant, they will also be fired on the a
 
 ## Connecting to a room
 
-Connecting to a room requires two parameters: a `url` and a `token`. The `url` points to your LiveKit server instance, which, if you followed [this guide](https://docs.livekit.io/guides/getting-started/#setting-up-the-server), is likely `ws://localhost:7880`. 
+Connecting to a room requires two parameters: a `url` and a `token`. The `url` points to your LiveKit server instance, which, if you followed [this guide](https://docs.livekit.io/guides/getting-started/#setting-up-the-server), is likely `ws://localhost:7880`.
 
 The `token` is an access token representing the particular local participant. You can use the aformentioned guide to generate a token via CLI, or you can use our [server SDK](https://docs.livekit.io/references/server-sdks) to create one.
 
@@ -24,6 +24,7 @@ The `token` is an access token representing the particular local participant. Yo
     {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
     {label: 'Golang', value: 'go'},
   ]}>
   <TabItem value="typescript">
@@ -208,7 +209,27 @@ class MainActivity : AppCompatActivity(), RoomListener {
 ```
 
 </TabItem>
+<TabItem value="flutter">
 
+For details regarding handling changes in Flutter's declarative UI, see [handling changes](https://github.com/livekit/client-sdk-flutter#handling-changes)
+
+```dart
+import 'package:livekit_client/livekit_client.dart';
+
+var url = 'your-host';
+var token = 'your-token';
+var room = await LiveKitClient.connect(url, token);
+
+class MyDelegate with RoomDelegate {
+  void onDisconnect() {
+  }
+
+  // all delegate callbacks are optional
+}
+
+```
+
+</TabItem>
 <TabItem value="go">
 
 ```go
@@ -247,17 +268,18 @@ func trackSubscribed(track *webrtc.TrackRemote, publication lksdk.TrackPublicati
 
 ## Leaving a room
 
-When your client is leaving a room, you should notify LiveKit of leave events by calling `Room.close()`. If the application is closed without notifying the LiveKit, it will continue to display the participant as being in the room for more than 20 seconds.
+When your client is leaving a room, you should notify LiveKit of leave events by calling `Room.disconnect()`. If the application is closed without notifying the LiveKit, it will continue to display the participant as being in the room for more than 20 seconds.
 
 ## Connectivity
 
 LiveKit configures WebRTC to enable connectivity from a wide variety of network conditions. It'll try the following in order of preference.
 
 1. ICE over UDP: ideal connection type, used in majority of conditions
-2. ICE over TCP: used when network disallows UDP (i.e. over VPN or corporate firewalls)
-3. TURN with TLS: used when firewall only allows outbound TLS connections
+2. TURN with UDP (443): used when firewall blocks all other UDP port other than 443
+3. ICE over TCP: used when network disallows UDP (i.e. over VPN or corporate firewalls)
+4. TURN with TLS: used when firewall only allows outbound TLS connections
 
-ICE over UDP and TCP works automatically, while TURN/TLS requires additional configurations and your own SSL certificate.
+ICE over UDP and TCP works automatically, while TURN requires additional configurations and your own SSL certificate.
 
 ## Network changes and reconnection
 

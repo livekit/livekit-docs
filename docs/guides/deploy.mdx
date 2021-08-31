@@ -38,16 +38,34 @@ optional; used by the embedded TURN server (see below)
 
 Certain corporate firewalls block not only UDP traffic, but non-secure TCP traffic, as well. In those cases, it's helpful to use a TURN server. [Here's](https://bloggeek.me/webrtc-turn/) a good resource if you're interested in reading more about how TURN is used.
 
-The good news is LiveKit includes an embedded TURN server. We have a secure TURN/TLS implementation that has integrated authentication with the rest of LiveKit. This ensures that only clients authenticated to join the room can connect to TURN.
+The good news is LiveKit includes an embedded TURN server. It's a secure TURN implementation that has integrated authentication with the rest of LiveKit. The authentication layer ensures that only clients that have already established a signal connection could connect to our TURN server.
 
-Because of the existing connectivity methods LiveKit already supports, TURN is only useful when both:
+### TURN/TLS
 
-- TLS is enabled
-- The port advertised to clients is the same as HTTPS (443)
+To firewalls, TLS traffic looks no different from regular HTTPS traffic to websites. Enabling TURN/TLS gives you the broadest coverage in client connectivity, including those behind corporate firewalls. TURN/TLS can be enabled with:
 
-With TURN/TLS, LiveKit will perform the termination, so you will have to specify the certificates in the LiveKit configuration. When running multiple LiveKit instances, you can place a layer 4 load balancer in front of the TCP port.
+```yaml title="config.yaml"
+turn:
+  enabled: true
+  tls_port: 5349
+  domain: turn.myhost.com
+  cert_file: /path/to/turn.crt
+  key_file: /path/to/turn.key
+```
+
+LiveKit will perform TLS termination, so you will have to specify the certificates in the config. When running multiple LiveKit instances, you can place a layer 4 load balancer in front of the TCP port.
 
 If you are not using a load balancer, `turn.tls_port` needs to be set to 443, as that will be the port that's advertised to clients.
+
+### TURN/UDP
+
+As QUIC or HTTP/3 gain adoption, some firewalls started allowing UDP traffic to pass through port 443. In those cases, it helps to use TURN/UDP on port 443. UDP is preferred over TCP for WebRTC traffic, as it has better control over congestion and latency. TURN/UDP can be enabled with:
+
+```yaml title="config.yaml"
+turn:
+  enabled: true
+  udp_port: 443
+```
 
 ## Resources
 

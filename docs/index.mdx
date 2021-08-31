@@ -11,7 +11,7 @@ LiveKit is an open source project that provides scalable, multi-user conferencin
 ## Features
 
 - Horizontally-scalable WebRTC Selective Forwarding Unit (SFU)
-- Modern, full-featured [client SDKs](references/client-sdks) for JavaScript, React, Swift, and Kotlin (React Native, Unity/C# and Flutter in development)
+- Modern, full-featured [client SDKs](references/client-sdks) for JavaScript, React, Swift, Kotlin, and Flutter (React Native and Unity/C# in development)
 - Built for production - JWT authentication and [server APIs](guides/server-api)
 - Robust networking & connectivity over UDP, TCP, and built-in TURN/TLS
 - Easy to deploy: pure Go and single binary
@@ -50,6 +50,7 @@ LiveKit has no external dependencies when running in single-node. Redis is requi
     {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
     {label: 'Golang', value: 'go'},
   ]}>
   <TabItem value="typescript">
@@ -236,8 +237,26 @@ class MainActivity : AppCompatActivity(), RoomListener {
 
 ```
 
-</TabItem>
+  </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+var url = 'your-host';
+var token = 'your-token';
+var room = await LiveKitClient.connect(url, token);
+try {
+  // video will fail when running in ios simulator
+  var localVideo = await LocalVideoTrack.createCameraTrack();
+  await room.localParticipant.publishVideoTrack(localVideo);
+} catch (e) {
+  print('could not publish video: $e');
+}
+
+var localAudio = await LocalAudioTrack.createTrack();
+await room.localParticipant.publishAudioTrack(localAudio);
+```
+
+  </TabItem>
 <TabItem value="go">
 
 ```go

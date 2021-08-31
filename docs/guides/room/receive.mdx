@@ -24,6 +24,7 @@ Subscribed callback will be fired on both `Room` and `RemoteParticipant` objects
     {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -77,10 +78,6 @@ export const MyComponent = ({ participant }) => {
   }
   ```
 
-  For convenience, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-ios/VideoPreset/) when creating a video track. You also have control over the encoding bitrate with [publishing options](https://docs.livekit.io/client-sdk-ios/LocalVideoTrackPublishOptions/).
-
-  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-ios/LocalAudioTrackOptions/).
-
   </TabItem>
   <TabItem value="android">
 
@@ -97,12 +94,61 @@ export const MyComponent = ({ participant }) => {
   }
   ```
 
-  For convenience, LiveKit provides a few [preset resolutions](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-video-preset/index.html) when creating a video track.
+  </TabItem>
+  <TabItem value="flutter">
 
-  When creating audio tracks, you have control over the [capture settings](https://docs.livekit.io/client-sdk-android/livekit-android-sdk/io.livekit.android.room.track/-local-audio-track-options/index.html).
+```dart title="Dart"
+class ParticipantWidget extends StatefulWidget {
+  final Participant participant;
+
+  ParticipantWidget(this.participant);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ParticipantState();
+  }
+}
+
+class _ParticipantState extends State<ParticipantWidget> with ParticipantDelegate {
+  TrackPublication? videoPub;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.participant.delegate = this;
+    // When track subscriptions change, Participant notifies listeners
+    widget.participant.addListener(_onChange);
+  }
+
+  @override
+  void dispose() {
+    widget.participant.delegate = null;
+    super.dispose();
+  }
+
+  void _onChange() {
+    TrackPublication? pub;
+    var visibleVideos = widget.participant.videoTracks.values.where((pub) {
+      return pub.kind == TrackType.VIDEO && pub.subscribed && !pub.muted;
+    });
+    if (visibleVideos.isNotEmpty) {
+      pub = visibleVideos.first;
+    }
+    // setState will trigger a build
+    setState(() {
+      // your updates here
+      videoPub = pub;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // your build function
+  }
+}
+```
 
   </TabItem>
-
 </Tabs>
 
 ## Track metadata
@@ -136,6 +182,7 @@ On mobile (iOS and Android), once subscribed to an audio track, live playback be
     {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -205,7 +252,26 @@ export const MyComponent = ({audioTrack, videoTrack}) => {
   ```
 
   </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+class _ParticipantState extends State<ParticipantWidget> with ParticipantDelegate {
+  ...
+  @override
+  Widget build(BuildContext context) {
+    var videoPub = this.videoPub;
+    if (videoPub != null) {
+      return VideoTrackRenderer(videoPub.track as VideoTrack);
+    } else {
+      return Container(
+        color: Colors.grey,
+      );
+    }
+  }
+}
+```
+
+  </TabItem>
 </Tabs>
 
 ## Speaker detection
@@ -220,6 +286,7 @@ When audio tracks are published, LiveKit will automatically detect participants 
     {label: 'React', value: 'react'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -287,7 +354,19 @@ remoteParticipant.listener = object : ParticipantListener {
 ```
 
   </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+class _ParticipantState extends State<ParticipantWidget> with ParticipantDelegate {
+  ...
+  @override
+  void onSpeakingChanged(Participant participant, bool speaking) {
+    // handle speaking change
+  }
+}
+```
+
+  </TabItem>
 </Tabs>
 
 ## Subscriber controls
@@ -304,6 +383,7 @@ Both client and server APIs are available to setup a connection for selective su
     {label: 'Browser', value: 'typescript'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -356,7 +436,22 @@ Both client and server APIs are available to setup a connection for selective su
   ```
 
   </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+var room = await LiveKitClient.connect(url, token, JoinOptions(autoSubscribe = false));
+room.delegate = RoomHandler();
+
+class RoomHandler with RoomDelegate {
+  @override
+  void onTrackPublished(RemoteParticipant participant, RemoteTrackPublication pub) {
+    // decide if this track should be subscribed to
+    pub.subscribed = true;
+  }
+}
+```
+
+  </TabItem>
 </Tabs>
 
 ### Server-side selective subscription
@@ -420,6 +515,7 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
     {label: 'Browser', value: 'typescript'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -474,7 +570,19 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
   ```
 
   </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+class RoomHandler with RoomDelegate {
+  @override
+  void onTrackSubscribed(RemoteParticipant participant, Track track,
+      RemoteTrackPublication publication) {
+    publication.enabled = false;
+  }
+}
+```
+
+  </TabItem>
 </Tabs>
 
 :::note
@@ -498,6 +606,7 @@ You can see how this is used in our [React component](https://github.com/livekit
     {label: 'Browser', value: 'typescript'},
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
+    {label: 'Flutter', value: 'flutter'},
   ]}>
 
   <TabItem value="typescript">
@@ -561,5 +670,19 @@ You can see how this is used in our [React component](https://github.com/livekit
   ```
 
   </TabItem>
+  <TabItem value="flutter">
 
+```dart title="Dart"
+class RoomHandler with RoomDelegate {
+  @override
+  void onTrackSubscribed(RemoteParticipant participant, Track track,
+      RemoteTrackPublication publication) {
+    if (publication.kind == TrackType.VIDEO) {
+      publication.videoQuality = VideoQuality.LOW;
+    }
+  }
+}
+```
+
+  </TabItem>
 </Tabs>
