@@ -12,7 +12,9 @@ Using LiveKit in your app does not require you to understand the underlying prot
 
 ## Basics
 
-LiveKit clients use a WebSocket to communicate with the server over Protocol Buffers. Clients additionally open two WebRTC PeerConnections, used for publishing and receiving streams, respectively.
+LiveKit clients use a WebSocket to communicate with the server over Protocol Buffers. Client could establish up to two WebRTC PeerConnections with the SFUs, used for publishing and receiving streams, respectively.
+
+By default, the subscriber PeerConnection will always be open upon connection. The publisher PeerConnection will be established only when the client is ready to publish.
 
 ![Client-Server Connection](/img/client-server-connection.svg)
 
@@ -32,15 +34,12 @@ Using separate peer connections simplifies the negotiation process and eliminate
 
 1. client initiates WebSocket connection to `/rtc`
 2. server sends a `JoinResponse`, which includes room information, the current participant's data, and information about other participants in the room
-3. client starts the publisher `PeerConnection`, and sends `offer` to the server
+3. server initiates the subscriber `PeerConnection`, sends `offer` to client
+   1. if `AutoSubscribe` is enabled, this offer will contain existing tracks in the room.
 4. client and server will exchange ICE candidates via `trickle`
-5. server accepts the publisher connection, sends an `answer`
+5. client accepts the subscriber connection, sends an `answer`
 6. ICE connectivity is established
 7. server notifies other participants of the new participant
-8. server subscribes the new client to existing tracks in the room
-   1. server initiates `offer` for subscriber `PeerConnection`
-   2. client accepts and sends `answer`
-   3. server confirms the `answer`
 
 ## Publishing
 
@@ -49,7 +48,9 @@ To publish a track, a client must first notify the server of its intent and send
 1. client sends a `AddTrackRequest` with track metadata
 2. server sends back a `TrackPublishedResponse`
 3. client adds `transceiver` to `PeerConnection`, along with the media track
-4. server receives the track and subscribes other participants to it
+4. client initiates `offer`, sends to server
+5. server answers the offer and starts receiving the track
+6. if server subscribes other participants (that has AutoSubscribe enabled) to it
 
 ## Receiving tracks
 
@@ -62,8 +63,12 @@ Since these messages are sent over two, separate communication channels, it's po
 The client must also be ready to act upon other changes in the room. The server will notify clients of:
 
 - `ParticipantUpdate`: when participants join or leave, or if there are changes to their tracks
-- `ActiveSpeakerUpdate`: when the active speakers in the room change
 - `LeaveRequest`: when the participant should immediately disconnect
+- `SpeakersChanged`: when the active speakers in the room changes
+
+### SpeakersChanged
+
+In protocol version 3, server will send down only a list of `SpeakerInfo` that has changed, instead of a comprehensive list of all speakers. Clients are responsible for applying the deltas and firing the appropriate events.
 
 ## Client-initiated control
 
