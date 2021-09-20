@@ -16,6 +16,7 @@ Once subscribed, the `Track` object allows you to play its associated media or a
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
     {label: 'Flutter', value: 'flutter'},
+    {label: 'Golang', value: 'go'},
   ]}>
 
   <TabItem value="typescript">
@@ -94,6 +95,25 @@ try {
 
 var localAudio = await LocalAudioTrack.createTrack();
 await room.localParticipant.publishAudioTrack(localAudio);
+```
+
+  </TabItem>
+  <TabItem value="go">
+
+```go title="Go"
+// publishing from file
+file := "video.ivf"
+track, err := lksdk.NewLocalFileTrack(file,
+	// control FPS to ensure synchronization
+	lksdk.FileTrackWithFrameDuration(33 * time.Millisecond),
+	lksdk.FileTrackWithOnWriteComplete(func() { fmt.Println("track finished") }),
+)
+if err != nil {
+    return err
+}
+if _, err = room.LocalParticipant.PublishTrack(track, file); err != nil {
+    return err
+}
 ```
 
   </TabItem>

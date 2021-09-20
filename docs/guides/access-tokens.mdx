@@ -112,6 +112,7 @@ Room permissions are specified in the `video` field of a decoded join token. It 
 | roomAdmin    | bool   | permission to moderate a room                             |
 | room         | string | name of the room, required if join or admin is set        |
 | canPublish   | bool   | allow participant to publish tracks                       |
+| canPublishData | bool   | allow participant to publish data to the room           |
 | canSubscribe | bool   | allow participant to subscribe to tracks                  |
 | hidden       | bool   | hide participant from others (used by recorder)           |
 
@@ -126,7 +127,8 @@ To create a token where the participant can only subscribe, and not publish into
     "room": "myroom",
     "roomJoin": true,
     "canSubscribe": true,
-    "canPublish": false
+    "canPublish": false,
+    "canPublishData": false
   }
 }
 ```

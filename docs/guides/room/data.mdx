@@ -78,6 +78,7 @@ We suggest keeping data packets small (under 1.4kB) to ensure that the packet do
     {label: 'iOS', value: 'ios'},
     {label: 'Android', value: 'android'},
     {label: 'Flutter', value: 'flutter'},
+    {label: 'Golang', value: 'go'},
   ]}>
   <TabItem value="typescript">
 
@@ -170,4 +171,20 @@ class DataExample with RoomDelegate {
 ```
 
   </TabItem>
+  <TabItem value="go">
+
+```go title="Go"
+// publish lossy data to everyone
+room.LocalParticipant.PublishData(data, DataPacket_Kind.LOSSY, nil)
+
+// publish reliable data to a set of participants
+room.LocalParticipant.PublishData(data, DataPacket_Kind.LOSSY, []string{"sid1", "sid2"})
+
+room.Callback.OnDataReceived = func(data []byte, rp *lksdk.RemoteParticipant) {
+  // process received data
+}
+```
+
+  </TabItem>
+
 </Tabs>
