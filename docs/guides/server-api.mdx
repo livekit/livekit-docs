@@ -102,12 +102,23 @@ Update participant metadata, will cause updates to be broadcasted to everyone in
 
 Subscribes or unsubscribe a participant from tracks
 
-| Parameter  | Type         | Description                                                |
-| :--------- | :----------- | :--------------------------------------------------------- |
-| room       | string       |                                                            |
-| identity   | string       |                                                            |
+| Parameter  | Type           | Description                                                |
+| :--------- | :------------- | :--------------------------------------------------------- |
+| room       | string         |                                                            |
+| identity   | string         |                                                            |
 | track_sids | List<[string]> | list of sids of tracks                                     |
-| subscribe  | bool         | set to true to subscribe, false to unsubscribe from tracks |
+| subscribe  | bool           | set to true to subscribe, false to unsubscribe from tracks |
+
+### SendData
+
+Sends data messages to participants, triggering `onDataReceived` event on clients.
+
+| Parameter        | Type           | Description                                                            |
+| :--------------- | :------------- | :--------------------------------------------------------------------- |
+| room             | string         |                                                                        |
+| data             | bytes          |                                                                        |
+| kind             | enum           | reliable or lossy                                                      |
+| destination_sids | List<[string]> | list of participant sids to send to, sends to everyone when left blank |
 
 ## Types
 
@@ -147,8 +158,8 @@ Subscribes or unsubscribe a participant from tracks
 
 ### ParticipantPermission
 
-| Field         | Type | Description                                                |
-| :------------ | :--- | :--------------------------------------------------------- |
-| can_subscribe | bool | allow participant to subscribe to other tracks in the room |
-| can_publish   | bool | allow participant to publish new tracks to room            |
-| can_publish_data   | bool | allow participant to publish data to room            |
+| Field            | Type | Description                                                |
+| :--------------- | :--- | :--------------------------------------------------------- |
+| can_subscribe    | bool | allow participant to subscribe to other tracks in the room |
+| can_publish      | bool | allow participant to publish new tracks to room            |
+| can_publish_data | bool | allow participant to publish data to room                  |

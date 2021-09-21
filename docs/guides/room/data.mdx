@@ -6,9 +6,9 @@ import TabItem from '@theme/TabItem';
 
 With LiveKit maintaining room state, you can use it to pass around custom application data. We have a flexible system that enables you to pass messages from both the backend, and between participants.
 
-## Participant metadata from backend
+## Participant metadata
 
-LiveKit participants have a `metadata` field that you could use to store application-specific data. For example, this could be the seat number around a table, or other state.
+LiveKit participants have a `metadata` field that you could use to store application-specific data. For example, this could be the seat number around a table, or other participant-specific state.
 
 Metadata is encoded in the [access token](../access-tokens) that participants use to connect to the room.
 
@@ -62,13 +62,15 @@ func updateMetadata(values interface{}) {
 
 </Tabs>
 
-## Data message from participants
+## Data messages
 
-From the client side, LiveKit lets you publish arbirary data messages to any participants in the room via the `LocalParticipant.publishData` API. Room data is published to the SFU via WebRTC data channels; and LiveKit server would forward that data to one or more participants in the room.
+From both server and clients, LiveKit lets you publish arbirary data messages to any participants in the room via the `LocalParticipant.publishData` API. Room data is published to the SFU via WebRTC data channels; and LiveKit server would forward that data to one or more participants in the room.
 
-Since the data is sent via UDP, it's possible for the packets to be lost. We offer two modes of delivery: lossy or reliable. Reliable mode enables WebRTC to retransmit the data until it's received, similar to TCP. For use-cases such as in-room chat, this is preferable.
+From the server side, this API is exposed on `RoomService` as `SendData`
 
-We suggest keeping data packets small (under 1.4kB) to ensure that the packet doesn't exceed network MTU.
+Since the data is sent via UDP, you have a flexibility regards to the reliability of delivery. We support both reliable and lossy. In reliable mode, your packets will be retransmitted until they are received. For use-cases such as in-room chat, this is preferable.
+
+When using lossy delivery, we suggest keeping data packets small (under network MTU of 1.4k). If a message is packetized into multiple packets, and a single packet doesn't arrive, your client will not receive the message at all.
 
 <Tabs
   defaultValue="typescript"
