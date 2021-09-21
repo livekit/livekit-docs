@@ -64,11 +64,11 @@ func updateMetadata(values interface{}) {
 
 ## Data messages
 
-From both server and clients, LiveKit lets you publish arbirary data messages to any participants in the room via the `LocalParticipant.publishData` API. Room data is published to the SFU via WebRTC data channels; and LiveKit server would forward that data to one or more participants in the room.
+From both server and clients, LiveKit lets you publish arbitrary data messages to any participants in the room via the `LocalParticipant.publishData` API. Room data is published to the SFU via WebRTC data channels; and LiveKit server would forward that data to one or more participants in the room.
 
 From the server side, this API is exposed on `RoomService` as `SendData`
 
-Since the data is sent via UDP, you have a flexibility regards to the reliability of delivery. We support both reliable and lossy. In reliable mode, your packets will be retransmitted until they are received. For use-cases such as in-room chat, this is preferable.
+Since the data is sent via UDP, you have a flexibility in regard to the reliability of delivery. We support both reliable and lossy. In reliable mode, your packets will be retransmitted until they are received. For use-cases such as in-room chat, this is preferable.
 
 When using lossy delivery, we suggest keeping data packets small (under network MTU of 1.4k). If a message is packetized into multiple packets, and a single packet doesn't arrive, your client will not receive the message at all.
 
