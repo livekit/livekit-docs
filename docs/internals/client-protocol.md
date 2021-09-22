@@ -73,9 +73,9 @@ Since these messages are sent over two, separate communication channels, it's po
 
 The client must also be ready to act upon other changes in the room. The server will notify clients of:
 
-- `ParticipantUpdate`: when participants join or leave, or if there are changes to their tracks
-- `LeaveRequest`: when the participant should immediately disconnect
-- `SpeakersChanged`: when the active speakers in the room changes
+* `ParticipantUpdate`: when participants join or leave, or if there are changes to their tracks
+* `LeaveRequest`: when the participant should immediately disconnect
+* `SpeakersChanged`: when the active speakers in the room changes
 
 ### SpeakersChanged
 
