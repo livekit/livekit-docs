@@ -154,8 +154,15 @@ class DataExample : RoomListener {
   <TabItem value="flutter">
 
 ```dart title="Dart"
-class DataExample with RoomDelegate {
+class DataExample {
   Room room;
+  late final _listener = room.createListener();
+
+  DataExample() {
+    _listener.on<DataReceivedEvent>((e) {
+      // process received data: e.data
+    })
+  }
 
   void publishData() {
     // publish lossy data to the entire room
@@ -165,9 +172,8 @@ class DataExample with RoomDelegate {
     room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE, ["sid1", "sid2"]);
   }
 
-  @override
-  void onDataReceived(RemoteParticipant participant, List<int> data) {
-    // process received data
+  void dispose() {
+    _listener.dispose();
   }
 }
 ```

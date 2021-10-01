@@ -45,7 +45,7 @@ Using separate peer connections simplifies the negotiation process and eliminate
 
 Websocket endpoint `/rtc` is the initial step that the client connects to. It takes in several parameters to give the server information about the client and its capabilities:
 
-* token: an encoded JWT access token
+* access_token: an encoded JWT access token
 * reconnect: true if client is trying to resume to an existing connection. when this is set, server will attempt to perform a ICE restart after connection is established.
 * auto_subscribe: true by default. If true, server will automatically subscribe client to all tracks in the room
 * sdk: indicates the SDK it's using. (js, ios, android, etc)
