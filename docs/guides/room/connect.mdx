@@ -218,15 +218,26 @@ import 'package:livekit_client/livekit_client.dart';
 
 var url = 'your-host';
 var token = 'your-token';
-var room = await LiveKitClient.connect(url, token);
+var room = await LiveKitClient.connect(
+  url,
+  token,
+  // optional
+  options: ConnectOptions(),
+);
 
-class MyDelegate with RoomDelegate {
-  void onDisconnect() {
-  }
+var listener = room.createListener();
 
-  // all delegate callbacks are optional
-}
+listener
+  ..on<RoomDisconnectedEvent>((_) {
+    // handle disconnection
+  })
+  ..on<TrackPublishedEvent>((e) {
+    // handle track publication
+    print("track published: ${e.publication.sid}")
+  })
 
+// when you no longer need the listener, dispose it
+listener.dispose();
 ```
 
 </TabItem>

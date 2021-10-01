@@ -109,21 +109,21 @@ class ParticipantWidget extends StatefulWidget {
   }
 }
 
-class _ParticipantState extends State<ParticipantWidget> with ParticipantDelegate {
+class _ParticipantState extends State<ParticipantWidget> {
   TrackPublication? videoPub;
 
   @override
   void initState() {
     super.initState();
-    widget.participant.delegate = this;
     // When track subscriptions change, Participant notifies listeners
+    // Uses the built-in ChangeNotifier API
     widget.participant.addListener(_onChange);
   }
 
   @override
   void dispose() {
-    widget.participant.delegate = null;
     super.dispose();
+    widget.participant.removeListener(_onChange);
   }
 
   void _onChange() {
@@ -255,7 +255,8 @@ export const MyComponent = ({audioTrack, videoTrack}) => {
   <TabItem value="flutter">
 
 ```dart title="Dart"
-class _ParticipantState extends State<ParticipantWidget> with ParticipantDelegate {
+class _ParticipantState extends State<ParticipantWidget> {
+  TrackPublication? videoPub;
   ...
   @override
   Widget build(BuildContext context) {
@@ -357,11 +358,15 @@ remoteParticipant.listener = object : ParticipantListener {
   <TabItem value="flutter">
 
 ```dart title="Dart"
-class _ParticipantState extends State<ParticipantWidget> with ParticipantDelegate {
-  ...
+class _ParticipantState extends State<ParticipantWidget> {
+  late final _listener = widget.participant.createListener()
+
   @override
-  void onSpeakingChanged(Participant participant, bool speaking) {
-    // handle speaking change
+  void initState() {
+    super.initState();
+    _listener.on<SpeakingChangedEvent>((e) {
+      // handle isSpeaking change
+    })
   }
 }
 ```
@@ -442,11 +447,15 @@ Both client and server APIs are available to setup a connection for selective su
 var room = await LiveKitClient.connect(url, token, JoinOptions(autoSubscribe = false));
 room.delegate = RoomHandler();
 
-class RoomHandler with RoomDelegate {
-  @override
-  void onTrackPublished(RemoteParticipant participant, RemoteTrackPublication pub) {
-    // decide if this track should be subscribed to
-    pub.subscribed = true;
+class RoomHandler {
+  Room room;
+  late EventsListener<RoomEvent> _listener;
+
+  RoomHandler(this.room) {
+    _listener = room.createListener();
+    _listener.on<TrackPublishedEvent>((e) {
+      e.publication.subscribed = true;
+    });
   }
 }
 ```
@@ -573,13 +582,11 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
   <TabItem value="flutter">
 
 ```dart title="Dart"
-class RoomHandler with RoomDelegate {
-  @override
-  void onTrackSubscribed(RemoteParticipant participant, Track track,
-      RemoteTrackPublication publication) {
-    publication.enabled = false;
-  }
+
+void disableTrack(RemoteTrackPublication publication) {
+  publication.enabled = false;
 }
+
 ```
 
   </TabItem>
@@ -673,15 +680,13 @@ You can see how this is used in our [React component](https://github.com/livekit
   <TabItem value="flutter">
 
 ```dart title="Dart"
-class RoomHandler with RoomDelegate {
-  @override
-  void onTrackSubscribed(RemoteParticipant participant, Track track,
-      RemoteTrackPublication publication) {
-    if (publication.kind == TrackType.VIDEO) {
-      publication.videoQuality = VideoQuality.LOW;
-    }
+
+var listener = room.createListener();
+listener.on<TrackSubscribedEvent>((e) {
+  if (e.publication.kind == TrackType.VIDEO) {
+    e.publication.videoQuality = VideoQuality.LOW;
   }
-}
+})
 ```
 
   </TabItem>
