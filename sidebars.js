@@ -35,7 +35,7 @@ module.exports = {
             'guides/deploy/kubernetes',
             'guides/deploy/tuning',
             'guides/deploy/benchmark',
-            // 'guides/deploy/6-recorder',
+            // 'guides/deploy/recorder',
           ],
         },
       ],
