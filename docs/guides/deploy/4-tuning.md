@@ -1,5 +1,5 @@
 ---
-title: Performance tuning
+title: Performance Tuning
 ---
 
 LiveKit is performant and can support rooms with hundreds of participants on a single node. To achieve high performance, some tuning is necessary.

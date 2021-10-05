@@ -30,9 +30,10 @@ module.exports = {
           label: 'Deployment',
           collapsed: true,
           items: [
-            'guides/deploy',
-            'guides/deploy/tuning',
+            'guides/deploy/prepare',
+            'guides/deploy/instance',
             'guides/deploy/kubernetes',
+            'guides/deploy/tuning',
             'guides/deploy/benchmark',
             // 'guides/deploy/recorder',
           ],
