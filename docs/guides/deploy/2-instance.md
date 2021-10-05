@@ -40,7 +40,6 @@ Steps:
   5. Under "Select additional options" section, check the "User data" option. Copy and paste text from your modified `cloud-init.ubuntu.yaml` file from step 1 into the "User data" field, under the "Advanced Details" section.
   6. Launch your droplet as usual.
 
-
 ### Custom Built Cloud Image
 You can build your own custom cloud image, and bake in any configuration you like.
 
