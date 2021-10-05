@@ -45,12 +45,10 @@ You can build your own custom cloud image, and bake in any configuration you lik
 cd livekit-server/deploy
 packer build .
 ```
-  4. Edit [cloud-init.lk-image.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.lk-image.yaml) with your LiveKit Server configuration.
-  5. Open the [AWS Console](https://console.aws.amazon.com/ec2) and navigate to EC2.
-  6. Launch an instance.
-  7. Choose custom built AMI.
-  8. In the "Step 3: Configure Instance Details" screen, copy and paste text from your modified `cloud-init.yaml` file from step 1 into the "User data" field, under the "Advanced Details" section.
-  9. Launch your instance as usual.
+  4. Open the [AWS Console](https://console.aws.amazon.com/ec2) and navigate to EC2.
+  5. Launch an instance.
+  6. Choose custom built AMI.
+  7. Launch your instance as usual.
 
 ## Firewall
 After you have [deployed](#deployment) LiveKit using one of the methods above, make sure your AWS Security Group is configured to allow the following ports to your LiveKit Instance:
