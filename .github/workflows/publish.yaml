@@ -42,7 +42,7 @@ jobs:
           yarn build
 
       - name: S3 Upload
-        run: aws s3 sync build/ s3://livekit-docs/ --recursive
+        run: aws s3 sync --acl private build/ s3://livekit-docs/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOY_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOY_AWS_API_SECRET }}
