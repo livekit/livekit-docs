@@ -49,8 +49,7 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
 
       - name: Invalidate CloudFront
-        with:
-          args: aws cloudfront create-invalidation --distribution-id ${{ secrets.DOCS_DISTRIBUTION }} --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.DOCS_DISTRIBUTION }} --paths "/*"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOY_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOY_AWS_API_SECRET }}
