@@ -8,6 +8,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  CI: true
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   publish:
@@ -39,18 +42,15 @@ jobs:
           yarn build
 
       - name: S3 Upload
-        uses: ItsKarma/aws-cli@v1.70.0
-        with:
-          args: s3 cp build/ s3://livekit-docs/ --recursive
+        run: aws s3 sync build/ s3://livekit-docs/ --recursive
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOY_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOY_AWS_API_SECRET }}
           AWS_DEFAULT_REGION: "us-east-1"
 
       - name: Invalidate CloudFront
-        uses: ItsKarma/aws-cli@v1.70.0
         with:
-          args: cloudfront create-invalidation --distribution-id ${{ secrets.DOCS_DISTRIBUTION }} --paths "/*"
+          args: aws cloudfront create-invalidation --distribution-id ${{ secrets.DOCS_DISTRIBUTION }} --paths "/*"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_DEPLOY_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_DEPLOY_AWS_API_SECRET }}
