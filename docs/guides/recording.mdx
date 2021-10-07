@@ -40,8 +40,8 @@ Create a `config.json` and fill in your `api_key`, `api_secret`, `ws_url`, and `
 
 ```json title="config.json"
 {
-  "api_key": "<key>",
-  "api_secret": "<secret>",
+  "api_key": "<api-key>",
+  "api_secret": "<api-secret>",
   "input": {
     "template": {
       "layout": "grid-dark",
@@ -116,7 +116,7 @@ const output = {
         secret: 'aws-secret'
     }
 }
-const recordingClient = NewRecordingServiceClient("https://yourlivekit-host", "yourkey", "yoursecret");
+const recordingClient = NewRecordingServiceClient("https://yourlivekit-host", "livekit-api-key", "livekit-api-secret");
 const recordingId = await recordingClient.startRecording(input, output)
 ```
 
@@ -143,7 +143,7 @@ req := &livekit.StartRecordingRequest{
     },
 }
 
-recordingClient := NewRecordingServiceClient("https://yourlivekit-host", "yourkey", "yoursecret")
+recordingClient := NewRecordingServiceClient("https://yourlivekit-host", "livekit-api-key", "livekit-api-secret")
 resp, err := recordingClient.StartRecording(context.Background(), req)
 recordingID := resp.RecordingId
 ```
@@ -154,8 +154,8 @@ recordingID := resp.RecordingId
 
 ```bash
 livekit-cli start-recording \
-      --api-key server-api-key \
-      --api-secret server-api-secret \
+      --api-key livekit-api-key \
+      --api-secret livekit-api-secret \
       --url https://your-livekit-address.com \
       --config path/to/config.json
 ```
@@ -201,8 +201,8 @@ _, err := recordingClient.EndRecording(context.Background(), req)
 
 ```bash
 livekit-cli end-recording \
-      --api-key server-api-key \
-      --api-secret server-api-secret \
+      --api-key livekit-api-key \
+      --api-secret livekit-api-secret \
       --url https://your-livekit-address.com \
       --id RR_XXXXXXXXXXXX
 ```

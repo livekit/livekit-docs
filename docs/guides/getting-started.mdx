@@ -11,7 +11,7 @@ This guide will get you running with a LiveKit installation in minutes.
 
 At its core, LiveKit is a WebRTC SFU. This means it acts as a WebRTC peer and maintains connections with each participant in a room. Unlike vanilla WebRTC, each client participant connects to the LiveKit server, not to one another.
 
-LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access tokens for authentication. Using LiveKit's server SDK, access tokens are generated with an API key and secret pair. This exchange takes place on the server side to avoid embedding secret keys in client code. Here's the general flow:
+LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access tokens for authentication. Using LiveKit's server SDK, access tokens are generated with an API key and secret pair. This exchange takes place on the server side to avoid embedding the secret in client code. Here's the general flow:
 
 * your backend server generates an access token using LiveKit's server SDK
 * your client obtains this token from your backend
@@ -72,7 +72,7 @@ LiveKit server requires one or more sets of API key and secret pairs to authenti
 
 ```
 API Key:  APIxxxxxxxx
-Secret Key:  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+API Secret:  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ## Start the server
@@ -91,7 +91,7 @@ docker run --rm \
   -p 7880:7880 \
   -p 7881:7881 \
   -p 7882:7882/udp \
-  -e LIVEKIT_KEYS="<key>: <secret>" \
+  -e LIVEKIT_KEYS="<api-key>: <api-secret>" \
   livekit/livekit-server \
   --dev \
   --node-ip=<machine-ip>
@@ -103,7 +103,7 @@ docker run --rm \
   <TabItem value="source">
 
 ```shell
-LIVEKIT_KEYS="<key>: <secret>" ./bin/livekit-server --dev
+LIVEKIT_KEYS="<api-key>: <api-secret>" ./bin/livekit-server --dev
 ```
 
   </TabItem>
@@ -131,14 +131,14 @@ For security, every participant that connects to a room needs an access token. B
   <TabItem value="docker">
 
 ```shell
-docker run --rm -e LIVEKIT_KEYS="<key>: <secret>" livekit/livekit-server create-join-token --room myroom --identity $participant_identity
+docker run --rm -e LIVEKIT_KEYS="<api-key>: <api-secret>" livekit/livekit-server create-join-token --room myroom --identity $participant_identity
 ```
 
   </TabItem>
   <TabItem value="source">
 
 ```shell
-LIVEKIT_KEYS="<key>: <secret>" ./bin/livekit-server create-join-token --room myroom --identity $participant_identity
+LIVEKIT_KEYS="<api-key>: <api-secret>" ./bin/livekit-server create-join-token --room myroom --identity $participant_identity
 ```
 
   </TabItem>
