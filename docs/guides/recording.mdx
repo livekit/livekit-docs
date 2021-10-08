@@ -176,16 +176,16 @@ Note: you can only add or remove outputs from a stream (rtmp output instead of f
         {label: 'Golang', value: 'go'},
         {label: 'Cli', value: 'cli'},
     ]}>
-    <TabItem value="node">
+  <TabItem value="node">
 
 ```typescript title="TypeScript"
 recordingClient.addOutput(recordingId, "rtmp://output-url");
 recordingClient.removeOutput(recordingId, "rtmp://output-url");
 ```
 
-    </TabItem>
+  </TabItem>
 
-    <TabItem value="go">
+  <TabItem value="go">
 
 ```go title="Go"
 req := &livekit.AddOutputRequest{
@@ -201,9 +201,9 @@ req := &livekit.RemoveOutputRequest{
 _, err := recordingClient.RemoveOutput(context.Background(), req)
 ```
 
-    </TabItem>
+  </TabItem>
 
-    <TabItem value="cli">
+  <TabItem value="cli">
 
 ```bash
 livekit-cli add-output \
@@ -221,7 +221,7 @@ livekit-cli remove-output \
     --rtmp-url "rtmp://output-url"
 ```
 
-    </TabItem>
+  </TabItem>
 
 </Tabs>
 
