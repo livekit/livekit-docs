@@ -24,34 +24,38 @@ You can record any web page (even unrelated to LiveKit). Try it now by running t
 mkdir -p ~/livekit-recordings
 docker pull livekit/livekit-recorder
 docker run --rm --name demo \
-    -e LIVEKIT_RECORDER_CONFIG='{"input":{"url":"https://www.youtube.com/v/dQw4w9WgXcQ"},"output":{"file":"/output/url-recording.mp4"}}' \
+    -e LIVEKIT_RECORDER_CONFIG='{"url":"https://www.youtube.com/v/dQw4w9WgXcQ","file":"/output/url-demo.mp4"}' \
     -v ~/livekit-recordings:/output \
     livekit/livekit-recorder & \
 sleep 60 && docker stop demo
 ```
 
-After a minute, you'll find `url-recording.mp4` at ~/livekit/recordings.
+After a minute, you'll find `url-demo.mp4` at ~/livekit-recordings.
 
 ### Room demo
 
 Record your own LiveKit room just as easily using our recording templates. (choose from `grid-light`, `grid-dark`, `speaker-light`, `speaker-dark`)
 
-Create a `config.json` and fill in your `api_key`, `api_secret`, `ws_url`, and `room_name`:
+Create a `config.yaml` and fill in your `api_key`, `api_secret`, and `ws_url`:
 
-```json title="config.json"
+```yaml title="config.yaml"
+api_key: <api-key>
+api_secret: <api-secret>
+ws_url: <ws-url>
+```
+
+When using an existing LiveKit template, we will automatically create a JWT token with the provided api_key and api_secret.
+The token is created to be a hidden, subscribe-only participant. This means the recorder connects to the room, but does not appear to other participants.
+
+Next, create a `request.json`:
+
+```json title="request.json"
 {
-  "api_key": "<api-key>",
-  "api_secret": "<api-secret>",
-  "input": {
     "template": {
-      "layout": "grid-dark",
-      "ws_url": "<wss://your-livekit-address.com>",
-      "room_name": "<room-to-record>"
-    }
-  },
-  "output": {
+        "layout": "grid-dark",
+        "room_name": "<room-to-record>"
+    },
     "file": "/output/room-recording.mp4"
-  }
 }
 ```
 
@@ -60,13 +64,12 @@ mkdir -p ~/livekit-recordings
 
 docker run --rm --name demo \
     -e LIVEKIT_RECORDER_CONFIG="$(cat config.json)" \
+    -e RECORDING_REQUEST="$(cat bin/file.json)" \
     -v ~/livekit-recordings:/output \
     livekit/livekit-recorder
 ```
 
-Once you leave the room, the recording will end, and you'll find `room-recording.mp4` at ~/livekit/recordings.
-
-When using an existing LiveKit template, we will automatically create a JWT token with the provided api_key and api_secret. The token is created to be a hidden, subscribe-only participant. This means the recorder connects to the room, but does not appear to other participants.
+Once you leave the room, the recording will end, and you'll find `room-recording.mp4` at ~/livekit-recordings.
 
 ## Creating your templates
 
@@ -80,11 +83,14 @@ Source code to our default room templates can be [found here](https://github.com
 
 ## Service
 
-While standalone mode is easy to get started, you may want to [deploy](/guides/deploy/recorder) the recorder as a service for programmatic access to recording. Once deployed, rooms can be recorded by indicating as such during room creation.
+While standalone mode is easy to get started, you may want to [deploy](/guides/deploy/recorder) the recorder as a service for programmatic access to recording.
+Once deployed, rooms can be recorded by indicating as such during room creation.
 
 ![Recorder service](/img/recorder/recorder-service.svg)
 
-In this mode, recorder service instances listen to Redis for recording jobs requested by LiveKit server. Only one instance of the service will be assigned to a single job. You can start multiple instances of the service to ensure spare capacity when rooms need to be recorded.
+In this mode, recorder service instances listen to Redis for recording jobs requested by LiveKit server.
+Only one instance of the service will be assigned to a single job.
+You can start multiple instances of the service to ensure spare capacity when rooms need to be recorded.
 
 ### Start a recording
 
@@ -104,19 +110,13 @@ To record a webpage, use the `Url` recording input instead of `Template`.
 const input = {
     template: {
         layout: 'grid-dark',
-        ws_url: 'wss://your-livekit-address.com',
         room_name: 'my-room'
     }
 }
 const output = {
-    s3: {
-        bucket: 'mybucket',
-        key: 'recording.mp4'
-        access_key: 'aws-access-key',
-        secret: 'aws-secret'
-    }
+    s3_url: "s3://mybucker/path/recording.mp4"
 }
-const recordingClient = NewRecordingServiceClient("https://yourlivekit-host", "livekit-api-key", "livekit-api-secret");
+const recordingClient = NewRecordingServiceClient("https://your-livekit-host", "livekit-api-key", "livekit-api-secret");
 const recordingId = await recordingClient.startRecording(input, output)
 ```
 
@@ -128,18 +128,14 @@ const recordingId = await recordingClient.startRecording(input, output)
 req := &livekit.StartRecordingRequest{
     Input: &livekit.StartRecordingRequest_Template{
         Template: &livekit.RecordingTemplate{
-            Layout: "grid-dark",
-            WsUrl: "wss://your-livekit-address.com",
-            RoomName: "my-room",
-        }
-    },
-    Output: &livekit.StartRecordingRequest_S3{
-        S3: &livekit.RecordingS3Output{
-            Bucket: "mybucket",
-            Key: "recording.mp4",
-            AccessKey: "aws-access-key",
-            Secret: "aws-secret",
+            Layout: "speaker-dark",
+            Room: &livekit.RecordingTemplate_Token{
+                Token: "fake-recording-token",
+            },
         },
+    },
+    Output: &livekit.StartRecordingRequest_S3Url{
+        S3Url: "s3://livekit/test.mp4",
     },
 }
 
@@ -154,10 +150,10 @@ recordingID := resp.RecordingId
 
 ```bash
 livekit-cli start-recording \
+      --url https://your-livekit-address.com \
       --api-key livekit-api-key \
       --api-secret livekit-api-secret \
-      --url https://your-livekit-address.com \
-      --config path/to/config.json
+      --request request.json
 ```
 Prints your recording ID:
 ```
@@ -165,6 +161,67 @@ Recording started. Recording ID: RR_XXXXXXXXXXXX
 ```
 
   </TabItem>
+
+</Tabs>
+
+### Add or remove outputs
+
+Note: you can only add or remove outputs from a stream (rtmp output instead of file or s3).
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+    <TabItem value="node">
+
+```typescript title="TypeScript"
+recordingClient.addOutput(recordingId, "rtmp://output-url");
+recordingClient.removeOutput(recordingId, "rtmp://output-url");
+```
+
+    </TabItem>
+
+    <TabItem value="go">
+
+```go title="Go"
+req := &livekit.AddOutputRequest{
+    RecordingId: recordingID,
+    RtmpUrl: "rtmp://output-url",
+}
+_, err := recordingClient.AddOutput(context.Background(), req)
+
+req := &livekit.RemoveOutputRequest{
+    RecordingId: recordingID,
+    RtmpUrl: "rtmp://output-url",
+}
+_, err := recordingClient.RemoveOutput(context.Background(), req)
+```
+
+    </TabItem>
+
+    <TabItem value="cli">
+
+```bash
+livekit-cli add-output \
+    --url https://your-livekit-address.com \
+    --api-key livekit-api-key \
+    --api-secret livekit-api-secret \
+    --id RR_XXXXXXXXXXXX \
+    --rtmp-url "rtmp://output-url"
+
+livekit-cli remove-output \
+    --url https://your-livekit-address.com \
+    --api-key livekit-api-key \
+    --api-secret livekit-api-secret \
+    --id RR_XXXXXXXXXXXX \
+    --rtmp-url "rtmp://output-url"
+```
+
+    </TabItem>
 
 </Tabs>
 
@@ -201,9 +258,9 @@ _, err := recordingClient.EndRecording(context.Background(), req)
 
 ```bash
 livekit-cli end-recording \
+      --url https://your-livekit-address.com \
       --api-key livekit-api-key \
       --api-secret livekit-api-secret \
-      --url https://your-livekit-address.com \
       --id RR_XXXXXXXXXXXX
 ```
 

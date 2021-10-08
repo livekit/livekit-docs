@@ -7,30 +7,44 @@ The recording service only requires access to the same redis cluster as your Liv
 ## Config
 
 The only required field is your redis address.
-Additionally, if you'll be starting template recordings by room name (instead of token), you'll need to supply your server api key and token.
+Additionally, if you'll be starting template recordings by room name (instead of token), you'll need to supply your server api key, secret, and ws url.
 
 ```yaml
-redis:
-    address: redis address, including port (required)
-    username: redis username (optional)
-    password: redis password (optional)
-    db: redis db (optional)
 api_key: livekit server api key (required if using templates without supplying tokens)
 api_secret: livekit server api secret (required if using templates without supplying tokens)
-# default recording options (optional)
-options:
-    preset: valid options are 720p30, 720p60, 1080p30, 1080p60
-    input_width: defaults to 1920
-    input_height: defaults to 1080
-    output_width: defaults to 0 (no scaling)
-    output_height: defaults to 0 (no scaling)
-    depth: defaults to 24
-    framerate: defaults to 30
-    audio_bitrate: defaults to "128k"
-    audio_frequency: defaults to "44100"
-    video_bitrate: defaults to "2976k"
-log_level: valid levels are debug, info, warn, error, fatal, or panic (optional)
+ws_url: livekit server ws url (required if using templates)
+health_port: http port to serve status (optional)
+log_level: valid levels are debug, info, warn, error, fatal, or panic. Defaults to debug
+redis: (service mode only)
+  address: redis address, including port
+  username: redis username (optional)
+  password: redis password (optional)
+  db: redis db (optional)
+s3: (required if using s3 output)
+  access_key: s3 access key
+  secret: s3 access secret
+  region: s3 region
+defaults:
+  preset: defaults to "NONE", see options below
+  width: defaults to 1920
+  height: defaults to 1080
+  depth: defaults to 24
+  framerate: defaults to 30
+  audio_bitrate: defaults to 128 (kbps)
+  audio_frequency: defaults to 44100 (Hz)
+  video_bitrate: defaults to 4500 (kbps)
 ```
+
+### Presets
+
+| Preset       | width | height | framerate | video_bitrate |
+|---           |---    |---     |---        |---            |
+| "HD_30"      | 1280  | 720    | 30        | 3000          |
+| "HD_60"      | 1280  | 720    | 60        | 4500          |
+| "FULL_HD_30" | 1920  | 1080   | 30        | 4500          |
+| "FULL_HD_60" | 1920  | 1080   | 60        | 6000          |
+
+If you don't supply any options with your config defaults or your requests, it defaults to FULL_HD_30.
 
 ## Ensuring availability
 
