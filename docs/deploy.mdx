@@ -4,9 +4,9 @@ title: Deploying LiveKit
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-WebRTC servers are usually tricky to deploy because of their use of UDP ports and needing to advertise its own public IP address.
+WebRTC servers can be tricky to deploy because of their use of UDP ports and having to know their own public IP address.
 
-We've addressed many of these challenges with LiveKit. This guide will help you get a secure LiveKit deployment up and running.
+This guide will help you get a secure LiveKit deployment up and running.
 
 ## Domain, SSL certificates, and load balancer
 
@@ -14,7 +14,7 @@ In order to have a secure LiveKit desployment, you will need a domain as well as
 
 You will also need to set up HTTPS/SSL termination with a load balancer or reverse proxy.
 
-If you are using TURN, then a separate TURN domain and SSL cert will be needed, as well. In order to use TURN/TLS correctly, the server needs to listen on port 443.
+If you are using TURN, then a separate TURN domain and SSL cert will be needed, as well.
 
 ## Improving connectivity with TURN
 
