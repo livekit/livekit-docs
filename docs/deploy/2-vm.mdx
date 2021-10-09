@@ -1,0 +1,80 @@
+---
+title: Deploy to a VM
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide helps you to set up LiveKit server on a virtual machine on AWS EC2 or Digital Ocean.
+
+## Pre-requisites
+
+To start, you'll need:
+
+- A valid self-generated LiveKit API key, following the instructions in the [Getting Started](/guides/getting-started#generate-api-key-and-secret) guide.
+- A valid SSL certificate and private key, which can be purchased anywhere that sells SSL certificates such as [Namecheap](https://www.namecheap.com/security/ssl-certificates/).
+- Ability to add a DNS record pointing to your new LiveKit Server.
+
+## Deploy with Cloud Init
+
+This is the easiest method for deploying LiveKit Server. You can deploy a LiveKit Server using a vanilla Linux image and Cloud Init configuration file.
+
+<Tabs
+  defaultValue="aws"
+  groupId="cloud"
+  values={[
+    {label: 'AWS', value: 'aws'},
+    {label: 'Digital Ocean', value: 'do'},
+  ]}>
+
+  <TabItem value="aws">
+
+LiveKit Server can be deployed with either Amazon Linux 2 or Ubuntu. Use the `cloud-init.<platform>.yaml` file corresponding to your desired platform:
+
+- For Amazon Linux 2, use [cloud-init.amzn2.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.amzn2.yaml)
+- For Ubuntu, use [cloud-init.ubuntu.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.ubuntu.yaml)
+
+Steps:
+
+1. Download one of the above `cloud-init.<platform>.yaml` files. Edit it to include your LiveKit Server configuration, SSL certificate, and SSL private key.
+2. Open the [AWS Console](https://console.aws.amazon.com/ec2) and navigate to EC2.
+3. Launch an instance.
+4. Choose the latest "Amazon Linux 2" or "Ubuntu Server" AMI.
+5. In the "Step 3: Configure Instance Details" screen, copy and paste text from your modified `cloud-init.yaml` file from step 1 into the "User data" field, under the "Advanced Details" section.
+6. Launch your instance as usual.
+
+
+  </TabItem>
+  <TabItem value="do">
+
+Steps:
+
+1. Download the [cloud-init.ubuntu.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.ubuntu.yaml) file. Edit it to include your LiveKit Server configuration, SSL certificate, and SSL private key.
+2. Log on to Digital Ocean and navigate to [Droplets](https://cloud.digitalocean.com/droplets).
+3. Create a Droplet.
+4. Choose the latest "Ubuntu" image.
+5. Under "Select additional options" section, check the "User data" option. Copy and paste text from your modified `cloud-init.ubuntu.yaml` file from step 1 into the "User data" field, under the "Advanced Details" section.
+6. Launch your droplet as usual.
+
+
+  </TabItem>
+</Tabs>
+
+## Firewall
+
+In addition to the [required ports](ports-firewall) listed above, you'll also want to open up the following ports:
+
+- TCP 22   - SSH
+- TPC 443  - SSL terminated WebSocket
+- UDP 7882 - RTC UDP
+
+## Troubleshooting
+
+If something is not working as expected, SSH in to your server and use the following commands to investigate:
+
+```
+systemctl status docker.service
+systemctl status nginx.service
+systemctl status docker.livekit-server@v0.13.service
+tail /var/log/nginx/access.log
+tail /var/log/nginx/error.log
+```

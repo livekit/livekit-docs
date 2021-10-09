@@ -7,7 +7,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Guides',
-      collapsed: false,
+      collapsed: true,
       items: [
         'guides/getting-started',
         {
@@ -25,24 +25,25 @@ module.exports = {
         'guides/server-api',
         'guides/webhooks',
         // 'guides/recording',
-        {
-          type: 'category',
-          label: 'Deployment',
-          collapsed: true,
-          items: [
-            'guides/deploy/prepare',
-            'guides/deploy/instance',
-            'guides/deploy/kubernetes',
-            'guides/deploy/tuning',
-            'guides/deploy/benchmark',
-            // 'guides/deploy/recorder',
-          ],
-        },
       ],
     },
     {
       type: 'category',
-      label: 'References',
+      label: 'Deployment',
+      collapsed: true,
+      items: [
+        'deploy',
+        'deploy/vm',
+        'deploy/kubernetes',
+        'deploy/ports-firewall',
+        'deploy/distributed',
+        'deploy/test-monitor',
+        'deploy/benchmark',
+      ]
+    },
+    {
+      type: 'category',
+      label: 'API Reference',
       collapsed: false,
       items: [
        'references/client-sdks',

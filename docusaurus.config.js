@@ -70,4 +70,37 @@ module.exports = {
       },
     ],
   ],
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            to: '/deploy',
+            from: ['/guides/deploy/prepare', '/guides/deploy'],
+          },
+          {
+            to: '/deploy/vm',
+            from: ['/guides/deploy/instance'],
+          },
+          {
+            to: '/deploy/kubernetes',
+            from: ['/guides/deploy/kubernetes'],
+          },
+          {
+            to: '/deploy/test-monitor',
+            from: ['/guides/deploy/tuning'],
+          },
+          {
+            to: '/deploy/benchmark',
+            from: ['/guides/deploy/benchmark'],
+          },
+          // {
+          //   to: '/deploy/recorder',
+          //   from: ['/guides/deploy/recorder'],
+          // },
+        ],
+      }
+    ],
+  ]
 };
