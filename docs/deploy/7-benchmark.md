@@ -24,7 +24,7 @@ For publishing, it sends packets simulating a particular bitrate. This makes it 
 
 As a subscriber, it will compute packet loss and produce NACKs, but does not produce PLI.
 
-When benchmarking with the load tester, be sure to run it on a machine with plenty of resources, and that the [sysctl parameters](tuning) have been tuned.
+When benchmarking with the load tester, be sure to run it on a machine with plenty of resources, and that the [sysctl parameters](test-monitor#performancetuning) have been tuned.
 
 ### Headless chrome
 

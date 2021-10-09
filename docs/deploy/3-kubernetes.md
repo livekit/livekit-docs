@@ -1,10 +1,10 @@
 ---
-title: Kubernetes
+title: Deploy to Kubernetes
 ---
 
-We've created a helm chart that makes deploying to Kubernetes simple. It will help you set up a distributed deployment of LiveKit, along with a Service and Ingress to correctly route traffic.
+LiveKit streamlines deployment to Kubernetes. We publish a [Helm chart](https://github.com/livekit/livekit-helm) that help you set up a distributed deployment of LiveKit, along with a Service and Ingress to correctly route traffic.
 
-Our [Helm chart](https://github.com/livekit/livekit-helm) supports GKE and EKS out of the box, and can serve as a guide on your custom Kubernetes installations.
+Our Helm chart supports Google GKE and Amazon EKS out of the box, and can serve as a guide on your custom Kubernetes installations.
 
 ## Understanding the deployment
 
@@ -13,6 +13,12 @@ LiveKit pods requires direct access to the network with host networking. This me
 Termination of TLS/SSL is left as a responsibility of the Ingress. Our Helm chart will configure TLS termination for GKE and ALB load balancers. To use ALB on EKS, AWS Load Balancer Controller needs to be [installed separately](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html).
 
 ![Kubernetes Deployment](/img/deploy/kubernetes.svg)
+
+## Graceful restarts
+
+During an upgrade deployment, older pods will need to be terminated. This could be extremely disruptive if there are active sessions running on those pods. LiveKit handles this by allowing that instance to drain prior to shutting down.
+
+We also set `terminationGracePeriodSeconds` to 5 hours in the helm chart, ensuring Kubernetes gives sufficient time for the pod to gracefully shut down.
 
 ## Using the Helm Chart
 
@@ -48,3 +54,9 @@ We'll publish new version of the chart with new server releases. To fetch these 
 $ helm repo update
 $ helm upgrade <instance_name> livekit/livekit-server --namespace <namespace> --values values.yaml
 ```
+
+If any configuration has changed, you may need to trigger a restart of the deployment. Kubernetes triggers a restart only when the pod itself has changed, but does not when the changes took place in the ConfigMap.
+
+### Firewall
+
+Ensure that your [firewall](ports-firewall#firewall) is configured properly to allow traffic into LiveKit ports.

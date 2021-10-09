@@ -1,16 +1,24 @@
 ---
-title: Performance Tuning
+title: Test and Monitoring
 ---
 
-LiveKit is performant and can support rooms with hundreds of participants on a single node. To achieve high performance, some tuning is necessary.
+## Testing for connectivity
+
+It's important to validate that your instance is configured correctly, and that users can connect to them. You can use our [connection tester](https://livekit.io/connection-test) to run through a series of tests and confirm that it's seeing the expected results.
+
+![Connection Tester](/img/deploy/connection-test.png)
+
+## Performance tuning
+
+To achieve high performance, some tuning is necessary.
 
 If you are deploying with our Kubernetes Helm chart, these settings will be applied automatically.
 
-## Host networking
+### Host networking
 
 If running in Docker, ensure that you are using host networking. NAT and bridge mode introduce another layer of translation that could be limiting to performance.
 
-## Kernel parameters
+### Kernel parameters
 
 Several kernel parameters would need to be tuned via sysctl. By default, Linux comes with conservative settings on buffer/queue sizes that would lead to packet loss under load.
 
@@ -44,3 +52,9 @@ To apply via sysctl, use:
 $ sudo sysctl -w net.core.rmem_max=25165824
 net.core.rmem_max = 25165824
 ```
+
+## Prometheus
+
+When configured, LiveKit exposes Prometheus stats via /metrics endpoint. We export metrics related to rooms, participants, and packet transmissions.
+
+To view the list of metrics we export, see [roomstatsreporter.go](https://github.com/livekit/livekit-server/blob/master/pkg/utils/stats/roomstatsreporter.go)
