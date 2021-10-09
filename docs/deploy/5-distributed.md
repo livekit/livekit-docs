@@ -2,7 +2,7 @@
 title: Distributed Set-up
 ---
 
-LiveKit is architected to be distributed, with homogeneous instances running across many instances; with Redis as the only external dependency.
+LiveKit is architected to be distributed, with homogeneous instances running across many servers. In distributed mode, Redis is required as shared data store and message bus.
 
 ## Multi-node routing
 
@@ -16,9 +16,11 @@ In a multi-node setup, LiveKit can support a large number of concurrent rooms. H
 
 ## Multi-region support
 
-It's a common use case to deploy LiveKit in multiple data centers, allowing users in the region to connect to an instance that's closest to them.
+It's possible to deploy LiveKit to multiple data centers, allowing users located in different regions to connect to a server that's closest to them.
 
-LiveKit supports this via a [region-aware, load aware node selector](https://github.com/livekit/livekit-server/blob/master/pkg/routing/selector/regionaware.go). It's designed to be used with a region-aware load balancer over the primary WebSocket connection. Here's how it works:
+LiveKit supports this via a [region-aware, load aware node selector](https://github.com/livekit/livekit-server/blob/master/pkg/routing/selector/regionaware.go). It's designed to be used in conjunction with region-aware load balancing of the signal connection.
+
+Here's how it works:
 
 1. Geo or latency aware DNS service (such as Route53 or Cloudflare) returns IP of load balancer closest to the user
 2. User connects load balancer in that region
@@ -27,7 +29,7 @@ LiveKit supports this via a [region-aware, load aware node selector](https://git
 5. The selection criteria is
    - node must have lower utilization than `sysload_limit`
    - nodes are in the region closest to the signaling instance
-   - a node matching the above is chosen at random
+   - a node satisfying the above is chosen at random
 
 ### Configuration
 

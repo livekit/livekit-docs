@@ -19,6 +19,11 @@ body {
   padding: 0 var(--ifm-pre-padding);
 }
 
+body .anchor {
+  /* compensate for header nav */
+  top: -5rem;
+}
+
 /* Infima overrides */
 .menu {
   font-weight: normal;
