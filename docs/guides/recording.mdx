@@ -24,7 +24,8 @@ You can record any web page (even unrelated to LiveKit). Try it now by running t
 mkdir -p ~/livekit-recordings
 docker pull livekit/livekit-recorder
 docker run --rm --name demo \
-    -e LIVEKIT_RECORDER_CONFIG='{"url":"https://www.youtube.com/v/dQw4w9WgXcQ","file":"/output/url-demo.mp4"}' \
+    -e LIVEKIT_RECORDER_CONFIG='log_level: debug' \
+    -e RECORDING_REQUEST='{"url":"https://www.youtube.com/v/dQw4w9WgXcQ","file":"/output/url-demo.mp4"}' \
     -v ~/livekit-recordings:/output \
     livekit/livekit-recorder & \
 sleep 60 && docker stop demo
