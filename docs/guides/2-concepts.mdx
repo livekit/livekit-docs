@@ -1,0 +1,35 @@
+---
+title: Core Concepts
+---
+
+LiveKit provides a flexible system consisting of a Room, Participants, and Tracks. With these constructs, you can build a myrid of real-time experiences.
+
+## Room
+
+Room is the containing unit for a LiveKit session. Participants in the same room may subscribe to each others' tracks.
+
+Everyone in the room will also get updates about changes to the other participants in the room. When a single participant changes their tracks (for example, mutes or unpublishes), everyone in the room will receive updates about it. This is a very powerful mechanism for building real-time experiences.
+
+Participants within the room may also [exchange data](room/data#data-messages) with one another, including one-to-many delivery.
+
+Rooms can be created with [server APIs](server-api), or automatically created when the first participant attempts to join the room. When the last participant leaves a room, it'll be closed after a short delay.
+
+## Participant
+
+A participant represents a user that's in the room. Each participant is represented by an unique client-provided `identity`, and a server-generated `sid`. If multiple connections are attempted using the same identity, the last one to join will remain in the room. The server will disconnect others using the same identity.
+
+Participant class contains metadata about its state, as well as a list of tracks they have published.
+
+There are two kinds of Participants:
+
+* `LocalParticipant` - represents the current user. Publishes tracks to the room.
+* `RemoteParticipant` - represents a remote user. You may subscribe to any of the tracks they've published.
+
+## Track and TrackPublication
+
+LiveKit has two related concepts around Tracks.
+
+* `Track` - a wrapper around the native WebRTC MediaStreamTrack, represents a playable track.
+* `TrackPublication` - a track that has been published to the server. If the track is subscribed and avialable for playback locally, it would have a `.track` attribute representing a `Track` object.
+
+Having a separate `TrackPublication` class allows us to represent tracks that have not been subscribed to. It becomes possible to list and manipulate tracks others that have published, but the local participant have not to subscribed to.
