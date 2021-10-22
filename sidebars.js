@@ -10,9 +10,10 @@ module.exports = {
       collapsed: true,
       items: [
         'guides/getting-started',
+        'guides/concepts',
         {
           type: 'category',
-          label: 'Room Basics',
+          label: 'Working with Rooms',
           collapsed: true,
           items: [
             'guides/room/connect',
