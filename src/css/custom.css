@@ -21,7 +21,7 @@ body {
 
 body .anchor {
   /* compensate for header nav */
-  top: -5rem;
+  scroll-margin-top: 5rem;
 }
 
 /* Infima overrides */
