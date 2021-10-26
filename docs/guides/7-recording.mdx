@@ -25,7 +25,7 @@ mkdir -p ~/livekit-recordings
 docker pull livekit/livekit-recorder
 docker run --rm --name demo \
     -e LIVEKIT_RECORDER_CONFIG='log_level: debug' \
-    -e RECORDING_REQUEST='{"url":"https://www.youtube.com/v/dQw4w9WgXcQ","file":"/output/url-demo.mp4"}' \
+    -e RECORDING_REQUEST='{"url":"https://www.youtube.com/v/dQw4w9WgXcQ","filepath":"/output/url-demo.mp4"}' \
     -v ~/livekit-recordings:/output \
     livekit/livekit-recorder & \
 sleep 60 && docker stop demo
@@ -56,7 +56,7 @@ Next, create a `request.json`:
         "layout": "grid-dark",
         "room_name": "<room-to-record>"
     },
-    "file": "/output/room-recording.mp4"
+    "filepath": "/output/room-recording.mp4"
 }
 ```
 
@@ -81,6 +81,20 @@ You likely already have a room UI built with LiveKit web SDKs. The recording UI 
 - Room controls (mute, leave, etc) should not be visible
 
 Source code to our default room templates can be [found here](https://github.com/livekit/livekit-recorder/tree/main/web).
+
+## Uploading to S3
+
+To automatically upload files to s3, add the following to your config:
+```yaml title="config.yaml"
+file_output:
+    s3:
+        access_key: <aws access key>
+        secret: <aws secret>
+        region: <region>
+        bucket: <bucket>
+```
+
+When the recorder finishes a filepath request, the mp4 file will be uploaded to `s3://bucket/{filepath}`
 
 ## Service
 
@@ -115,7 +129,7 @@ const input = {
     }
 }
 const output = {
-    s3_url: "s3://mybucker/path/recording.mp4"
+    filepath: "path/recording.mp4"
 }
 const recordingClient = NewRecordingServiceClient("https://your-livekit-host", "livekit-api-key", "livekit-api-secret");
 const recordingId = await recordingClient.startRecording(input, output)
@@ -135,8 +149,8 @@ req := &livekit.StartRecordingRequest{
             },
         },
     },
-    Output: &livekit.StartRecordingRequest_S3Url{
-        S3Url: "s3://livekit/test.mp4",
+    Output: &livekit.StartRecordingRequest_Filepath{
+        Filepath: "path/test.mp4",
     },
 }
 
@@ -167,7 +181,7 @@ Recording started. Recording ID: RR_XXXXXXXXXXXX
 
 ### Add or remove outputs
 
-Note: you can only add or remove outputs from a stream (rtmp output instead of file or s3).
+Note: you can only add or remove outputs from a stream (rtmp output instead of filepath).
 
 <Tabs
     defaultValue="node"

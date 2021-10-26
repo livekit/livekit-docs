@@ -16,23 +16,26 @@ ws_url: livekit server ws url (required if using templates)
 health_port: http port to serve status (optional)
 log_level: valid levels are debug, info, warn, error, fatal, or panic. Defaults to debug
 redis: (service mode only)
-  address: redis address, including port
-  username: redis username (optional)
-  password: redis password (optional)
-  db: redis db (optional)
-s3: (required if using s3 output)
-  access_key: s3 access key
-  secret: s3 access secret
-  region: s3 region
+    address: redis address, including port
+    username: redis username (optional)
+    password: redis password (optional)
+    db: redis db (optional)
+file_output:
+    local: true/false (defaults to true if no s3 output specified)
+    s3: (will upload all filepath requests to s3)
+        access_key: s3 access key
+        secret: s3 access secret
+        region: s3 region
+        bucket: s3 bucket
 defaults:
-  preset: defaults to "NONE", see options below
-  width: defaults to 1920
-  height: defaults to 1080
-  depth: defaults to 24
-  framerate: defaults to 30
-  audio_bitrate: defaults to 128 (kbps)
-  audio_frequency: defaults to 44100 (Hz)
-  video_bitrate: defaults to 4500 (kbps)
+    preset: defaults to "NONE", see options below
+    width: defaults to 1920
+    height: defaults to 1080
+    depth: defaults to 24
+    framerate: defaults to 30
+    audio_bitrate: defaults to 128 (kbps)
+    audio_frequency: defaults to 44100 (Hz)
+    video_bitrate: defaults to 4500 (kbps)
 ```
 
 ### Presets
