@@ -59,4 +59,4 @@ If any configuration has changed, you may need to trigger a restart of the deplo
 
 ### Firewall
 
-Ensure that your [firewall](ports-firewall#firewall) is configured properly to allow traffic into LiveKit ports.
+Ensure that your [firewall](/deploy/ports-firewall#firewall) is configured properly to allow traffic into LiveKit ports.

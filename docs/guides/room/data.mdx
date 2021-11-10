@@ -10,7 +10,7 @@ With LiveKit maintaining room state, you can use it to pass around custom applic
 
 LiveKit participants have a `metadata` field that you could use to store application-specific data. For example, this could be the seat number around a table, or other participant-specific state.
 
-Metadata is encoded in the [access token](../access-tokens) that participants use to connect to the room.
+Metadata is encoded in the [access token](/guides/access-tokens) that participants use to connect to the room.
 
 With our server SDKs, you can update the metadata from your backend. LiveKit will broadcast metadata changes to all participants in the room. You can receive these updates by listening to the MetadataUpdated callback/event.
 
