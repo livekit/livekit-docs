@@ -40,7 +40,7 @@ const url = 'wss://your_host'
 const token = 'jwt_token'
 
 // after connection, you could set up listeners
-connect(url, token).then(async (room) => {
+connect(url, token).then(room => {
   // when a media track is subscribed to, ready for playback
   room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {})
 
@@ -71,7 +71,7 @@ export const MyComponent = () => {
 
   useEffect(() => {
     connect(url, token)
-      .then((room) => {
+      .then(room => {
         // publish tracks
       })
     // teardown
