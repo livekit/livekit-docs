@@ -57,4 +57,4 @@ net.core.rmem_max = 25165824
 
 When configured, LiveKit exposes Prometheus stats via /metrics endpoint. We export metrics related to rooms, participants, and packet transmissions.
 
-To view the list of metrics we export, see [roomstatsreporter.go](https://github.com/livekit/livekit-server/blob/master/pkg/utils/stats/roomstatsreporter.go)
+To view the list of metrics we export, see [livekit-server/pkg/telemetry/prometheus](https://github.com/livekit/livekit-server/tree/master/pkg/telemetry/prometheus).
