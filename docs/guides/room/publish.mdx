@@ -6,8 +6,8 @@ import TabItem from '@theme/TabItem';
 
 ## Camera and microphone
 
-It's common to publish the local participant's camera and/or microphone streams in a conference.
-We provide a consistent way to do this across platforms.
+It's simple to publish the local participant's camera and/or microphone streams to the room.
+We provide a consistent way to do this across platforms:
 
 ```typescript
 // Turns camera track on
@@ -17,14 +17,14 @@ room.localParticipant.setCameraEnabled(true)
 room.localParticipant.setMicrophoneEnabled(true)
 ```
 
-and to mute them, you can perform
+and to mute them, you can perform:
 
 ```typescript
 room.localParticipant.setCameraEnabled(false)
 room.localParticipant.setMicrophoneEnabled(false)
 ```
 
-Disabling camera or microphone will turn off the respective recording indicators. Other participants will receive a `TrackMuted` event.
+Disabling camera or microphone will turn off their respective recording indicators. Other participants will receive a `TrackMuted` event.
 
 ## Screen sharing
 
@@ -49,7 +49,7 @@ await currentRoom.localParticipant.setScreenShareEnabled(true);
   </TabItem>
   <TabItem value="android">
 
-On Android, screen capture is performed using `MediaProjectionManager`.
+On Android, screen capture is performed using `MediaProjectionManager`:
 
 ```kotlin title="Kotlin"
 // create an intent launcher for screen capture
@@ -82,7 +82,7 @@ With Flutter, screen sharing is currently supported on Android and Web.
 room.localParticipant.setScreenShareEnabled(true);
 ```
 
-On Android, you would have to define a foreground service in your AndroidManifest.xml.
+On Android, you would have to define a foreground service in your AndroidManifest.xml:
 
 ```xml title="AndroidManifest.xml"
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -196,9 +196,9 @@ await room.localParticipant.publishAudioTrack(localAudio);
   </TabItem>
   <TabItem value="go">
 
-The Go SDK makes it simple to publish static files or media from other sources to the room.
+The Go SDK makes it simple to publish static files or media from other sources to a room.
 
-To publish files, they need to be first [encoded](https://github.com/livekit/server-sdk-go/tree/main#publishing-tracks-to-room) into the right format.
+To publish files, they must first be [encoded](https://github.com/livekit/server-sdk-go/tree/main#publishing-tracks-to-room) into the right format.
 
 ```go title="Go"
 // publishing from file
@@ -224,7 +224,7 @@ if _, err = room.LocalParticipant.PublishTrack(track, file); err != nil {
 
 When using audio with native iOS or Android SDKs, it's important to consider the device's audio stack, in order to behave well with other apps.
 
-With Flutter SDK, audio session is managed automatically.
+With the Flutter SDK, audio session is managed automatically.
 
 <Tabs
   defaultValue="ios"
@@ -236,9 +236,9 @@ With Flutter SDK, audio session is managed automatically.
 
   <TabItem value="ios">
 
-On iOS, LiveKit provides automatic management of `AVAudioSession`. We ensure that the minimal set of audio permissions are acquired (for example, microphone is turned off when it's not publishing).
+On iOS, LiveKit provides automatic management of `AVAudioSession`. We ensure the minimal set of audio permissions are acquired (for example, microphone is turned off when it's not publishing).
 
-It may be desirable to override the default settings by setting `LiveKit.onShouldConfigureAudioSession`
+It may be desirable to override the default settings by setting `LiveKit.onShouldConfigureAudioSession`:
 
 ```swift
 LiveKit.onShouldConfigureAudioSession = { (_ newState: AudioTrack.TracksState,
@@ -301,8 +301,8 @@ Mute/unmute a track using its corresponding `LocalTrackPublication` object.
 
 With simulcasting, a client publishes multiple versions of the same video track with varying bitrate profiles. This allows LiveKit to dynamically forward the stream that's most appropriate given each receiving participant's available bandwidth and desired resolution.
 
-Adaptive layer selection takes place automatically in the SFU when the server detects that a participant is bandwidth constrainted. When the participant's bandwidth improves, the server will then upgrade the stream to a higher resolution.
+Adaptive layer selection takes place automatically in the SFU when the server detects a participant is bandwidth constrainted. When the participant's bandwidth improves, the server will then upgrade subscribed streams to higher resolutions.
 
 For more information about Simulcast, see [an introduction to WebRTC simulcast](https://blog.livekit.io/an-introduction-to-webrtc-simulcast-6c5f1f6402eb).
 
-Simulcast is supported in all of LiveKit's client SDKs. You can enable them in the default publish settings or when publishing video tracks.
+Simulcast is supported in all of LiveKit's client SDKs. You can enable it in the default publish settings or when publishing video tracks.
