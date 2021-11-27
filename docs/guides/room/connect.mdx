@@ -16,6 +16,8 @@ Connecting to a room requires two parameters: a `url` and a `token`. The `url` p
 
 The `token` is an access token representing the particular local participant. You can use the aformentioned guide to generate a token via CLI, or you can use our [server SDK](/references/server-sdks) to create one.
 
+You may also customize room options during connect.
+
 <Tabs
   defaultValue="typescript"
   groupId="client-sdk"
@@ -39,23 +41,38 @@ import {
 const url = 'wss://your_host'
 const token = 'jwt_token'
 
+const room = await connect(url, token, {
+  // to publish camera and microphone immediately after joining
+  audio: true,
+  video: true,
+  // automatically manage video quality
+  autoManageVideo: true,
+  // default publish settings
+  publishDefaults: {
+    simulcast: true,
+  },
+  // default capture settings
+  captureDefaults: {
+    videoResolution: VideoPresets.hd.resolution,
+  },
+})
+
 // after connection, you could set up listeners
-connect(url, token).then(room => {
+room
   // when a media track is subscribed to, ready for playback
-  room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {})
-
+  .on(RoomEvent.TrackSubscribed, (track, publication, participant) => {})
   // when a media track has been unsubscribed
-  room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {})
-
-  room.on(RoomEvent.ParticipantConnected, (participant) => {
+  .on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {})
+  // when a new participant has joined
+  .on(RoomEvent.ParticipantConnected, (participant) => {
     // set up any per-participant callbacks
     participant.on(ParticipantEvent.TrackMuted, (publication) => {})
   })
-  room.on(RoomEvent.ParticipantDisconnected, (participant) => {})
-
+  // when a participant has left
+  .on(RoomEvent.ParticipantDisconnected, (participant) => {})
   // teardown room
-  room.on(RoomEvent.Disconnected, () => {})
-})
+  .on(RoomEvent.Disconnected, () => {})
+
 ```
 
 See listing of [Room events](https://docs.livekit.io/client-sdk-js/enums/roomevent.html) and [Participant events](https://docs.livekit.io/client-sdk-js/enums/participantevent.html)
@@ -70,10 +87,21 @@ export const MyComponent = () => {
   const { connect, isConnecting, room, error, participants } = useRoom();
 
   useEffect(() => {
-    connect(url, token)
-      .then(room => {
-        // publish tracks
-      })
+    const options: ConnectOptions = {
+      // automatically manage video quality
+      autoManageVideo: true,
+      // default publish settings
+      publishDefaults: {
+        simulcast: true,
+      },
+      // default capture settings
+      captureDefaults: {
+        videoResolution: VideoPresets.hd.resolution,
+      },
+    }
+    connect(url, token, options).then(room => {
+      // publish tracks
+    })
     // teardown
     return () => {
       room.disconnect()
@@ -102,8 +130,12 @@ class RoomViewController: UIViewController {
 
         let url: String = "ws://your_host"
         let token: String = "your_jwt_token"
+        let options: ConnectOptions = ConnectOptions(
+          autoSubscribe: true,
+          defaultVideoPublishOptions: LocalVideoTrackPublishOptions(simulcast: true),
+        )
 
-        room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+        room = LiveKit.connect(url, token, options: options, delegate: self)
     }
 }
 
@@ -161,16 +193,25 @@ class MainActivity : AppCompatActivity(), RoomListener {
         ...
         val url = "wss://your_host";
         val token = "your_token"
+        val options = ConnectOptions(
+            autoSubscribe: false,
+            autoManageVideo: true,
+            videoTrackPublishDefaults: VideoTrackPublishDefaults(
+              simulcast: true,
+            ),
+            videoTrackCaptureDefaults: LocalVideoTrackOptions(
+              captureParams: VideoPreset169.HD.capture,
+            ),
+        )
 
         launch {
             val room = LiveKit.connect(
                 applicationContext,
                 url,
                 token,
-                ConnectOptions(),
+                options,
                 this
             )
-            // room interactions
         }
     }
 
@@ -218,11 +259,18 @@ import 'package:livekit_client/livekit_client.dart';
 
 var url = 'your-host';
 var token = 'your-token';
+var options = ConnectOptions(
+  autoSubscribe: false,
+  optimizeVideo: true,
+  defaultVideoPublishOptions: VideoPublishOptions(
+    simulcast: true,
+  ),
+)
 var room = await LiveKitClient.connect(
   url,
   token,
   // optional
-  options: ConnectOptions(),
+  options: options,
 );
 
 var listener = room.createListener();
