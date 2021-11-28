@@ -124,7 +124,7 @@ public class DataExample {
 }
 
 extension DataExample: RoomDelegate {
-  func didReceive(data: Data, participant: RemoteParticipant) {
+  func room(_ room: Room, participant: RemoteParticipant, didReceive data: Data) {
 
   }
 }

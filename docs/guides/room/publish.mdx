@@ -145,7 +145,7 @@ On Android, you would have to define a foreground service in your AndroidManifes
   ```swift title="Swift"
   var videoOpts = LocalVideoTrackOptions()
   videoOpts.captureParameter = VideoPreset.hd.capture
-  let videoTrack = try LocalVideoTrack.createTrack(name: "video", options: videoOpts)
+  let videoTrack = try LocalVideoTrack.createCameraTrack(options: videoOpts)
   let audioTrack = LocalAudioTrack.createTrack(name: "localAudio")
   let videoPublication = localParticipant.publishVideoTrack(track: videoTrack)
   let audioPublication = localParticipant.publishAudioTrack(track: audioTrack)

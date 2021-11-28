@@ -70,9 +70,10 @@ export const MyComponent = ({ participant }) => {
   ```swift title="Swift"
   let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
   ...
-  func didSubscribe(track: Track,
-                    publication: RemoteTrackPublication,
-                    participant: RemoteParticipant) {
+  func room(_ room: Room,
+            participant: RemoteParticipant, 
+            didSubscribe publication: RemoteTrackPublication, 
+            track: Track) {
 
     /* do things with track, publication or participant */
   }
@@ -206,7 +207,11 @@ export const MyComponent = ({audioTrack, videoTrack}) => {
   <TabItem value="ios">
 
   ```swift title="Swift"
-  func didSubscribe(track: Track, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+  func room(_ room: Room,
+            participant: RemoteParticipant,
+            didSubscribe publication: RemoteTrackPublication,
+            track: Track) {
+
     if let videoTrack = track as? VideoTrack {
       DispatchQueue.main.async {
         let videoView = VideoView(frame: .zero)
@@ -215,7 +220,7 @@ export const MyComponent = ({audioTrack, videoTrack}) => {
 
         /* Add any app-specific layout constraints */
 
-        videoTrack.addRenderer(videoView.renderer)
+        videoView.track = videoTrack
       }
     }
   }
@@ -541,9 +546,10 @@ The `disable` action is useful when optimzing for a client's bandwidth consumpti
   ```swift title="Swift"
   let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
   ...
-  func didSubscribe(track: Track,
-                    publication: RemoteTrackPublication,
-                    participant: RemoteParticipant) {
+  func room(_ room: Room,
+            participant: RemoteParticipant,
+            didSubscribe publication: RemoteTrackPublication,
+            track: Track) {
 
    publication.setEnabled(false)
   }
@@ -635,11 +641,12 @@ You can see how this is used in our [React component](https://github.com/livekit
   <TabItem value="ios">
 
   ```swift title="Swift"
-  let room = LiveKit.connect(options: ConnectOptions(url: url, token: token), delegate: self)
+  let room = LiveKit.connect(url, token, delegate: self)
   ...
-  func didSubscribe(track: Track,
-                    publication: RemoteTrackPublication,
-                    participant: RemoteParticipant) {
+  func room(_ room: Room, 
+            participant: RemoteParticipant, 
+            didSubscribe publication: RemoteTrackPublication, 
+            track: Track) {
 
    if let _ = track as? VideoTrack {
      publication.setVideoQuality(.low)

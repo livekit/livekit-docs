@@ -140,23 +140,23 @@ class RoomViewController: UIViewController {
 }
 
 extension RoomViewController: RoomDelegate {
-    func didConnect(room: Room) {
+    func room(_ room: Room, didConnect isReconnect: Bool) {
     }
 
-    func didDisconnect(room: Room, error: Error?) {
+    func room(_ room: Room, didDisconnect error: Error?) {
     }
 
-    func participantDidConnect(room: Room, participant: RemoteParticipant) {
+    func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
       // participant.delegate = <ParticipantDelegate>
     }
 
-    func participantDidDisconnect(room: Room, participant: RemoteParticipant) {
+    func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
     }
 
-    func didSubscribe(track: Track, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+    func room(_ room: Room, participant: RemoteParticipant, didSubscribe trackPublication: RemoteTrackPublication, track: Track) {
     }
 
-    func didUnsubscribe(track: Track, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+    func room(_ room: Room, participant: RemoteParticipant, didUnsubscribe trackPublication: RemoteTrackPublication) {
     }
 }
 ```
