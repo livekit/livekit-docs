@@ -243,15 +243,28 @@ npm install --save livekit-react livekit-client
 
   <TabItem value="android">
 
-  Android client SDK is [published to Maven](https://search.maven.org/artifact/io.livekit/livekit-android).
-  Here's an [example app](https://github.com/livekit/client-sdk-android/tree/master/sample-app) using the Android SDK.
+Android client SDK is [published to Maven](https://search.maven.org/artifact/io.livekit/livekit-android).
+Here's an [example app](https://github.com/livekit/client-sdk-android/tree/master/sample-app) using the Android SDK.
 
-  ```groovy title="build.gradle"
-  ...
-  dependencies {
-    implementation "io.livekit:livekit-android:<version>"
+```groovy title="build.gradle"
+...
+dependencies {
+  implementation "io.livekit:livekit-android:<version>"
+}
+```
+
+You'll also need Jitpack.io as one of the repositories
+
+```groovy
+subprojects {
+  repositories {
+      google()
+      mavenCentral()
+      // ...
+      maven { url 'https://jitpack.io' }
   }
-  ```
+}
+```
 
   </TabItem>
 
