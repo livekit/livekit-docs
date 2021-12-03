@@ -78,7 +78,7 @@ Removes a participant from room. Requires `roomAdmin`
 
 ### MutePublishedTrack
 
-Mute/unmute a participant's track, Requires `roomAdmin`
+Mute/unmute a participant's track. Requires `roomAdmin`
 
 | Parameter | Type   | Description                          |
 | :-------- | :----- | :----------------------------------- |
@@ -100,7 +100,9 @@ Update participant metadata, will cause updates to be broadcasted to everyone in
 
 ### UpdateSubscriptions
 
-Subscribes or unsubscribe a participant from tracks
+Subscribes or unsubscribe a participant from tracks. Requires `roomAdmin`.
+
+As an admin, you can subscribe a participant to a track even if they do not have `canSubscribe` permission.
 
 | Parameter  | Type           | Description                                                |
 | :--------- | :------------- | :--------------------------------------------------------- |
@@ -108,6 +110,17 @@ Subscribes or unsubscribe a participant from tracks
 | identity   | string         |                                                            |
 | track_sids | List<[string]> | list of sids of tracks                                     |
 | subscribe  | bool           | set to true to subscribe, false to unsubscribe from tracks |
+
+### UpdateRoomMetadata
+
+Update room level metadata. Requires `roomAdmin`
+
+This API allows you to attach user-defined metadata to a room. Changes to metadata will be broadcasted to all participants in the room.
+
+| Parameter | Type   | Description                             |
+| :-------- | :----- | :-------------------------------------- |
+| room      | string |                                         |
+| metadata  | string | user-provided payload opaque to LiveKit |
 
 ### SendData
 
