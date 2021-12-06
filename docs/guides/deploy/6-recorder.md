@@ -6,36 +6,41 @@ The recording service only requires access to the same redis cluster as your Liv
 
 ## Config
 
-The only required field is your redis address.
-Additionally, if you'll be starting template recordings by room name (instead of token), you'll need to supply your server api key, secret, and ws url.
+Required fields: `api_key`, `api_secret`, `ws_url`, and `redis`
 
 ```yaml
-api_key: livekit server api key (required if using templates without supplying tokens)
-api_secret: livekit server api secret (required if using templates without supplying tokens)
-ws_url: livekit server ws url (required if using templates)
+api_key: livekit server api key
+api_secret: livekit server api secret
+ws_url: livekit server ws url
 health_port: http port to serve status (optional)
 log_level: valid levels are debug, info, warn, error, fatal, or panic. Defaults to debug
+template_address: template url base, can be used to host your own templates. Defaults to https://recorder.livekit.io/#
 redis: (service mode only)
-    address: redis address, including port
-    username: redis username (optional)
-    password: redis password (optional)
-    db: redis db (optional)
+  address: redis address, including port
+  username: redis username (optional)
+  password: redis password (optional)
+  db: redis db (optional)
 file_output:
-    local: true/false (defaults to true if no s3 output specified)
-    s3: (will upload all filepath requests to s3)
-        access_key: s3 access key
-        secret: s3 access secret
-        region: s3 region
-        bucket: s3 bucket
+  local: true/false (will default to true if you don't supply s3 config)
+  s3: (required if using s3 output)
+    access_key: s3 access key
+    secret: s3 access secret
+    region: s3 region
+    bucket: s3 bucket
+    endpoint: s3 server endpoint (optional - for use with minio)
+  azblob: (required if using azure blob output)
+    account_name: azure blob account
+    account_key: azure blob access key
+    container_name: azure blob container name
 defaults:
-    preset: defaults to "NONE", see options below
-    width: defaults to 1920
-    height: defaults to 1080
-    depth: defaults to 24
-    framerate: defaults to 30
-    audio_bitrate: defaults to 128 (kbps)
-    audio_frequency: defaults to 44100 (Hz)
-    video_bitrate: defaults to 4500 (kbps)
+  preset: defaults to "NONE", see options below
+  width: defaults to 1920
+  height: defaults to 1080
+  depth: defaults to 24
+  framerate: defaults to 30
+  audio_bitrate: defaults to 128 (kbps)
+  audio_frequency: defaults to 44100 (Hz)
+  video_bitrate: defaults to 4500 (kbps)
 ```
 
 ### Presets
