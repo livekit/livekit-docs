@@ -30,11 +30,11 @@ When benchmarking with the load tester, be sure to run it on a machine with plen
 
 A closer approximation to real world traffic, especially for video, would be to run headless Chrome instances to join the room. We've created a [Chrometester](https://github.com/livekit/chrometester) for this purpose. This docker image will start Chromemium in headless mode, and use our react example app to join a test room.
 
-Chrometester can join a room either as a passive subscriber, or to publish their video and audio (via simulated camera/mic source). To use this properly, you'd want to run the docker image on a Kubernetes environment where you could quickly spin up hundreds of instances.
+Chrometester can join a room either as a passive subscriber, or to publish their video and audio (via simulated camera/mic source). To use this properly, you'd want to orchestrate many instances of it at the same time. We have been performing our own tests on a Kubernetes cluster.
 
 ## Benchmarks
 
-We've ran benchmarks for a few different scenarios to give a general understanding of performance. All benchmarks are ran with the server running on a 16-core, compute optimized instance on Google Cloud. ( `c2-standard-16`)
+We've ran benchmarks for a few different scenarios to give a general understanding of performance. All benchmarks were ran with the server running on a 16-core, compute optimized instance on Google Cloud. ( `c2-standard-16`)
 
 Note: in the tables below, `Pubs` indicate number of participants publishing to the room, and `Subs` indicate the number of subscribers (including the publishers). Autosubscribe is enabled in benchmarks so that everyone is subscribing to every publisher.
 
