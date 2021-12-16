@@ -30,25 +30,41 @@ When benchmarking with the load tester, be sure to run it on a machine with plen
 
 A closer approximation to real world traffic, especially for video, would be to run headless Chrome instances to join the room. We've created a [Chrometester](https://github.com/livekit/chrometester) for this purpose. This docker image will start Chromemium in headless mode, and use our react example app to join a test room.
 
-Chrometester can join only as a subscriber, since it doesn't have a camera or microphone to produce real data as a publisher.
+Chrometester can join a room either as a passive subscriber, or to publish their video and audio (via simulated camera/mic source). To use this properly, you'd want to orchestrate many instances of it at the same time. We have been performing our own tests on a Kubernetes cluster.
 
 ## Benchmarks
 
-We've ran benchmarks for a few different scenarios to give a general understanding of performance. All benchmarks are ran with the server running on a 16-core, compute optimized instance on Google Cloud. ( `c2-standard-16`)
+We've ran benchmarks for a few different scenarios to give a general understanding of performance. All benchmarks were ran with the server running on a 16-core, compute optimized instance on Google Cloud. ( `c2-standard-16`)
+
+Note: in the tables below, `Pubs` indicate number of participants publishing to the room, and `Subs` indicate the number of subscribers (including the publishers). Autosubscribe is enabled in benchmarks so that everyone is subscribing to every publisher.
 
 ### Audio only
 
 This simulates an audio only experience with various number of speakers and listeners. It's performed using CLI load tester using a bitrate of 20kbps.
 
+#### Results
+
 | Pubs | Subs | Tracks | Latency | Packet loss |
 | :--- | :--- | :----- | :------ | :---------- |
-| 10   | 0    | 90     | 46.5ms  | 0.000%      |
-| 10   | 100  | 1090   | 47ms    | 0.000%      |
-| 50   | 0    | 2450   | 46.7ms  | 0.000%      |
-| 10   | 500  | 5090   | 48.3ms  | 0.001%      |
-| 100  | 0    | 9900   | 49.2ms  | 0.020%      |
-| 10   | 1000 | 10090  | 52.1ms  | 1.529%      |
+| 10   | 10   | 90     | 46.5ms  | 0.000%      |
+| 10   | 110  | 1090   | 47ms    | 0.000%      |
+| 50   | 50   | 2450   | 46.7ms  | 0.000%      |
+| 10   | 510  | 5090   | 48.3ms  | 0.001%      |
+| 100  | 100  | 9900   | 49.2ms  | 0.020%      |
+| 10   | 1010 | 10090  | 52.1ms  | 1.529%      |
 
 ### Video room
 
-This simulates a large room with a limited number of publishers and many viewers. We started **4 publishers** (using example.livekit.io) each publishing audio and video (960x540) with simulcast enabled. We then spun up instances of Chrometester on Kubernetes, joining the same room as subscribers. At around **440** subscribers, we started experiencing video artifacts caused by high packet loss. When that happened, we observed the server instance had maxed out on CPU usage.
+We performed a set of benchmark using the [example react app](https://example.livekit.io/) and Chrometester. The latest run was performed on December 2nd, 2021 with server [v0.14.2](https://github.com/livekit/livekit-server/releases/tag/v0.14.2).
+
+The tests measure two scenarios:
+
+1. few publishers, how many simulteneous subscribers can it handle
+2. large meetings assuming everyone is publishing both video and audio.
+
+#### Results
+
+| Pubs | Subs | CPU Usage | Egress (GB/min) |
+| :--- | :--- | :-------- | :-------------- |
+| 5    | 990  | 90%       | 7.43            |
+| 100  | 100  | 65%       | 2.75            |
