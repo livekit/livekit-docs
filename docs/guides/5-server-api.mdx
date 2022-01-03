@@ -8,7 +8,7 @@ Room APIs are built on top of [Twirp](https://twitchtv.github.io/twirp/docs/intr
 
 Room APIs are fully distributed across multiple nodes. Each instance is capable of fulfilling requests about any room or participant.
 
-## APIs
+### Authorization header
 
 All of the APIs require a signed access token. The token should be set in HTTP headers as
 
@@ -17,6 +17,14 @@ Authorization: Bearer <token>
 ```
 
 Our [server sdks](/references/server-sdks) will include the authentication header automatically.
+
+### Post body
+
+Twirp expects each request to be a HTTP POST. The body of the request should be
+a JSON object (`application/json`) containing parameters specific to each request. For requests
+that takes no parameters, an empty `{}` body should be used.
+
+## APIs
 
 ### CreateRoom
 
