@@ -13,7 +13,7 @@ At its core, LiveKit is a WebRTC SFU. This means it acts as a WebRTC peer and ma
 
 LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access tokens for authentication. Using LiveKit's server SDK, access tokens are generated with an API key and secret pair. This exchange takes place on the server side to avoid embedding the secret in client code. Here's the general flow:
 
-* your backend server generates an access token using LiveKit's server SDK
+* your backend server generates an access token using LiveKit's [server SDK](/references/server-sdks)
 * your client obtains this token from your backend
 * your client passes the token to LiveKit's client SDK
 * the LiveKit client connects to a LiveKit server instance with the provided token
@@ -295,9 +295,18 @@ The following server SDKs are designed to be used by your backend code. For acce
   defaultValue="node"
   groupId="server-sdk"
   values={[
-    {label: 'Node', value: 'node'},
     {label: 'Golang', value: 'go'},
+    {label: 'Node', value: 'node'},
+    {label: 'Ruby', value: 'ruby'},
   ]}>
+  <TabItem value="go">
+
+  ```shell
+  go get github.com/livekit/server-sdk-go
+  go get github.com/livekit/protocol
+  ```
+
+  </TabItem>
   <TabItem value="node">
 
   Server SDK is [published to npm](https://www.npmjs.com/package/livekit-server-sdk)
@@ -315,12 +324,24 @@ The following server SDKs are designed to be used by your backend code. For acce
   ```
 
   </TabItem>
+  <TabItem value="ruby">
 
-  <TabItem value="go">
+  Server SDK is [published to RubyGems](https://rubygems.org/gems/livekit-server-sdk)
+
+  ***Gemfile***
+
+  Add this line to your application's Gemfile:
+
+  ```ruby
+  gem 'livekit-server-sdk'
+  ```
+
+  and then `bundle install`.
+
+  ***Install system-wide***
 
   ```shell
-  go get github.com/livekit/server-sdk-go
-  go get github.com/livekit/protocol
+  gem install livekit-server-sdk
   ```
 
   </TabItem>

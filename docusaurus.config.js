@@ -49,7 +49,7 @@ module.exports = {
     },
     prism: {
       theme: require('./themes/livekit'),
-      additionalLanguages: ["swift", "kotlin", "go", "groovy", "ini", "dart"],
+      additionalLanguages: ["swift", "kotlin", "go", "groovy", "ini", "dart", "ruby"],
     },
   },
   presets: [
