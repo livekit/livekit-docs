@@ -14,8 +14,9 @@ This token encodes the identity of a participant, name of the room, capabilities
   defaultValue="node"
   groupId="server-sdk"
   values={[
-    {label: 'Node', value: 'node'},
     {label: 'Golang', value: 'go'},
+    {label: 'Node', value: 'node'},
+    {label: 'Ruby', value: 'ruby'},
     {label: 'Other', value: 'other'},
   ]}>
   <TabItem value="node">
@@ -24,10 +25,12 @@ This token encodes the identity of a participant, name of the room, capabilities
 import { AccessToken } from 'livekit-server-sdk';
 
 const roomName = 'name-of-room';
-const participantName = 'user-name';
+const participantIdentity = 'unique-identity';
+const participantName = 'display name';
 
 const at = new AccessToken('api-key', 'secret-key', {
-  identity: participantName,
+  identity: participantIdentity,
+  name: participantName,
 });
 at.addGrant({ roomJoin: true, room: roomName, canPublish: true, canSubscribe: true });
 
@@ -60,6 +63,8 @@ func getJoinToken(apiKey, apiSecret, room, identity string) (string, error) {
 	}
 	at.AddGrant(grant).
 		SetIdentity(identity).
+    // optional
+    SetName("participant-name").
 		SetValidFor(time.Hour)
 
 	return at.ToJWT()
@@ -67,7 +72,20 @@ func getJoinToken(apiKey, apiSecret, room, identity string) (string, error) {
 ```
 
   </TabItem>
+  <TabItem value="ruby">
 
+  ```ruby title="Ruby"
+  require 'livekit'
+
+  token = LiveKit::AccessToken.new(api_key: 'yourkey', api_secret: 'yoursecret')
+  token.identity = 'participant-identity'
+  token.name = 'participant-name'
+  token.add_grant(roomJoin: true, room: 'room-name')
+
+  puts token.to_jwt
+  ```
+
+  </TabItem>
   <TabItem value="other">
 
   For other platforms, you could either implement token generation yourself or use the `livekit-cli` command.
