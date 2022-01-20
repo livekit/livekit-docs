@@ -4,77 +4,113 @@ title: Deploy to a VM
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide helps you to set up LiveKit server on a virtual machine on AWS EC2 or Digital Ocean.
+This guide helps you to set up production-ready LiveKit server on a virtual machine.
+
+This configuration uses Docker Compose and Caddy. Your LiveKit server will support
+a wide range of connectivity, including those behind VPN and firewalls (via TURN/TLS)
+
+You do not need separate SSL certificates for this set up, we will provision them
+automatically with Caddy.
 
 ## Pre-requisites
 
 To start, you'll need:
 
-- A valid self-generated LiveKit API key, following the instructions in the [Getting Started](/guides/getting-started#generate-api-key-and-secret) guide.
-- A valid SSL certificate issued by a [certificate authority](https://en.wikipedia.org/wiki/Certificate_authority) (self-signed certs do not work here).
-- Ability to add a DNS record pointing to your new LiveKit Server.
+- A domain that you control
+- Ability to add DNS records for subdomains that point to your new LiveKit Server
 
-## Deploy with Cloud Init
+## Generate configuration
 
-This is the easiest method for deploying LiveKit Server. You can deploy a LiveKit Server using a vanilla Linux image and Cloud Init configuration file.
+Use our configuration generation tool to create a customized configuration for your domain.
+
+```shell
+docker run --rm -it -v$PWD:/output livekit/generate
+```
+
+You should have a folder with the following files:
+
+* caddy.yaml
+* docker-compose.yaml
+* livekit.yaml
+* redis.conf
+* init_script.sh OR cloud_init.xxxx.yaml
+
+## Deploy to a VM
+
+Depending on your cloud provider, there are a couple of options
 
 <Tabs
-  defaultValue="aws"
-  groupId="cloud"
+  defaultValue="cloud-init"
+  groupId="cloud-deploy"
   values={[
-    {label: 'AWS', value: 'aws'},
-    {label: 'Digital Ocean', value: 'do'},
+    {label: 'Cloud Init', value: 'cloud-init'},
+    {label: 'Startup Script', value: 'startup-script'},
   ]}>
 
-  <TabItem value="aws">
+  <TabItem value="cloud-init">
 
-LiveKit Server can be deployed with either Amazon Linux 2 or Ubuntu. Use the `cloud-init.<platform>.yaml` file corresponding to your desired platform:
+  This is the easiest method for deploying LiveKit Server. AWS, Azure, Digital Ocean, and others support [cloud-init](https://cloud-init.io/).
 
-- For Amazon Linux 2, use [cloud-init.amzn2.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.amzn2.yaml)
-- For Ubuntu, use [cloud-init.ubuntu.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.ubuntu.yaml)
+  We have tested our scripts on Ubuntu and Amazon Linux, but it's possible that the same scripts may also work on other platforms.
+  (Please let us know in Slack or open a PR!)
 
-Steps:
+  When starting a VM, paste the contents of the file `cloud-init.xxxx.yaml` into the `User data` field.
 
-1. Download one of the above `cloud-init.<platform>.yaml` files. Edit it to include your LiveKit Server configuration, SSL certificate, and SSL private key.
-2. Open the [AWS Console](https://console.aws.amazon.com/ec2) and navigate to EC2.
-3. Launch an instance.
-4. Choose the latest "Amazon Linux 2" or "Ubuntu Server" AMI.
-5. In the "Step 3: Configure Instance Details" screen, copy and paste text from your modified `cloud-init.yaml` file from step 1 into the "User data" field, under the "Advanced Details" section.
-6. Launch your instance as usual.
-
+  That's it, when the machine starts up, it'll execute the cloud-init protocol and install LiveKit
 
   </TabItem>
-  <TabItem value="do">
+  <TabItem value="startup-script">
 
-Steps:
+  We could also generate a startup script that can work when cloud-init isn't supported.
 
-1. Download the [cloud-init.ubuntu.yaml](https://raw.githubusercontent.com/livekit/livekit-server/master/deploy/cloud-init.ubuntu.yaml) file. Edit it to include your LiveKit Server configuration, SSL certificate, and SSL private key.
-2. Log on to Digital Ocean and navigate to [Droplets](https://cloud.digitalocean.com/droplets).
-3. Create a Droplet.
-4. Choose the latest "Ubuntu" image.
-5. Under "Select additional options" section, check the "User data" option. Copy and paste text from your modified `cloud-init.ubuntu.yaml` file from step 1 into the "User data" field, under the "Advanced Details" section.
-6. Launch your droplet as usual.
+  This has been tested with Linode and Google Cloud.
+
+  1. Start a VM as usual
+  2. Copy the file `init_script.sh` to the VM
+  3. ssh into the instance
+  3. Run `sudo ./init_script.sh` to perform installation
 
 
   </TabItem>
 </Tabs>
 
+When the install script is finished, your instance should be set up. It will have installed
+
+* docker
+* docker-compose
+* generated configuration to /opt/livekit
+* systemd service `livekit-docker`
+
+To start/stop the service you could use systemctl:
+
+```shell
+systemctl stop livekit-docker
+
+systemctl start livekit-docker
+```
+
 ## Firewall
 
-In addition to the [required ports](ports-firewall) listed above, you'll also want to open up the following ports:
+Ensure that the following ports are open on your firewall and accessible on the instance:
 
-- TCP 22   - SSH
-- TPC 443  - SSL terminated WebSocket
-- UDP 7882 - RTC UDP
+ * 443 - primary HTTPS and TURN/TLS
+ * 80 - TLS issuance
+ * 7881 - WebRTC over TCP
+ * 443/UDP - TURN/UDP
+ * 50000-60000/UDP - WebRTC over UDP
+
+## DNS
+
+Ensure both primary domain and TURN domain are pointed at the IP address of your instance.
+
+This is required in order for Caddy to start provisioning your TLS certificates.
 
 ## Troubleshooting
 
 If something is not working as expected, SSH in to your server and use the following commands to investigate:
 
-```
-systemctl status docker.service
-systemctl status nginx.service
-systemctl status docker.livekit-server@v0.13.service
-tail /var/log/nginx/access.log
-tail /var/log/nginx/error.log
+```shell
+systemctl status livekit-docker
+cd /opt/livekit
+sudo docker-compose logs
 ```
