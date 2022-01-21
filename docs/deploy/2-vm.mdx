@@ -16,8 +16,8 @@ automatically with Caddy.
 
 To start, you'll need:
 
-- A domain that you control
-- Ability to add DNS records for subdomains that point to your new LiveKit Server
+- A domain you control
+- The ability to add DNS records for subdomains for your new LiveKit server
 
 ## Generate configuration
 
@@ -37,7 +37,7 @@ You should have a folder with the following files:
 
 ## Deploy to a VM
 
-Depending on your cloud provider, there are a couple of options
+Depending on your cloud provider, there are a couple of options:
 
 <Tabs
   defaultValue="cloud-init"
@@ -51,17 +51,17 @@ Depending on your cloud provider, there are a couple of options
 
   This is the easiest method for deploying LiveKit Server. AWS, Azure, Digital Ocean, and others support [cloud-init](https://cloud-init.io/).
 
-  We have tested our scripts on Ubuntu and Amazon Linux, but it's possible that the same scripts may also work on other platforms.
+  We have tested our scripts on Ubuntu and Amazon Linux, but it's possible the same scripts may work on other platforms.
   (Please let us know in Slack or open a PR!)
 
   When starting a VM, paste the contents of the file `cloud-init.xxxx.yaml` into the `User data` field.
 
-  That's it, when the machine starts up, it'll execute the cloud-init protocol and install LiveKit
+  That's it! When the machine starts up, it'll execute the cloud-init protocol and install LiveKit.
 
   </TabItem>
   <TabItem value="startup-script">
 
-  We could also generate a startup script that can work when cloud-init isn't supported.
+  We could also generate a startup script that works when cloud-init isn't supported.
 
   This has been tested with Linode and Google Cloud.
 
@@ -74,7 +74,7 @@ Depending on your cloud provider, there are a couple of options
   </TabItem>
 </Tabs>
 
-When the install script is finished, your instance should be set up. It will have installed
+When the install script is finished, your instance should be set up. It will have installed:
 
 * docker
 * docker-compose
@@ -103,7 +103,7 @@ Ensure that the following ports are open on your firewall and accessible on the 
 
 Ensure both primary domain and TURN domain are pointed at the IP address of your instance.
 
-This is required in order for Caddy to start provisioning your TLS certificates.
+This is required for Caddy to start provisioning your TLS certificates.
 
 ## Troubleshooting
 
