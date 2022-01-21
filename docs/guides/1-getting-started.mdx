@@ -5,7 +5,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import xcodeSwiftPackageImageUrl from '@site/static/img/getting-started/swift-package-xcode.png'
 
-This guide will get you running with a LiveKit installation in minutes.
+This guide will get you running with a LiveKit installation in two minutes!
 
 ## Overview
 
@@ -21,141 +21,53 @@ LiveKit uses [JWT-based](https://en.wikipedia.org/wiki/JSON_Web_Token) access to
 
 ## Setting up the server
 
-### Docker
-
-LiveKit is published to [docker hub](https://hub.docker.com/r/livekit/livekit-server). Everything in this guide can be done using the published docker image.
-
-### Building from source
-
-Alternatively, you can build LiveKit on your machine. To do so, there are a few prerequisites:
-
-* Go 1.15+ is installed
-* GOPATH/bin is in your PATH
-
-Then run:
+### Generate config file and keys
 
 ```shell
-git clone https://github.com/livekit/livekit-server
-cd livekit-server
-./bootstrap.sh
-mage
+docker run --rm -v$PWD:/output livekit/generate --local
 ```
 
-## Generate API key and secret
+The above command generates a `livekit.yaml` you can use to start LiveKit. It'll contain an API key/secret pair
+you can use with your LiveKit install.
 
-LiveKit server requires one or more sets of API key and secret pairs to authenticate clients. For your convenience, we've included a secure key/secret generator with the server binary.
-
-<Tabs
-  defaultValue="docker"
-  groupId="server-build"
-  values={[
-    {label: 'Docker', value: 'docker'},
-    {label: 'From source', value: 'source'},
-  ]}>
-  <TabItem value="docker">
+### Starting with docker
 
 ```shell
-% docker run --rm livekit/livekit-server generate-keys
+docker run --rm -p 7880:7880 \
+    -p 7881:7881 \
+    -p 7882:7882/udp \
+    -v $PWD/livekit.yaml:/livekit.yaml \
+    livekit-server \
+    --config /livekit.yaml \
+    --node-ip <machine-ip>
 ```
 
-  </TabItem>
-  <TabItem value="source">
+When running with docker, `--node-ip` needs to be set to your machine's IP address. If the service will be exposed to
+the public Internet, this should the machine's public IP.
 
+### Test with example app
 
-```shell
-% ./bin/livekit-server generate-keys
-```
+You are now ready to connect to your server with a client. Head over to the [example app](https://example.livekit.io) and enter the generated token to connect to your LiveKit
+server. This app is built with our [React SDK](https://github.com/livekit/livekit-react).
 
-  </TabItem>
-</Tabs>
-
-```
-API Key:  APIxxxxxxxx
-API Secret:  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-## Start the server
-
-<Tabs
-  defaultValue="docker"
-  groupId="server-build"
-  values={[
-    {label: 'Docker', value: 'docker'},
-    {label: 'From source', value: 'source'},
-  ]}>
-  <TabItem value="docker">
-
-```shell
-docker run --rm \
-  -p 7880:7880 \
-  -p 7881:7881 \
-  -p 7882:7882/udp \
-  -e LIVEKIT_KEYS="<api-key>: <api-secret>" \
-  livekit/livekit-server \
-  --dev \
-  --node-ip=<machine-ip>
-```
-
-`--node-ip` is required when running via Docker with bridge networking (default).
-If the service is to be exposed to public internet, this should be the machine's public IP.
-
-  </TabItem>
-  <TabItem value="source">
-
-```shell
-LIVEKIT_KEYS="<api-key>: <api-secret>" ./bin/livekit-server --dev
-```
-
-  </TabItem>
-</Tabs>
-
-```shell
-2021-05-16T00:17:18.816-0700	INFO	server/main.go:176	configured key provider	{"num_keys": 1}
-2021-05-16T00:17:18.948-0700	INFO	server/main.go:225	using single-node routing
-2021-05-16T00:17:18.951-0700	INFO	service/server.go:162	starting LiveKit server	{"address": ":7880", "nodeId": "ND_nMu0nVnx", "version": "0.9.3", "rtc.tcp_port": 7881, "rtc.udp_port": 7882}
-```
-
-You now have an instance of LiveKit running in single-node mode! While this mode is suitable for development purposes, we don't recommended it for production.
-
-## Generate access token
-
-For security, every participant that connects to a room needs an access token. By substituting a unique string for `$participant_identity`, you can generate a development access token with the following command:
-
-<Tabs
-  defaultValue="docker"
-  groupId="server-build"
-  values={[
-    {label: 'Docker', value: 'docker'},
-    {label: 'From source', value: 'source'},
-  ]}>
-  <TabItem value="docker">
-
-```shell
-docker run --rm -e LIVEKIT_KEYS="<api-key>: <api-secret>" livekit/livekit-server create-join-token --room myroom --identity $participant_identity
-```
-
-  </TabItem>
-  <TabItem value="source">
-
-```shell
-LIVEKIT_KEYS="<api-key>: <api-secret>" ./bin/livekit-server create-join-token --room myroom --identity $participant_identity
-```
-
-  </TabItem>
-</Tabs>
-
-:::note
-
-This token expires after a month, which is useful for development and testing, but inappropriate for use in production. To generate production tokens, see [Access Token guide](/guides/access-tokens).
-
-:::
-
-
-## Connecting to your room
-
-You are now ready to connect to the room with a client. Head over to our [example browser client](https://example.livekit.io/), paste the token you generated, and voilà! You are live with LiveKit.
+Once connected, your video and audio are now published to your new LiveKit instance!
 
 ![browser client screenshot](/img/getting-started/browser-client.png)
+
+### Generating access tokens (JWT)
+
+To add more users to a room, you'll have to create a token for each
+participant. [Learn more about access tokens](/guides/access-tokens/).
+
+`livekit-server` provides a convenient sub-command to create a development token. This token has an expiration of a
+month, which is useful for development and testing, but not appropriate for production use.
+
+```shell
+docker run --rm -e LIVEKIT_KEYS="<api-key>: <api-secret>" \
+    livekit/livekit-server create-join-token \
+    --room "<room-name>" \
+    --identity "<participant-identity>"
+```
 
 ## Integrating Client SDKs
 
