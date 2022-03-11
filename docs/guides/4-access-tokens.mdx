@@ -8,6 +8,8 @@ For a LiveKit client to successfully connect to the server, it must pass an acce
 
 This token encodes the identity of a participant, name of the room, capabilities and permissions. Access tokens are JWT-based and signed with your API secret to prevent forgery.
 
+Since participant identity is unique within the room, each access token can be used only by a single participant.
+
 ## Creating a token
 
 <Tabs
