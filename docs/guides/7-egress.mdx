@@ -1,0 +1,376 @@
+---
+title: LiveKit Egress (Beta)
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Record or stream your LiveKit rooms
+
+## How it works
+
+Depending on your request type, the egress service will either launch a web template in Chrome and connect to the room
+(room composite requests), or it will use the sdk directly (track and track composite requests). It uses GStreamer to
+encode, and can output to a file or to one or more streams.
+
+![Recorder service](/img/recorder/recorder-service.svg)
+
+## Capabilities
+
+### Egress Types
+
+* Room Composite - export an entire room's video, audio, or both using a web layout
+* Track Composite - transcode up to one audio track and one video track
+* Track - export tracks directly, without transcoding
+
+| Egress Type     | File Output | Stream Output | Websocket Output |
+|-----------------|-------------|---------------|------------------|
+| Room Composite  | ✅           | ✅             |                  |
+| Track Composite | Coming soon | Coming soon   |                  |
+| Track           | Coming soon |               | Coming soon      |
+
+### Supported Codecs and Output Types
+
+* Room Composite and Track Composite egress can be output to an mp4 or ogg file, or an rtmp or rtmps stream.
+
+| Output type  | H264 Baseline | H264 Main   | H264 High | AAC         | OPUS        |
+|--------------|---------------|-------------|-----------|-------------|-------------|
+| mp4 file     | ✅             | ✅ (default) | ✅         | ✅ (default) | ✅           |
+| ogg file     |               |             |           |             | ✅ (default) |
+| rtmp stream  | ✅             | ✅ (default) | ✅         | ✅ (default) |             |
+| rtmps stream | ✅             | ✅ (default) | ✅         | ✅ (default) |             |
+
+* Track egress is exported directly, without transcoding.
+
+| Track codec | File Output |
+|-------------|-------------|
+| h264        | h264 file   |
+| vp8         | ivf file    |
+| opus        | ogg file    |
+
+## API
+
+All RPC definitions and options can be found [here](https://github.com/livekit/protocol/blob/main/livekit_egress.proto).
+
+The Egress API exists within our server sdks ([Go Egress Client](https://github.com/livekit/server-sdk-go/blob/main/egressclient.go)
+and [JS Egress Client](https://github.com/livekit/server-sdk-js/blob/main/src/EgressClient.ts)), and our
+[cli](https://github.com/livekit/livekit-cli/blob/main/cmd/livekit-cli/egress.go) can be used to submit requests manually.
+The API is part of LiveKit Server, which uses redis to communicate with the Egress service.
+
+### StartRoomCompositeEgress
+
+Starts a web composite egress (uses a web template).
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+
+<TabItem value="node">
+
+```typescript title="TypeScript"
+const egressClient = NewEgressClient(
+    'https://my-livekit-host',
+    'livekit-api-key',
+    'livekit-api-secret'
+);
+
+const output = {
+    fileType:  EncodedFileType.MP4,
+    filepath: 'my-room-test.mp4',
+    s3: {
+        accessKey: 'aws-access-key',
+        secret:    'aws-access-secret',
+        region:    'aws-region',
+        bucket:    'my-bucket'
+    }
+};
+const info = await egressClient.startRoomCompositeEgress('my-room', 'speaker-dark', output);
+const egressID = info.egressId;
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go title="Go"
+ctx := context.Background()
+egressClient := lksdk.NewEgressClient(
+    "https://my-livekit-host",
+    "livekit-api-key",
+    "livekit-api-secret",
+)
+
+fileRequest := &livekit.RoomCompositeEgressRequest{
+    RoomName:  "my-room",
+    Layout:    "speaker-dark",
+    Output: &livekit.RoomCompositeEgressRequest_File{
+        File: &livekit.EncodedFileOutput{
+            FileType: livekit.EncodedFileType_MP4,
+            Filepath: "my-room-test.mp4",
+            Output: &livekit.EncodedFileOutput_S3{
+                S3: &livekit.S3Upload{
+                    AccessKey: "aws-access-key",
+                    Secret:    "aws-access-secret",
+                    Region:    "aws-region",
+                    Bucket:    "my-bucket",
+                },
+            },
+        },
+    },
+}
+
+info, err := egressClient.StartRoomCompositeEgress(ctx, fileRequest)
+egressID := info.EgressId
+```
+
+</TabItem>
+
+<TabItem value="cli">
+
+```json title=request.json
+{
+    "room_name": "my-room",
+    "layout": "speaker-dark",
+    "file": {
+        "file_type": "MP4",
+        "filepath": "my-room-test.mp4",
+        "s3": {
+            "access_key": "aws-access-key",
+            "secret": "aws-access-secret",
+            "region": "aws-region",
+            "bucket": "my-bucket"
+        }
+    }
+}
+```
+
+```shell
+export LIVEKIT_URL=https://my-livekit-host
+export LIVEKIT_API_KEY=livekit-api-key
+export LIVEKIT_API_SECRET=livekit-api-secret
+
+livekit-cli start-egress --request request.json
+```
+
+```
+Egress started. Egress ID: EG_XXXXXXXXXXXX
+```
+
+</TabItem>
+
+</Tabs>
+
+* `fileRequest.Output.File.Output` can be left empty if one of `s3`, `azure`, or `gcp` is supplied with your config (see [below](#config)).
+* `fileRequest.Output.File.Filepath` can be left empty, and a unique filename will be generated based on the date and room name.
+
+#### Layouts
+
+Built-in layouts include `speaker-dark`, `speaker-light`, `grid-dark`, and `grid-light`.
+
+You can also build your own layouts. You likely already have a room UI built with LiveKit web SDKs - the recording UI can be similar to your existing room UI, with a few differences:
+
+- Do not render the local participant - in this case, the local participant will be the recorder instance
+- Token permissions - the recorder should have `canSubscribe` and `hidden` set to true
+- Room controls (mute, leave, etc) should not be visible
+
+Source code to our default room templates, and more info can be [found here](https://github.com/livekit/livekit-recorder/tree/main/web).
+
+### UpdateLayout (coming soon)
+
+Used to change the web layout on an active RoomCompositeEgress.
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+
+<TabItem value="node">
+
+```typescript title="TypeScript"
+const info = await egressClient.updateLayout(egressID, 'grid-light');
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go title="Go"
+info, err := egressClient.UpdateLayout(ctx, &livekit.UpdateLayoutRequest{
+    EgressId: egressID,
+    Layout:   "grid-light",
+})
+```
+
+</TabItem>
+
+<TabItem value="cli">
+
+```shell
+livekit-cli update-layout --id EG_XXXXXXXXXXXX --layout grid-light
+```
+
+</TabItem>
+
+</Tabs>
+
+### UpdateStream
+
+Used to add or remove stream urls from an active stream
+
+Note: you can only add or remove outputs from a stream (rtmp output instead of filepath).
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+
+<TabItem value="node">
+
+```typescript title="TypeScript"
+const output = {
+    protocol:  StreamProtocol.RTMP,
+    urls: ['rtmp://live.twitch.tv/app/<stream-key>']
+};
+var info = await egressClient.startRoomCompositeEgress('my-room', 'speaker-dark', output);
+const streamEgressID = info.egressId;
+
+info = await egressClient.updateStream(
+    streamEgressID,
+    ['rtmp://a.rtmp.youtube.com/live2/<stream-key>']
+);
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go title="Go"
+streamRequest := &livekit.RoomCompositeEgressRequest{
+    RoomName:  "my-room",
+    Layout:    "speaker-dark",
+    Output: &livekit.RoomCompositeEgressRequest_Stream{
+        Stream: &livekit.StreamOutput{
+            Protocol: livekit.StreamProtocol_RTMP,
+            Urls:     []string{"rtmp://live.twitch.tv/app/<stream-key>"},
+        },
+    },
+}
+
+info, err := egressClient.StartRoomCompositeEgress(ctx, streamRequest)
+streamEgressID := info.EgressId
+
+info, err = egressClient.UpdateStream(ctx, &livekit.UpdateStreamRequest{
+    EgressId:      streamEgressID,
+    AddOutputUrls: []string{"rtmp://a.rtmp.youtube.com/live2/<stream-key>"}
+})
+```
+
+</TabItem>
+
+<TabItem value="cli">
+
+```shell
+livekit-cli update-stream \
+    --id EG_XXXXXXXXXXXX \
+    --add-urls "rtmp://a.rtmp.youtube.com/live2/<stream-key>"
+```
+
+</TabItem>
+
+</Tabs>
+
+### ListEgress
+
+Used to list active egress. Does not include completed egress.
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+
+<TabItem value="node">
+
+```typescript title="TypeScript"
+const res = egressClient.listEgress();
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go title="Go"
+res, err := egressClient.ListEgress(ctx, &livekit.ListEgressRequest{})
+```
+
+</TabItem>
+
+<TabItem value="cli">
+
+```shell
+livekit-cli list-egress
+```
+
+</TabItem>
+
+</Tabs>
+
+### StopEgress
+
+Stops an active egress.
+
+<Tabs
+    defaultValue="node"
+    groupId="server-sdk"
+    values={[
+        {label: 'Node', value: 'node'},
+        {label: 'Golang', value: 'go'},
+        {label: 'Cli', value: 'cli'},
+    ]}>
+
+<TabItem value="node">
+
+```typescript title="TypeScript"
+const info = egressClient.stopEgress(egressID);
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go title="Go"
+info, err := egressClient.StopEgress(ctx, &livekit.StopEgressRequest{
+    EgressId: egressID,
+})
+```
+
+</TabItem>
+
+<TabItem value="cli">
+
+```shell
+livekit-cli stop-egress --id EG_XXXXXXXXXXXX
+```
+
+</TabItem>
+
+</Tabs>
+
+## Deployment
+
+See the [deployment docs](/guides/deploy/egress) for more info on deployment, config, and autoscaling.

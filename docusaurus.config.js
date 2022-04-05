@@ -96,8 +96,8 @@ module.exports = {
             from: ['/guides/deploy/benchmark'],
           },
           // {
-          //   to: '/deploy/recorder',
-          //   from: ['/guides/deploy/recorder'],
+          //   to: '/deploy/egress',
+          //   from: ['/guides/deploy/egress'],
           // },
         ],
       }
