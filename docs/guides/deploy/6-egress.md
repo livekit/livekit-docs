@@ -44,14 +44,6 @@ gcp:
 
 The config file can be added to a mounted volume with its location passed in the EGRESS_CONFIG_FILE env var, or its body can be passed in the EGRESS_CONFIG_BODY env var.
 
-## Version Compatibility
-
-Egress is still in beta and subject to change. The following versions are compatible:
-
-| livekit-egress | protocol | livekit-server | server-sdk-go | server-sdk-js | livekit-cli |
-|----------------|----------|----------------|---------------|---------------|-------------|
-| v0.4+          | v0.13.0+ | v0.15.7+       | v0.9.3+       | v0.5.11+      | v0.7.2+     |
-
 ## Ensuring availability
 
 The `livekit_egress_available` Prometheus metric is provided to support autoscaling. `prometheus_port` must be defined in your config.
