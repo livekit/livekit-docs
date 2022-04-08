@@ -53,10 +53,9 @@ app.post('/webhook-endpoint', (req, res) => {
 
 ```go title="Go"
 import (
-  "github.com/livekit/protocol/auth"
+	"github.com/livekit/protocol/auth"
 	"github.com/livekit/protocol/livekit"
 	"github.com/livekit/protocol/webhook"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
