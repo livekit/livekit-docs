@@ -53,21 +53,20 @@ app.post('/webhook-endpoint', (req, res) => {
 
 ```go title="Go"
 import (
-	livekit "github.com/livekit/protocol/proto"
+  "github.com/livekit/protocol/auth"
+	"github.com/livekit/protocol/livekit"
 	"github.com/livekit/protocol/webhook"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	data, err := webhook.Receive(r, s.provider)
+  authProvider := auth.NewSimpleKeyProvider(
+		apiKey, apiSecret,
+	)
+  // event is a livekit.WebhookEvent{} object
+	event, err := webhook.ReceiveWebhookEvent(r, authProvider)
 	if err != nil {
 		// could not validate, handle error
-		return
-	}
-
-	event := livekit.WebhookEvent{}
-	if err = protojson.Unmarshal(data, &event); err != nil {
-		// handle error
 		return
 	}
 
@@ -116,5 +115,27 @@ interface WebhookEvent {
   event: 'participant_left'
   room: Room
   participant: Participant
+}
+```
+
+### Track Published
+
+```typescript
+interface WebhookEvent {
+  event: 'track_published'
+  room: Room
+  participant: Participant
+  track: TrackInfo
+}
+```
+
+### Track Unpublished
+
+```typescript
+interface WebhookEvent {
+  event: 'track_unpublished'
+  room: Room
+  participant: Participant
+  track: TrackInfo
 }
 ```
