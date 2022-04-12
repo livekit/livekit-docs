@@ -49,7 +49,7 @@ Websocket endpoint `/rtc` is the initial step that the client connects to. It ta
 * reconnect: true if client is trying to resume to an existing connection. when this is set, server will attempt to perform a ICE restart after connection is established.
 * auto_subscribe: true by default. If true, server will automatically subscribe client to all tracks in the room
 * sdk: indicates the SDK it's using. (js, ios, android, etc)
-* protocol: indicates the protocol version. this document descriibes the latest protocol version: 3
+* protocol: indicates the protocol version. this document describes the latest protocol version: 3
 * version: version of the client SDK
 
 ## Publishing
